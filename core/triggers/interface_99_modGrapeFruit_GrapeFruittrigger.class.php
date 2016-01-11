@@ -113,6 +113,9 @@ class InterfaceGrapeFruittrigger
      */
     public function run_trigger($action, $object, $user, $langs, $conf)
     {
+    	dol_include_once('/grapefruit/class/grapefruit.class.php');
+		$langs->load('grapefruit@grapefruit');
+		
         // Put here code you want to execute when a Dolibarr business events occurs.
         // Data and type of action are stored into $object and $action
         // Users
@@ -485,10 +488,14 @@ class InterfaceGrapeFruittrigger
 
         // Projects
         elseif ($action == 'PROJECT_CREATE') {
+        	if(!TGrappeFruit::checkBudgetNotEmpty($object)) return -1;			
+        	
             dol_syslog(
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
             );
         } elseif ($action == 'PROJECT_MODIFY') {
+        	if(!TGrappeFruit::checkBudgetNotEmpty($object)) return -1;
+			
             dol_syslog(
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
             );
