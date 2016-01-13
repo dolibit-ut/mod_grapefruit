@@ -85,4 +85,26 @@ class ActionsGrapeFruit
 			return -1;
 		}*/
 	}
+
+	function formObjectOptions($parameters, &$object, &$action, $hookmanager)
+	{
+		global $conf;
+		
+		//Context : frm creation propal
+		if ($parameters['currentcontext'] === 'propalcard' && $action === 'create') 
+		{
+			if ($conf->grapefruit->enabled && $conf->global->GRAPEFRUIT_PROPAL_DEFAULT_BANK_ACOUNT > 0)
+			{
+				?>
+				<script type="text/javascript">
+					$(function() {
+						$("select[name=fk_account] option[value=<?php echo $conf->global->GRAPEFRUIT_PROPAL_DEFAULT_BANK_ACOUNT; ?>]").attr('selected', true);
+					});
+				</script>
+				<?php
+			}
+		}
+		
+	}
+	
 }

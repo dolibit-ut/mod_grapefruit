@@ -100,7 +100,7 @@ $form=new Form($db);
 $var=false;
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("Parameters").'</td>'."\n";
+print '<td>'.$langs->trans("Project").'</td>'."\n";
 print '<td align="center" width="20">&nbsp;</td>';
 print '<td align="center" width="100">'.$langs->trans("Value").'</td>'."\n";
 
@@ -130,6 +130,23 @@ echo ajax_constantonoff('GRAPEFRUIT_BUDGET_NEEDED');
 print '</form>';
 print '</td></tr>';
 
+print '<tr class="liste_titre">';
+print '<td>'.$langs->trans("Propal").'</td>'."\n";
+print '<td align="center" width="20">&nbsp;</td>';
+print '<td align="center" width="100">'.$langs->trans("Value").'</td>'."\n";
+
+$var=!$var;
+print '<tr '.$bc[$var].'>';
+print '<td>'.$langs->trans("set_GRAPEFRUIT_PROPAL_DEFAULT_BANK_ACOUNT").'</td>';
+print '<td align="center" width="20">&nbsp;</td>';
+print '<td align="right" width="300">';
+print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="action" value="set_GRAPEFRUIT_PROPAL_DEFAULT_BANK_ACOUNT">';
+print $form->select_comptes($conf->global->GRAPEFRUIT_PROPAL_DEFAULT_BANK_ACOUNT, 'GRAPEFRUIT_PROPAL_DEFAULT_BANK_ACOUNT', 0, '', 1);
+print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+print '</form>';
+print '</td></tr>';
 
 print '</table>';
 

@@ -88,8 +88,8 @@ class modGrapeFruit extends DolibarrModules
 		//							'workflow' => array('WORKFLOW_MODULE1_YOURACTIONTYPE_MODULE2'=>array('enabled'=>'! empty($conf->module1->enabled) && ! empty($conf->module2->enabled)', 'picto'=>'yourpicto@grapefruit')) // Set here all workflow context managed by module
 		//                        );
 		$this->module_parts = array(
-			'triggers' => 1,  
-		
+			'triggers' => 1
+			,'hooks' => array('propalcard')
 		);
 
 		// Data directories to create when module is enabled.

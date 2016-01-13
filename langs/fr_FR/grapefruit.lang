@@ -7,3 +7,5 @@ GrapeFruitSetup = Configuration du module GrapeFruit
 GrapeFruitAbout = A propos du module GrapeFruit
 set_GRAPEFRUIT_BUDGET_NEEDED=Rendre obligatoire la saisie d'un budget dans un projet
 BudgetRequire=Budget obligatoire
+
+set_GRAPEFRUIT_PROPAL_DEFAULT_BANK_ACOUNT=Définir un compte bancaire par défaut lors de la création d'une propal
