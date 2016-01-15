@@ -107,4 +107,28 @@ class ActionsGrapeFruit
 		
 	}
 	
+	function addMoreActionsButtons($parameters, &$object, &$action, $hookmanager)
+	{
+		global $conf,$user,$langs;
+		
+		if ($parameters['currentcontext'] === 'suppliercard' && !empty($conf->global->GRAPEFRUIT_SUPPLIER_FORCE_BT_ORDER_TO_INVOICE)) 
+		{
+			if ($user->rights->fournisseur->facture->creer)
+			{
+				?>
+				<script type="text/javascript">
+					$(function() {
+						var bt = $('a.butAction[href*="orderstoinvoice.php?socid="]');
+						if (bt.length == 0)
+						{
+							var btOrder = $('<div class="inline-block divButAction"><a class="butAction" href="<?php echo DOL_URL_ROOT; ?>/fourn/commande/orderstoinvoice.php?socid=<?php echo $object->id; ?>"><?php echo $langs->transnoentitiesnoconv("CreateInvoiceForThisCustomer"); ?></a></div>');
+							$('div.tabsAction').append(btOrder);
+						}
+					});
+				</script>
+				<?php
+			}
+		}
+	}
+	
 }
