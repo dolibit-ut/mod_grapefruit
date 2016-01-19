@@ -131,4 +131,41 @@ class ActionsGrapeFruit
 		}
 	}
 	
+	function beforePDFCreation(&$parameters, &$object, &$action, $hookmanager)
+	{
+		global $conf,$user,$langs;
+		
+		if ($parameters['currentcontext'] === 'pdfgeneration' && !empty($conf->global->GRAPEFRUIT_SUPPLIER_CONTACT_SHIP_ADDRESS)) 
+		{
+			$base_object = $parameters['object'];
+			if(isset($base_object) && $base_object->element == 'order_supplier')
+			{
+				require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
+				$langs->load('orders');
+				$usecontact=false;
+				// Load des contacts livraison
+				$arrayidcontact=$base_object->getIdContact('external','SHIPPING');
+				if (count($arrayidcontact) > 0)
+				{
+					$usecontact=true;
+					$base_object->fetch_contact($arrayidcontact[0]);
+				}
+				if($usecontact)
+				{
+					//Recipient name
+					// On peut utiliser le nom de la societe du contact
+					if (!empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)) $thirdparty = $base_object->contact;
+					$carac_client_name= pdfBuildThirdpartyName($thirdparty, $parameters['outputlangs']);
+					$carac_client=pdf_build_address($parameters['outputlangs'],$object->emetteur,$base_object->client,($usecontact?$base_object->contact:''),$usecontact,'target');
+					
+					$newcontent = $langs->trans('TypeContact_order_supplier_external_SHIPPING').' :'."\n".'<strong>'.$carac_client_name.'</strong>'."\n".$carac_client;
+					if(!empty($parameters['object']->note_public))
+						$parameters['object']->note_public = dol_nl2br($newcontent."\n".$parameters['object']->note_public);
+					else
+						$parameters['object']->note_public = dol_nl2br($newcontent);
+				}
+			}
+		}
+	}
+	
 }

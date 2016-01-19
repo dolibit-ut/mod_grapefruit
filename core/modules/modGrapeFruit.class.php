@@ -89,7 +89,7 @@ class modGrapeFruit extends DolibarrModules
 		//                        );
 		$this->module_parts = array(
 			'triggers' => 1
-			,'hooks' => array('propalcard', 'suppliercard')
+			,'hooks' => array('propalcard', 'suppliercard', 'pdfgeneration')
 		);
 
 		// Data directories to create when module is enabled.
