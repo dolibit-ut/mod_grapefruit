@@ -5,3 +5,6 @@ ATMAbout = This module has been developed by <a href="http://www.atm-consulting.
 
 GrapeFruitSetup = GrapeFruit module setup
 GrapeFruitAbout = About GrapeFruit
+
+set_GRAPEFRUIT_SUPPLIER_CONTACT_SHIP_ADDRESS=Add a delivery contact into supplier order PDF
+Ajouter le contact livraison sur le pdf d'une Commande Fournisseur
