@@ -361,6 +361,14 @@ class InterfaceGrapeFruittrigger
 
         // Bills
         elseif ($action == 'BILL_CREATE') {
+				
+        	if(!empty($conf->global->GRAPEFRUIT_LINK_INVOICE_TO_SESSION_IF_PROPAL_IS) && $conf->agefodd->enabled) {
+        		
+				
+				
+        	}
+			
+			
             dol_syslog(
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
             );
