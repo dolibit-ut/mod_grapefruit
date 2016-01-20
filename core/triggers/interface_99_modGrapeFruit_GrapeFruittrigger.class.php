@@ -363,9 +363,29 @@ class InterfaceGrapeFruittrigger
         elseif ($action == 'BILL_CREATE') {
 				
         	if(!empty($conf->global->GRAPEFRUIT_LINK_INVOICE_TO_SESSION_IF_PROPAL_IS) && $conf->agefodd->enabled) {
-        		
-				
-				
+//        		var_dump($object->origin, $object->origin_id);
+			if($object->origin == 'propal' && $object->origin_id>0) {
+				$db = &$this->db;
+
+				dol_include_once('/agefodd.git/class/agefodd_session_element.class.php');
+
+				$res = $db->query("SELECT fk_session_agefodd FROM ".MAIN_DB_PREFIX."agefodd_session_element WHERE fk_element=".$object->origin_id." AND element_type='propal'");
+				$obj = $db->fetch_object($res);
+//var_dump($obj->fk_session_agefodd);
+
+				if($obj->fk_session_agefodd>0) {
+					$agf = new Agefodd_session_element($db);
+					$agf->fk_element = $object->id;
+					$agf->fk_session_agefodd = $obj->fk_session_agefodd;
+					$agf->fk_soc = empty($object->socid) ? $object->fk_soc : $object->socid;
+			                $agf->element_type = 'invoice';
+				        $result = $agf->create($user);
+//var_dump($result);
+				}
+//var_dump($db);
+//				exit('!');
+
+			}
         	}
 			
 			
