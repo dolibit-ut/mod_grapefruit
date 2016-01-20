@@ -179,6 +179,11 @@ print '</td></tr>';
 
 if($conf->agefodd->enabled) {
 
+	print '<tr class="liste_titre">';
+	print '<td>'.$langs->trans("Agefodd").'</td>'."\n";
+	print '<td align="center" width="20">&nbsp;</td>';
+	print '<td align="center" width="100">'.$langs->trans("Value").'</td>'."\n";
+
 	$var=!$var;
 	print '<tr '.$bc[$var].'>';
 	print '<td>'.$langs->trans("set_GRAPEFRUIT_LINK_INVOICE_TO_SESSION_IF_PROPAL_IS").'</td>';
