@@ -171,12 +171,13 @@ class ActionsGrapeFruit
 					$carac_client_name= pdfBuildThirdpartyName($thirdparty, $parameters['outputlangs']);
 					
 					$thecontact = $base_object->contact;
-					if(empty($thecontact->address) || empty($thecontact->zip) || empty($thecontact->town))
+					// SI un élément manquant ou qu'on veuille envoyé à la société du contact alors on change
+					if((empty($thecontact->address) || empty($thecontact->zip) || empty($thecontact->town)) || (!empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)))
 					{
 						$contactSociete = new Societe($db);
 						$contactSociete->fetch($thecontact->socid);
 						$thecontact->address = $contactSociete->address;
-						$thecontact->zip = $contactSociete->zip;
+						$thecontact->zip = $contactSociete->zip; 
 						$thecontact->town = $contactSociete->town;
 					}
 					$carac_client=pdf_build_address($parameters['outputlangs'],$object->emetteur,$base_object->client,($usecontact?$base_object->contact:''),$usecontact,'target');
