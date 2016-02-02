@@ -141,14 +141,25 @@ class ActionsGrapeFruit
 			if(isset($base_object) && $base_object->element == 'order_supplier')
 			{
 				require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
-				$langs->load('orders');
-				$usecontact=false;
+				$parameters['outputlangs']->load('deliveries');
+				$parameters['outputlangs']->load('orders');
+				$usecommande=$usecontact=false;
 				// Load des contacts livraison
 				$arrayidcontact=$base_object->getIdContact('external','SHIPPING');
 				if (count($arrayidcontact) > 0)
 				{
 					$usecontact=true;
 					$base_object->fetch_contact($arrayidcontact[0]);
+				}
+				$base_object->fetchObjectLinked();
+				if(isset($base_object->linkedObjects['commande']))
+				{
+					// On récupère la donnée de la commande initiale
+					// C'est un tableau basé sur des ID donc on boucle pour sortir le premier item
+					$commande = reset($base_object->linkedObjects['commande']);
+					$date_affiche = date("Y-m-d", $commande->date);
+					$ref = $commande->ref;
+					$usecommande=true;
 				}
 				if($usecontact)
 				{
@@ -158,7 +169,12 @@ class ActionsGrapeFruit
 					$carac_client_name= pdfBuildThirdpartyName($thirdparty, $parameters['outputlangs']);
 					$carac_client=pdf_build_address($parameters['outputlangs'],$object->emetteur,$base_object->client,($usecontact?$base_object->contact:''),$usecontact,'target');
 					
-					$newcontent = $langs->trans('TypeContact_order_supplier_external_SHIPPING').' :'."\n".'<strong>'.$carac_client_name.'</strong>'."\n".$carac_client;
+					$newcontent = $parameters['outputlangs']->trans('Delivery').' :'."\n".'<strong>'.$carac_client_name.'</strong>'."\n".$carac_client;
+					if($usecommande)
+					{
+						$newcontent .= "\n".'Ref '.$parameters['outputlangs']->trans('Order').' : '.$ref;
+						$newcontent .= "\n".$parameters['outputlangs']->trans('Date').' '.$parameters['outputlangs']->trans('Order').' : '.$date_affiche;
+					}
 					if(!empty($parameters['object']->note_public))
 						$parameters['object']->note_public = dol_nl2br($newcontent."\n".$parameters['object']->note_public);
 					else
