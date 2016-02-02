@@ -165,7 +165,7 @@ class ActionsGrapeFruit
 				{
 					//Recipient name
 					// On peut utiliser le nom de la societe du contact
-					if (!empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)) $thirdparty = $base_object->contact;
+					$thirdparty = $base_object->contact;
 					$carac_client_name= pdfBuildThirdpartyName($thirdparty, $parameters['outputlangs']);
 					$carac_client=pdf_build_address($parameters['outputlangs'],$object->emetteur,$base_object->client,($usecontact?$base_object->contact:''),$usecontact,'target');
 					
