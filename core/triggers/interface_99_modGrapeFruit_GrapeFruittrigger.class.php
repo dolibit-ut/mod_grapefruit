@@ -119,248 +119,255 @@ class InterfaceGrapeFruittrigger
         // Put here code you want to execute when a Dolibarr business events occurs.
         // Data and type of action are stored into $object and $action
         // Users
-        if ($action == 'USER_LOGIN') {
+        if ($action === 'USER_LOGIN') {
             dol_syslog(
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
             );
-        } elseif ($action == 'USER_UPDATE_SESSION') {
+        } 
+		else if($action ==='LINECONTRACT_INSERT') {
+			
+			TGrappeFruit::checkContractFourn($object);
+			
+			
+		}
+        elseif ($action === 'USER_UPDATE_SESSION') {
             // Warning: To increase performances, this action is triggered only if
             // constant MAIN_ACTIVATE_UPDATESESSIONTRIGGER is set to 1.
             dol_syslog(
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
             );
-        } elseif ($action == 'USER_CREATE') {
+        } elseif ($action === 'USER_CREATE') {
             dol_syslog(
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
             );
-        } elseif ($action == 'USER_CREATE_FROM_CONTACT') {
+        } elseif ($action === 'USER_CREATE_FROM_CONTACT') {
             dol_syslog(
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
             );
-        } elseif ($action == 'USER_MODIFY') {
+        } elseif ($action === 'USER_MODIFY') {
             dol_syslog(
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
             );
-        } elseif ($action == 'USER_NEW_PASSWORD') {
+        } elseif ($action === 'USER_NEW_PASSWORD') {
             dol_syslog(
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
             );
-        } elseif ($action == 'USER_ENABLEDISABLE') {
+        } elseif ($action === 'USER_ENABLEDISABLE') {
             dol_syslog(
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
             );
-        } elseif ($action == 'USER_DELETE') {
+        } elseif ($action === 'USER_DELETE') {
             dol_syslog(
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
             );
-        } elseif ($action == 'USER_LOGOUT') {
+        } elseif ($action === 'USER_LOGOUT') {
             dol_syslog(
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
             );
-        } elseif ($action == 'USER_SETINGROUP') {
+        } elseif ($action === 'USER_SETINGROUP') {
             dol_syslog(
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
             );
-        } elseif ($action == 'USER_REMOVEFROMGROUP') {
+        } elseif ($action === 'USER_REMOVEFROMGROUP') {
             dol_syslog(
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
             );
         }
 
         // Groups
-        elseif ($action == 'GROUP_CREATE') {
+        elseif ($action === 'GROUP_CREATE') {
             dol_syslog(
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
             );
-        } elseif ($action == 'GROUP_MODIFY') {
+        } elseif ($action === 'GROUP_MODIFY') {
             dol_syslog(
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
             );
-        } elseif ($action == 'GROUP_DELETE') {
+        } elseif ($action === 'GROUP_DELETE') {
             dol_syslog(
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
             );
         }
 
         // Companies
-        elseif ($action == 'COMPANY_CREATE') {
+        elseif ($action === 'COMPANY_CREATE') {
             dol_syslog(
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
             );
-        } elseif ($action == 'COMPANY_MODIFY') {
+        } elseif ($action === 'COMPANY_MODIFY') {
             dol_syslog(
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
             );
-        } elseif ($action == 'COMPANY_DELETE') {
+        } elseif ($action === 'COMPANY_DELETE') {
             dol_syslog(
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
             );
         }
 
         // Contacts
-        elseif ($action == 'CONTACT_CREATE') {
+        elseif ($action === 'CONTACT_CREATE') {
             dol_syslog(
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
             );
-        } elseif ($action == 'CONTACT_MODIFY') {
+        } elseif ($action === 'CONTACT_MODIFY') {
             dol_syslog(
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
             );
-        } elseif ($action == 'CONTACT_DELETE') {
+        } elseif ($action === 'CONTACT_DELETE') {
             dol_syslog(
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
             );
         }
 
         // Products
-        elseif ($action == 'PRODUCT_CREATE') {
+        elseif ($action === 'PRODUCT_CREATE') {
             dol_syslog(
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
             );
-        } elseif ($action == 'PRODUCT_MODIFY') {
+        } elseif ($action === 'PRODUCT_MODIFY') {
             dol_syslog(
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
             );
-        } elseif ($action == 'PRODUCT_DELETE') {
+        } elseif ($action === 'PRODUCT_DELETE') {
             dol_syslog(
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
             );
         }
 
         // Customer orders
-        elseif ($action == 'ORDER_CREATE') {
+        elseif ($action === 'ORDER_CREATE') {
             dol_syslog(
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
             );
-        } elseif ($action == 'ORDER_CLONE') {
+        } elseif ($action === 'ORDER_CLONE') {
             dol_syslog(
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
             );
-        } elseif ($action == 'ORDER_VALIDATE') {
+        } elseif ($action === 'ORDER_VALIDATE') {
             dol_syslog(
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
             );
-        } elseif ($action == 'ORDER_DELETE') {
+        } elseif ($action === 'ORDER_DELETE') {
             dol_syslog(
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
             );
-        } elseif ($action == 'ORDER_BUILDDOC') {
+        } elseif ($action === 'ORDER_BUILDDOC') {
             dol_syslog(
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
             );
-        } elseif ($action == 'ORDER_SENTBYMAIL') {
+        } elseif ($action === 'ORDER_SENTBYMAIL') {
             dol_syslog(
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
             );
-        } elseif ($action == 'LINEORDER_INSERT') {
+        } elseif ($action === 'LINEORDER_INSERT') {
             dol_syslog(
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
             );
-        } elseif ($action == 'LINEORDER_DELETE') {
+        } elseif ($action === 'LINEORDER_DELETE') {
             dol_syslog(
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
             );
         }
 
         // Supplier orders
-        elseif ($action == 'ORDER_SUPPLIER_CREATE') {
+        elseif ($action === 'ORDER_SUPPLIER_CREATE') {
             dol_syslog(
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
             );
-        } elseif ($action == 'ORDER_SUPPLIER_VALIDATE') {
+        } elseif ($action === 'ORDER_SUPPLIER_VALIDATE') {
             dol_syslog(
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
             );
-        } elseif ($action == 'ORDER_SUPPLIER_SENTBYMAIL') {
+        } elseif ($action === 'ORDER_SUPPLIER_SENTBYMAIL') {
             dol_syslog(
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
             );
-        } elseif ($action == 'SUPPLIER_ORDER_BUILDDOC') {
+        } elseif ($action === 'SUPPLIER_ORDER_BUILDDOC') {
             dol_syslog(
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
             );
         }
 
         // Proposals
-        elseif ($action == 'PROPAL_CREATE') {
+        elseif ($action === 'PROPAL_CREATE') {
             dol_syslog(
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
             );
-        } elseif ($action == 'PROPAL_CLONE') {
+        } elseif ($action === 'PROPAL_CLONE') {
             dol_syslog(
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
             );
-        } elseif ($action == 'PROPAL_MODIFY') {
+        } elseif ($action === 'PROPAL_MODIFY') {
             dol_syslog(
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
             );
-        } elseif ($action == 'PROPAL_VALIDATE') {
+        } elseif ($action === 'PROPAL_VALIDATE') {
             dol_syslog(
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
             );
-        } elseif ($action == 'PROPAL_BUILDDOC') {
+        } elseif ($action === 'PROPAL_BUILDDOC') {
             dol_syslog(
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
             );
-        } elseif ($action == 'PROPAL_SENTBYMAIL') {
+        } elseif ($action === 'PROPAL_SENTBYMAIL') {
             dol_syslog(
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
             );
-        } elseif ($action == 'PROPAL_CLOSE_SIGNED') {
+        } elseif ($action === 'PROPAL_CLOSE_SIGNED') {
             dol_syslog(
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
             );
-        } elseif ($action == 'PROPAL_CLOSE_REFUSED') {
+        } elseif ($action === 'PROPAL_CLOSE_REFUSED') {
             dol_syslog(
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
             );
-        } elseif ($action == 'PROPAL_DELETE') {
+        } elseif ($action === 'PROPAL_DELETE') {
             dol_syslog(
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
             );
-        } elseif ($action == 'LINEPROPAL_INSERT') {
+        } elseif ($action === 'LINEPROPAL_INSERT') {
             dol_syslog(
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
             );
-        } elseif ($action == 'LINEPROPAL_MODIFY') {
+        } elseif ($action === 'LINEPROPAL_MODIFY') {
             dol_syslog(
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
             );
-        } elseif ($action == 'LINEPROPAL_DELETE') {
+        } elseif ($action === 'LINEPROPAL_DELETE') {
             dol_syslog(
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
             );
         }
 
         // Contracts
-        elseif ($action == 'CONTRACT_CREATE') {
+        elseif ($action === 'CONTRACT_CREATE') {
             dol_syslog(
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
             );
-        } elseif ($action == 'CONTRACT_MODIFY') {
+        } elseif ($action === 'CONTRACT_MODIFY') {
             dol_syslog(
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
             );
-        } elseif ($action == 'CONTRACT_ACTIVATE') {
+        } elseif ($action === 'CONTRACT_ACTIVATE') {
             dol_syslog(
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
             );
-        } elseif ($action == 'CONTRACT_CANCEL') {
+        } elseif ($action === 'CONTRACT_CANCEL') {
             dol_syslog(
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
             );
-        } elseif ($action == 'CONTRACT_CLOSE') {
+        } elseif ($action === 'CONTRACT_CLOSE') {
             dol_syslog(
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
             );
-        } elseif ($action == 'CONTRACT_DELETE') {
+        } elseif ($action === 'CONTRACT_DELETE') {
             dol_syslog(
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
             );
         }
 
         // Bills
-        elseif ($action == 'BILL_CREATE') {
+        elseif ($action === 'BILL_CREATE') {
 				
         	if(!empty($conf->global->GRAPEFRUIT_LINK_INVOICE_TO_SESSION_IF_PROPAL_IS) && $conf->agefodd->enabled) {
 //        		var_dump($object->origin, $object->origin_id);
@@ -392,210 +399,210 @@ class InterfaceGrapeFruittrigger
             dol_syslog(
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
             );
-        } elseif ($action == 'BILL_CLONE') {
+        } elseif ($action === 'BILL_CLONE') {
             dol_syslog(
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
             );
-        } elseif ($action == 'BILL_MODIFY') {
+        } elseif ($action === 'BILL_MODIFY') {
             dol_syslog(
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
             );
-        } elseif ($action == 'BILL_VALIDATE') {
+        } elseif ($action === 'BILL_VALIDATE') {
             dol_syslog(
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
             );
-        } elseif ($action == 'BILL_BUILDDOC') {
+        } elseif ($action === 'BILL_BUILDDOC') {
             dol_syslog(
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
             );
-        } elseif ($action == 'BILL_SENTBYMAIL') {
+        } elseif ($action === 'BILL_SENTBYMAIL') {
             dol_syslog(
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
             );
-        } elseif ($action == 'BILL_CANCEL') {
+        } elseif ($action === 'BILL_CANCEL') {
             dol_syslog(
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
             );
-        } elseif ($action == 'BILL_DELETE') {
+        } elseif ($action === 'BILL_DELETE') {
             dol_syslog(
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
             );
-        } elseif ($action == 'LINEBILL_INSERT') {
+        } elseif ($action === 'LINEBILL_INSERT') {
             dol_syslog(
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
             );
-        } elseif ($action == 'LINEBILL_DELETE') {
+        } elseif ($action === 'LINEBILL_DELETE') {
             dol_syslog(
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
             );
         }
 
         // Payments
-        elseif ($action == 'PAYMENT_CUSTOMER_CREATE') {
+        elseif ($action === 'PAYMENT_CUSTOMER_CREATE') {
             dol_syslog(
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
             );
-        } elseif ($action == 'PAYMENT_SUPPLIER_CREATE') {
+        } elseif ($action === 'PAYMENT_SUPPLIER_CREATE') {
             dol_syslog(
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
             );
-        } elseif ($action == 'PAYMENT_ADD_TO_BANK') {
+        } elseif ($action === 'PAYMENT_ADD_TO_BANK') {
             dol_syslog(
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
             );
-        } elseif ($action == 'PAYMENT_DELETE') {
+        } elseif ($action === 'PAYMENT_DELETE') {
             dol_syslog(
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
             );
         }
 
         // Interventions
-        elseif ($action == 'FICHEINTER_CREATE') {
+        elseif ($action === 'FICHEINTER_CREATE') {
             dol_syslog(
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
             );
-        } elseif ($action == 'FICHEINTER_MODIFY') {
+        } elseif ($action === 'FICHEINTER_MODIFY') {
             dol_syslog(
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
             );
-        } elseif ($action == 'FICHEINTER_VALIDATE') {
+        } elseif ($action === 'FICHEINTER_VALIDATE') {
             dol_syslog(
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
             );
-        } elseif ($action == 'FICHEINTER_DELETE') {
+        } elseif ($action === 'FICHEINTER_DELETE') {
             dol_syslog(
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
             );
         }
 
         // Members
-        elseif ($action == 'MEMBER_CREATE') {
+        elseif ($action === 'MEMBER_CREATE') {
             dol_syslog(
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
             );
-        } elseif ($action == 'MEMBER_VALIDATE') {
+        } elseif ($action === 'MEMBER_VALIDATE') {
             dol_syslog(
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
             );
-        } elseif ($action == 'MEMBER_SUBSCRIPTION') {
+        } elseif ($action === 'MEMBER_SUBSCRIPTION') {
             dol_syslog(
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
             );
-        } elseif ($action == 'MEMBER_MODIFY') {
+        } elseif ($action === 'MEMBER_MODIFY') {
             dol_syslog(
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
             );
-        } elseif ($action == 'MEMBER_NEW_PASSWORD') {
+        } elseif ($action === 'MEMBER_NEW_PASSWORD') {
             dol_syslog(
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
             );
-        } elseif ($action == 'MEMBER_RESILIATE') {
+        } elseif ($action === 'MEMBER_RESILIATE') {
             dol_syslog(
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
             );
-        } elseif ($action == 'MEMBER_DELETE') {
+        } elseif ($action === 'MEMBER_DELETE') {
             dol_syslog(
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
             );
         }
 
         // Categories
-        elseif ($action == 'CATEGORY_CREATE') {
+        elseif ($action === 'CATEGORY_CREATE') {
             dol_syslog(
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
             );
-        } elseif ($action == 'CATEGORY_MODIFY') {
+        } elseif ($action === 'CATEGORY_MODIFY') {
             dol_syslog(
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
             );
-        } elseif ($action == 'CATEGORY_DELETE') {
+        } elseif ($action === 'CATEGORY_DELETE') {
             dol_syslog(
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
             );
         }
 
         // Projects
-        elseif ($action == 'PROJECT_CREATE') {
+        elseif ($action === 'PROJECT_CREATE') {
         	if(!TGrappeFruit::checkBudgetNotEmpty($object)) return -1;			
         	
             dol_syslog(
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
             );
-        } elseif ($action == 'PROJECT_MODIFY') {
+        } elseif ($action === 'PROJECT_MODIFY') {
         	if(!TGrappeFruit::checkBudgetNotEmpty($object)) return -1;
 			
             dol_syslog(
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
             );
-        } elseif ($action == 'PROJECT_DELETE') {
+        } elseif ($action === 'PROJECT_DELETE') {
             dol_syslog(
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
             );
         }
 
         // Project tasks
-        elseif ($action == 'TASK_CREATE') {
+        elseif ($action === 'TASK_CREATE') {
             dol_syslog(
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
             );
-        } elseif ($action == 'TASK_MODIFY') {
+        } elseif ($action === 'TASK_MODIFY') {
             dol_syslog(
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
             );
-        } elseif ($action == 'TASK_DELETE') {
+        } elseif ($action === 'TASK_DELETE') {
             dol_syslog(
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
             );
         }
 
         // Task time spent
-        elseif ($action == 'TASK_TIMESPENT_CREATE') {
+        elseif ($action === 'TASK_TIMESPENT_CREATE') {
             dol_syslog(
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
             );
-        } elseif ($action == 'TASK_TIMESPENT_MODIFY') {
+        } elseif ($action === 'TASK_TIMESPENT_MODIFY') {
             dol_syslog(
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
             );
-        } elseif ($action == 'TASK_TIMESPENT_DELETE') {
+        } elseif ($action === 'TASK_TIMESPENT_DELETE') {
             dol_syslog(
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
             );
         }
 
         // Shipping
-        elseif ($action == 'SHIPPING_CREATE') {
+        elseif ($action === 'SHIPPING_CREATE') {
             dol_syslog(
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
             );
-        } elseif ($action == 'SHIPPING_MODIFY') {
+        } elseif ($action === 'SHIPPING_MODIFY') {
             dol_syslog(
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
             );
-        } elseif ($action == 'SHIPPING_VALIDATE') {
+        } elseif ($action === 'SHIPPING_VALIDATE') {
             dol_syslog(
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
             );
-        } elseif ($action == 'SHIPPING_SENTBYMAIL') {
+        } elseif ($action === 'SHIPPING_SENTBYMAIL') {
             dol_syslog(
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
             );
-        } elseif ($action == 'SHIPPING_DELETE') {
+        } elseif ($action === 'SHIPPING_DELETE') {
             dol_syslog(
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
             );
-        } elseif ($action == 'SHIPPING_BUILDDOC') {
+        } elseif ($action === 'SHIPPING_BUILDDOC') {
             dol_syslog(
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
             );
         }
 
         // File
-        elseif ($action == 'FILE_UPLOAD') {
+        elseif ($action === 'FILE_UPLOAD') {
             dol_syslog(
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
             );
-        } elseif ($action == 'FILE_DELETE') {
+        } elseif ($action === 'FILE_DELETE') {
             dol_syslog(
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
             );
