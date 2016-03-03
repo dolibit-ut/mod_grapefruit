@@ -133,12 +133,12 @@ class ActionsGrapeFruit
 	
 	function beforePDFCreation(&$parameters, &$object, &$action, $hookmanager)
 	{
-		global $conf,$user,$langs,$db;
+		global $conf,$user,$langs,$db,$mysoc;
 		
-		if ($parameters['currentcontext'] === 'pdfgeneration' && !empty($conf->global->GRAPEFRUIT_SUPPLIER_CONTACT_SHIP_ADDRESS)) 
+		if ($parameters['currentcontext'] === 'pdfgeneration') 
 		{
 			$base_object = $parameters['object'];
-			if(isset($base_object) && $base_object->element == 'order_supplier')
+			if(isset($base_object) && in_array($base_object->element, array('order_supplier','commande')))
 			{
 				require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 				$parameters['outputlangs']->load('deliveries');
@@ -152,16 +152,25 @@ class ActionsGrapeFruit
 					$base_object->fetch_contact($arrayidcontact[0]);
 				}
 				$base_object->fetchObjectLinked();
-				if(isset($base_object->linkedObjects['commande']))
+				$Qwrite = false;
+				if(isset($base_object->linkedObjects['commande']) && !empty($conf->global->GRAPEFRUIT_SUPPLIER_CONTACT_SHIP_ADDRESS))
 				{
 					// On récupère la donnée de la commande initiale
 					// C'est un tableau basé sur des ID donc on boucle pour sortir le premier item
 					$commande = reset($base_object->linkedObjects['commande']);
 					$date_affiche = date("Y-m-d", $commande->date);
 					$ref = $commande->ref;
-					$usecommande=true;
+					$ref_client = $commande->ref_client;
+					$usecommande=$Qwrite=true;
 				}
-				if($usecontact)
+				elseif($base_object->element === 'commande' && !empty($conf->global->GRAPEFRUIT_ORDER_CONTACT_SHIP_ADDRESS))
+				{
+					$date_affiche = date("Y-m-d", $base_object->date);
+					$ref = $base_object->ref;
+					$ref_client = $base_object->ref_client;
+					$usecommande=$Qwrite=true;
+				}
+				if($usecontact && $Qwrite)
 				{
 					//Recipient name
 					// On peut utiliser le nom de la societe du contact
@@ -171,8 +180,9 @@ class ActionsGrapeFruit
 					$carac_client_name= pdfBuildThirdpartyName($thirdparty, $parameters['outputlangs']);
 					
 					$thecontact = $base_object->contact;
+					
 					// SI un élément manquant ou qu'on veuille envoyé à la société du contact alors on change
-					if((empty($thecontact->address) || empty($thecontact->zip) || empty($thecontact->town)) || (!empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)))
+					if(empty($thecontact->address) || empty($thecontact->zip) || empty($thecontact->town))
 					{
 						$contactSociete = new Societe($db);
 						$contactSociete->fetch($thecontact->socid);
@@ -180,20 +190,23 @@ class ActionsGrapeFruit
 						$thecontact->zip = $contactSociete->zip; 
 						$thecontact->town = $contactSociete->town;
 					}
-					$carac_client=pdf_build_address($parameters['outputlangs'],$object->emetteur,$base_object->client,($usecontact?$base_object->contact:''),$usecontact,'target');
 					
-					$newcontent = $parameters['outputlangs']->trans('Delivery').' :'."\n".'<strong>'.$carac_client_name.'</strong>'."\n".$carac_client;
+					$carac_client=pdf_build_address($parameters['outputlangs'],$object->emetteur,$base_object->client,$base_object->contact,$usecontact,'target');
+					
+					$newcontent = $parameters['outputlangs']->trans('DeliveryAddress').' :'."\n".'<strong>'.$carac_client_name.'</strong>'."\n".$carac_client;
 					if($usecommande)
 					{
-						$newcontent .= "\n".'Ref '.$parameters['outputlangs']->trans('Order').' : '.$ref;
-						$newcontent .= "\n".$parameters['outputlangs']->trans('Date').' '.$parameters['outputlangs']->trans('Order').' : '.$date_affiche;
+						if(isset($ref_client))
+							$newcontent .= "\n"."<strong>".$parameters['outputlangs']->trans('RefOrder').' client : </strong>'.$ref_client;
+						$newcontent .= "\n"."<strong>".$parameters['outputlangs']->trans('RefOrder').' '.$mysoc->name.' : </strong>'.$ref;
+						$newcontent .= "\n"."<strong>".$parameters['outputlangs']->trans('OrderDate').' : </strong>'.$date_affiche;
 					}
 					if(!empty($parameters['object']->note_public))
-						$parameters['object']->note_public = dol_nl2br($newcontent."\n".$parameters['object']->note_public);
+						$parameters['object']->note_public = dol_nl2br($newcontent."\n\n".$parameters['object']->note_public);
 					else
 						$parameters['object']->note_public = dol_nl2br($newcontent);
 				}
-			}
+			} // Fin order / order_supplier
 		}
 	}
 	

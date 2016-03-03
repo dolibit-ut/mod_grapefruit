@@ -7,4 +7,5 @@ GrapeFruitSetup = GrapeFruit module setup
 GrapeFruitAbout = About GrapeFruit
 
 set_GRAPEFRUIT_SUPPLIER_CONTACT_SHIP_ADDRESS=Add a delivery contact into supplier order PDF
+set_GRAPEFRUIT_ORDER_CONTACT_SHIP_ADDRESS=Add a delivery contact into customer order PDF
 Ajouter le contact livraison sur le pdf d'une Commande Fournisseur
