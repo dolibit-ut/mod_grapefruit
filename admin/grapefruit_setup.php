@@ -34,6 +34,8 @@ require_once '../lib/grapefruit.lib.php';
 
 // Translations
 $langs->load("grapefruit@grapefruit");
+$langs->load("contract");
+$langs->load("fournisseur");
 
 // Access control
 if (! $user->admin) {
@@ -186,6 +188,23 @@ print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="set_GRAPEFRUIT_ORDER_CONTACT_SHIP_ADDRESS">';
 echo ajax_constantonoff('GRAPEFRUIT_ORDER_CONTACT_SHIP_ADDRESS');
+print '</form>';
+print '</td></tr>';
+
+print '<tr class="liste_titre">';
+print '<td>'.$langs->trans("Contract").'</td>'."\n";
+print '<td align="center" width="20">&nbsp;</td>';
+print '<td align="center" width="100">'.$langs->trans("Value").'</td>'."\n";
+$var=!$var;
+print '<tr '.$bc[$var].'>';
+print '<td>'.$langs->trans("set_GRAPEFRUIT_CONTRACT_DEFAUL_FOURN").'</td>';
+print '<td align="center" width="20">&nbsp;</td>';
+print '<td align="right" width="300">';
+print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="action" value="set_GRAPEFRUIT_CONTRACT_DEFAUL_FOURN">';
+echo $form->select_thirdparty($conf->global->GRAPEFRUIT_CONTRACT_DEFAUL_FOURN, 'GRAPEFRUIT_CONTRACT_DEFAUL_FOURN', 'fournisseur=1');
+print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 print '</form>';
 print '</td></tr>';
 

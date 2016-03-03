@@ -13,3 +13,4 @@ set_GRAPEFRUIT_SUPPLIER_FORCE_BT_ORDER_TO_INVOICE=Forcer l'accès à la fonction
 set_GRAPEFRUIT_SUPPLIER_CONTACT_SHIP_ADDRESS=Ajouter le contact livraison sur le PDF d'une Commande Fournisseur
 set_GRAPEFRUIT_ORDER_CONTACT_SHIP_ADDRESS=Ajouter le contact livraison sur le PDF d'une Commande Client
 set_GRAPEFRUIT_LINK_INVOICE_TO_SESSION_IF_PROPAL_IS=Lier une facture à la session de formation si la session l'est
+set_GRAPEFRUIT_CONTRACT_DEFAUL_FOURN=Prix d'achat utilisé pour un contrat si non précisé (et si existant)
