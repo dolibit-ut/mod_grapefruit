@@ -525,6 +525,8 @@ class InterfaceGrapeFruittrigger
         elseif ($action === 'PROJECT_CREATE') {
         	if(!TGrappeFruit::checkBudgetNotEmpty($object)) return -1;			
         	
+			TGrappeFruit::createTasks($object);
+			
             dol_syslog(
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
             );

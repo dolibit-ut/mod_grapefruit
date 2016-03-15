@@ -7,10 +7,13 @@ GrapeFruitSetup = Configuration du module GrapeFruit
 GrapeFruitAbout = A propos du module GrapeFruit
 set_GRAPEFRUIT_BUDGET_NEEDED=Rendre obligatoire la saisie d'un budget dans un projet
 BudgetRequire=Budget obligatoire
-
+ValuesUpdated=Valeurs mises à jour
 set_GRAPEFRUIT_PROPAL_DEFAULT_BANK_ACOUNT=Définir un compte bancaire par défaut lors de la création d'une propal (v. d'ajout 3.8)
 set_GRAPEFRUIT_SUPPLIER_FORCE_BT_ORDER_TO_INVOICE=Forcer l'accès à la fonctionnalité "Facturer Commandes" sur statut 2,3,4 et 5 et non pas seulement sur 5 (remplacer <b>/fourn/commande/orderstoinvoice.php</b> - spécifique faire une recherche sur "GRAPEFRUIT" - v. d'ajout 3.8 )
 set_GRAPEFRUIT_SUPPLIER_CONTACT_SHIP_ADDRESS=Ajouter le contact livraison sur le PDF d'une Commande Fournisseur
 set_GRAPEFRUIT_ORDER_CONTACT_SHIP_ADDRESS=Ajouter le contact livraison sur le PDF d'une Commande Client
 set_GRAPEFRUIT_LINK_INVOICE_TO_SESSION_IF_PROPAL_IS=Lier une facture à la session de formation si la session l'est
 set_GRAPEFRUIT_CONTRACT_DEFAUL_FOURN=Prix d'achat utilisé pour un contrat si non précisé (et si existant)
+set_GRAPEFRUIT_PROJECT_AUTO_ADD_TASKS_ON_CREATE=Créer des tâches automatiquement à la création d'un projet (une tâche par ligne)
+ImpossibleToAdd=Impossible d'ajouter la tâche %s
+autoTasksAdded=Tâches automatiques ajoutées

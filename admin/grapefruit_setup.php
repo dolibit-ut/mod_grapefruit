@@ -53,6 +53,9 @@ if (preg_match('/set_(.*)/',$action,$reg))
 	$code=$reg[1];
 	if (dolibarr_set_const($db, $code, GETPOST($code), 'chaine', 0, '', $conf->entity) > 0)
 	{
+		
+		setEventMessage("ValuesUpdated");
+		
 		header("Location: ".$_SERVER["PHP_SELF"]);
 		exit;
 	}
@@ -129,6 +132,18 @@ print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="set_GRAPEFRUIT_BUDGET_NEEDED">';
 echo ajax_constantonoff('GRAPEFRUIT_BUDGET_NEEDED');
+print '</form>';
+print '</td></tr>';
+
+$var=!$var;
+print '<tr '.$bc[$var].'>';
+print '<td>'.$langs->trans("set_GRAPEFRUIT_PROJECT_AUTO_ADD_TASKS_ON_CREATE").'</td>';
+print '<td colspan="2"  align="right">';
+print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="action" value="set_GRAPEFRUIT_PROJECT_AUTO_ADD_TASKS_ON_CREATE">';
+print '<textarea cols="80" rows="5" name="GRAPEFRUIT_PROJECT_AUTO_ADD_TASKS_ON_CREATE">'.$conf->global->GRAPEFRUIT_PROJECT_AUTO_ADD_TASKS_ON_CREATE.'</textarea>';
+print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 print '</form>';
 print '</td></tr>';
 
