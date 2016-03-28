@@ -524,14 +524,16 @@ class InterfaceGrapeFruittrigger
         // Projects
         elseif ($action === 'PROJECT_CREATE') {
         	if(!TGrappeFruit::checkBudgetNotEmpty($object)) return -1;			
-        	
-			TGrappeFruit::createTasks($object);
+		if(!TGrappeFruit::checkDateEndNotEmpty($object)) return -1;
+
+		TGrappeFruit::createTasks($object);
 			
             dol_syslog(
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
             );
         } elseif ($action === 'PROJECT_MODIFY') {
         	if(!TGrappeFruit::checkBudgetNotEmpty($object)) return -1;
+		if(!TGrappeFruit::checkDateEndNotEmpty($object)) return -1;
 			
             dol_syslog(
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id

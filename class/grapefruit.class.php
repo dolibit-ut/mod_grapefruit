@@ -16,6 +16,20 @@ class TGrappeFruit {
 		}
 		
 	}
+
+	static function checkDateEndNotEmpty(&$object) {
+		global $conf,$langs;
+                if(empty($conf->global->GRAPEFRUIT_DATEEND_NEEDED)) return true;
+                if(empty($object->date_end)) {
+                        setEventMessage($langs->trans('ProjectDateEndRequire'), 'errors');
+                        return false;
+                }
+                else{
+                        return true;
+                }
+
+	}
+
 	
 	static function createTasks(&$object) {
 		global $conf,$langs,$db,$user;
