@@ -30,6 +30,55 @@ class TGrappeFruit {
 
 	}
 
+	static function createShippingFromOrderOnBillPayed(&$object) {
+		global $conf,$langs, $db, $user;
+        if(empty($conf->global->GRAPEFRUIT_SHIPPING_CREATE_FROM_ORDER_WHERE_BILL_PAID) || $object->element!='facture') return true;
+		
+		if(empty($object->linked_objects)) $object->fetchObjectLinked(null,null,$object->id,'facture');
+		
+		if(empty($object->linkedObjects['commande'])) return false;
+		
+		dol_include_once('/expedition/class/expedition.class.php');
+		
+		$TNotCopy=array('db','element','table_element','fk_element');
+		
+		foreach($object->linkedObjects['commande'] as &$commande) {
+			
+			$expedition = new Expedition($db); 
+		
+			foreach($commande as $k=>$v) {
+				if(!in_array($k, $TNotCopy)) {
+					$expedition->{$k} = $commande->{$k};	
+				}
+				
+			} 
+			$expedition->tracking_number='';
+			
+			$expedition->size=0;
+			$expedition->weight=0;
+			
+			$expedition->sizeS = $expedition->sizeH = $expedition->sizeW = 0;	// TODO Should use this->trueDepth
+			
+			$expedition->width=0;
+			$expedition->height=0;
+			$expedition->weight_units=0;
+			$expedition->size_units=0;
+			
+			$res = $expedition->create($user);
+			if($res>0) {
+				
+				$expedition->add_object_linked($commande->element, $commande->id);
+				
+				setEventMessage($langs->trans('ShippingCreated'));	
+			}	
+			else{
+				var_dump($expedition);exit;
+			}		
+		}
+		
+		return true;
+	}
+
 	static function createBillOnOrderValidate(&$object) {
 		global $conf,$langs, $db, $user;
         if(empty($conf->global->GRAPEFRUIT_ORDER_CREATE_BILL_ON_VALIDATE)) return true;

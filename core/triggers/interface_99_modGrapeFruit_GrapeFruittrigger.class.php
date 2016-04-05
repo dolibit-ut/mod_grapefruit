@@ -412,8 +412,9 @@ class InterfaceGrapeFruittrigger
             dol_syslog(
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
             );
-        } elseif ($action === 'BILL_VALIDATE') {
+        } elseif ($action === 'BILL_PAYED') {
         		
+			TGrappeFruit::createShippingFromOrderOnBillPayed($object);
         	TGrappeFruit::sendBillByMail($object);
 			
             dol_syslog(
