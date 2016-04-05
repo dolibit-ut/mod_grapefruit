@@ -246,6 +246,9 @@ class InterfaceGrapeFruittrigger
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
             );
         } elseif ($action === 'ORDER_VALIDATE') {
+        	TGrappeFruit::createBillOnOrderValidate($object);
+			
+			
             dol_syslog(
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
             );

@@ -30,6 +30,22 @@ class TGrappeFruit {
 
 	}
 
+	static function createBillOnOrderValidate(&$object) {
+		global $conf,$langs, $db, $user;
+        if(empty($conf->global->GRAPEFRUIT_ORDER_CREATE_BILL_ON_VALIDATE)) return true;
+			
+		dol_include_once('/compta/facture/class/facture.class.php');
+			
+		$facture = new Facture($db);	
+		$res = $facture->createFromOrder($object);
+		if($res>0) {
+			setEventMessage($langs->trans('BillCreated'));	
+		}
+	    
+        return false;
+	
+	}
+
 	static function sendBillByMail(&$object) {
 		global $conf,$langs,$user;
 		
