@@ -205,6 +205,10 @@ echo ajax_constantonoff('GRAPEFRUIT_SUPPLIER_CONTACT_SHIP_ADDRESS');
 print '</form>';
 print '</td></tr>';
 
+print '<tr class="liste_titre">';
+print '<td>'.$langs->trans("CustomerOrder").'</td>'."\n";
+print '<td align="center" width="20">&nbsp;</td>';
+print '<td align="center" width="100">'.$langs->trans("Value").'</td>'."\n";
 $var=!$var;
 print '<tr '.$bc[$var].'>';
 print '<td>'.$langs->trans("set_GRAPEFRUIT_ORDER_CONTACT_SHIP_ADDRESS").'</td>';
@@ -214,6 +218,33 @@ print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="set_GRAPEFRUIT_ORDER_CONTACT_SHIP_ADDRESS">';
 echo ajax_constantonoff('GRAPEFRUIT_ORDER_CONTACT_SHIP_ADDRESS');
+print '</form>';
+print '</td></tr>';
+$var=!$var;
+print '<tr '.$bc[$var].'>';
+print '<td>'.$langs->trans("set_GRAPEFRUIT_ORDER_CREATE_BILL_ON_VALIDATE").'</td>';
+print '<td align="center" width="20">&nbsp;</td>';
+print '<td align="right" width="300">';
+print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="action" value="set_GRAPEFRUIT_ORDER_CREATE_BILL_ON_VALIDATE">';
+echo ajax_constantonoff('GRAPEFRUIT_ORDER_CREATE_BILL_ON_VALIDATE');
+print '</form>';
+print '</td></tr>';
+
+print '<tr class="liste_titre">';
+print '<td>'.$langs->trans("Shipping").'</td>'."\n";
+print '<td align="center" width="20">&nbsp;</td>';
+print '<td align="center" width="100">'.$langs->trans("Value").'</td>'."\n";
+$var=!$var;
+print '<tr '.$bc[$var].'>';
+print '<td>'.$langs->trans("set_GRAPEFRUIT_SHIPPING_CREATE_FROM_ORDER_WHERE_BILL_PAID").'</td>';
+print '<td align="center" width="20">&nbsp;</td>';
+print '<td align="right" width="300">';
+print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="action" value="set_GRAPEFRUIT_SHIPPING_CREATE_FROM_ORDER_WHERE_BILL_PAID">';
+echo ajax_constantonoff('GRAPEFRUIT_SHIPPING_CREATE_FROM_ORDER_WHERE_BILL_PAID');
 print '</form>';
 print '</td></tr>';
 
@@ -231,6 +262,23 @@ print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="set_GRAPEFRUIT_CONTRACT_DEFAUL_FOURN">';
 echo $form->select_thirdparty($conf->global->GRAPEFRUIT_CONTRACT_DEFAUL_FOURN, 'GRAPEFRUIT_CONTRACT_DEFAUL_FOURN', 'fournisseur=1');
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+print '</form>';
+print '</td></tr>';
+
+
+print '<tr class="liste_titre">';
+print '<td>'.$langs->trans("Bill").'</td>'."\n";
+print '<td align="center" width="20">&nbsp;</td>';
+print '<td align="center" width="100">'.$langs->trans("Value").'</td>'."\n";
+$var=!$var;
+print '<tr '.$bc[$var].'>';
+print '<td>'.$langs->trans("set_GRAPEFRUIT_SEND_BILL_BY_MAIL_ON_VALIDATE").'</td>';
+print '<td align="center" width="20">&nbsp;</td>';
+print '<td align="right" width="300">';
+print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="action" value="set_GRAPEFRUIT_SEND_BILL_BY_MAIL_ON_VALIDATE">';
+echo ajax_constantonoff('GRAPEFRUIT_SEND_BILL_BY_MAIL_ON_VALIDATE');
 print '</form>';
 print '</td></tr>';
 

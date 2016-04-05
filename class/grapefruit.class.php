@@ -30,6 +30,33 @@ class TGrappeFruit {
 
 	}
 
+	static function sendBillByMail(&$object) {
+		global $conf,$langs,$user;
+		
+		if(!empty($conf->global->GRAPEFRUIT_SEND_BILL_BY_MAIL_ON_VALIDATE)) {
+			
+			if(!empty($object->thirdparty->email)) {
+				$sendto = $object->thirdparty->email;
+				$from = $user->email;
+				include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+				
+				$formmail = new FormMail($db);
+
+				$attachedfiles=$formmail->get_attached_files();
+				$filepath = $attachedfiles['paths'];
+				$filename = $attachedfiles['names'];
+				$mimetype = $attachedfiles['mimes'];
+						
+				exit;
+				setEventMessage($langs->trans('BillSendedByMailTo', $sendto));
+			}			
+			
+			
+			
+		}
+		
+	}
+
 	
 	static function createTasks(&$object) {
 		global $conf,$langs,$db,$user;

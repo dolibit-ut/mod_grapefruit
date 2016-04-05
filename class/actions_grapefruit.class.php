@@ -89,7 +89,7 @@ class ActionsGrapeFruit
 	function formObjectOptions($parameters, &$object, &$action, $hookmanager)
 	{
 		global $conf;
-		
+		//var_dump($action, $parameters);exit;
 		//Context : frm creation propal
 		if ($parameters['currentcontext'] === 'propalcard' && $action === 'create') 
 		{
@@ -104,7 +104,33 @@ class ActionsGrapeFruit
 				<?php
 			}
 		}
+		/*else if ($parameters['currentcontext'] === 'invoicecard' && $action === 'confirm_valid') { 
 		
+				?>
+				<script type="text/javascript">
+					$(document).ready(function() {
+						
+						$a = $('a.butAction[href*=presend]');
+						
+						document.location.href = $a.attr('href');
+												
+					});
+				</script>
+				<?php
+		}
+		else if ($parameters['currentcontext'] === 'invoicecard' && $action === 'presend') { 
+		
+				?>
+				<script type="text/javascript">
+					$(document).ready(function() {
+						
+						
+						$('')
+												
+					});
+				</script>
+				<?php
+		}*/
 	}
 	
 	function addMoreActionsButtons($parameters, &$object, &$action, $hookmanager)
