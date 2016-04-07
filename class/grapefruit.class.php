@@ -64,6 +64,17 @@ class TGrappeFruit {
 			$expedition->weight_units=0;
 			$expedition->size_units=0;
 			
+			if(empty($conf->global->GRAPEFRUIT_SHIPPING_CREATE_FROM_ORDER_WHERE_BILL_PAID_WAREHOUSE)) {
+				setEventMessage($langs->trans('DefaultWarehouseRequired'));
+				return false;
+			}
+			
+			foreach($expedition->lines as &$line) {
+				$line->entrepot_id = (int)$conf->global->GRAPEFRUIT_SHIPPING_CREATE_FROM_ORDER_WHERE_BILL_PAID_WAREHOUSE;
+				$line->origin_line_id = $line->id;
+				
+			}
+			
 			$res = $expedition->create($user);
 			if($res>0) {
 				

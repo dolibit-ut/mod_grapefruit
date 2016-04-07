@@ -248,6 +248,22 @@ echo ajax_constantonoff('GRAPEFRUIT_SHIPPING_CREATE_FROM_ORDER_WHERE_BILL_PAID')
 print '</form>';
 print '</td></tr>';
 
+
+dol_include_once('/product/class/html.formproduct.class.php');
+$formProduct = new FormProduct($db);
+$var=!$var;
+print '<tr '.$bc[$var].'>';
+print '<td>'.'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'.$langs->trans("set_GRAPEFRUIT_SHIPPING_CREATE_FROM_ORDER_WHERE_BILL_PAID_WAREHOUSE").'</td>';
+print '<td align="center" width="20">&nbsp;</td>';
+print '<td align="right" width="300">';
+print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="action" value="set_GRAPEFRUIT_SHIPPING_CREATE_FROM_ORDER_WHERE_BILL_PAID_WAREHOUSE">';
+echo $formProduct->selectWarehouses($conf->global->GRAPEFRUIT_SHIPPING_CREATE_FROM_ORDER_WHERE_BILL_PAID_WAREHOUSE,'GRAPEFRUIT_SHIPPING_CREATE_FROM_ORDER_WHERE_BILL_PAID_WAREHOUSE','',1);
+print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+print '</form>';
+print '</td></tr>';
+
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Contract").'</td>'."\n";
 print '<td align="center" width="20">&nbsp;</td>';
@@ -297,7 +313,7 @@ while($obj = $db->fetch_object($res)) {
 
 $var=!$var;
 print '<tr '.$bc[$var].'>';
-print '<td>'.$langs->trans("set_GRAPEFRUIT_SEND_BILL_BY_MAIL_ON_VALIDATE_MODEL").'</td>';
+print '<td>'.'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'.$langs->trans("set_GRAPEFRUIT_SEND_BILL_BY_MAIL_ON_VALIDATE_MODEL").'</td>';
 print '<td align="center" width="20">&nbsp;</td>';
 print '<td align="right" width="300">';
 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
