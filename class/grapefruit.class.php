@@ -120,11 +120,14 @@ class TGrappeFruit {
 				$id_template = (int)$conf->global->GRAPEFRUIT_SEND_BILL_BY_MAIL_ON_VALIDATE_MODEL;
 				
 				$formmail->fetchAllEMailTemplate('facture_send', $user, $outputlangs);
+				
 				foreach($formmail->lines_model as &$model) {
 					
 					if($model->id == $id_template) break;
 					
 				}
+				
+				if(empty($model)) setEventMessage($langs->trans('ModelRequire'),'errors');
 				
 				$_POST['message'] = $model->topic;
 				$_POST['subject'] = $model->label;
