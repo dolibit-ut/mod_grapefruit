@@ -266,6 +266,8 @@ print '</form>';
 print '</td></tr>';
 
 
+if($conf->facture->enabled) {
+
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Bill").'</td>'."\n";
 print '<td align="center" width="20">&nbsp;</td>';
@@ -282,6 +284,33 @@ echo ajax_constantonoff('GRAPEFRUIT_SEND_BILL_BY_MAIL_ON_VALIDATE');
 print '</form>';
 print '</td></tr>';
 
+
+
+$sql = "SELECT rowid, label, topic, content, lang";
+$sql.= " FROM ".MAIN_DB_PREFIX.'c_email_templates';
+$sql.= " WHERE type_template='facture_send'";
+$sql.= " AND entity IN (".getEntity("c_email_templates").")";
+$res = $db->query($sql);
+while($obj = $db->fetch_object($res)) {
+	$TModel[$obj->rowid] = $obj->label.( !empty($obj->lang) ? '('.$obj->lang.')' : '' );
+}
+
+$var=!$var;
+print '<tr '.$bc[$var].'>';
+print '<td>'.$langs->trans("set_GRAPEFRUIT_SEND_BILL_BY_MAIL_ON_VALIDATE_MODEL").'</td>';
+print '<td align="center" width="20">&nbsp;</td>';
+print '<td align="right" width="300">';
+print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="action" value="set_GRAPEFRUIT_SEND_BILL_BY_MAIL_ON_VALIDATE_MODEL">';
+
+echo $form->selectarray('GRAPEFRUIT_SEND_BILL_BY_MAIL_ON_VALIDATE_MODEL', $TModel, $conf->global->GRAPEFRUIT_SEND_BILL_BY_MAIL_ON_VALIDATE_MODEL);
+
+print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+print '</form>';
+print '</td></tr>';
+
+}
 
 if($conf->agefodd->enabled) {
 

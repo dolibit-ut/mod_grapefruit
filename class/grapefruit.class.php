@@ -96,24 +96,47 @@ class TGrappeFruit {
 	}
 
 	static function sendBillByMail(&$object) {
-		global $conf,$langs,$user;
+		global $conf,$langs,$user,$db;
 		
 		if(!empty($conf->global->GRAPEFRUIT_SEND_BILL_BY_MAIL_ON_VALIDATE)) {
 			
+			if(empty($object->thirdparty)) $object->fetch_thirdparty();
+			
 			if(!empty($object->thirdparty->email)) {
 				$sendto = $object->thirdparty->email;
-				$from = $user->email;
-				include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+				$sendtocc = '';
 				
-				$formmail = new FormMail($db);
-
-				$attachedfiles=$formmail->get_attached_files();
-				$filepath = $attachedfiles['paths'];
-				$filename = $attachedfiles['names'];
-				$mimetype = $attachedfiles['mimes'];
-						
-				exit;
-				setEventMessage($langs->trans('BillSendedByMailTo', $sendto));
+				$from = $user->email;
+				$id = $object->id;
+				
+				$_POST['receiver'] = '-1';
+				
+				$_POST['frommail'] =  $_POST['replytomail'] = $from;
+				$_POST['fromname'] =  $_POST['replytoname'] = $user->getFullName($langs);
+				
+				dol_include_once('/core/class/html.formmail.class.php');
+				$formmail=new Formmail($db);
+				$outputlangs = clone $langs;
+				$id_template = (int)$conf->global->GRAPEFRUIT_SEND_BILL_BY_MAIL_ON_VALIDATE_MODEL;
+				
+				$formmail->fetchAllEMailTemplate('facture_send', $user, $outputlangs);
+				foreach($formmail->lines_model as &$model) {
+					
+					if($model->id == $id_template) break;
+					
+				}
+				
+				$_POST['message'] = $model->topic;
+				$_POST['subject'] = $model->label;
+				
+				$action='send';
+				$actiontypecode='AC_FAC';
+				$trigger_name='BILL_SENTBYMAIL';
+				$paramname='id';
+				$mode='emailfrominvoice';
+				require_once __DIR__.'/../tpl/actions_sendmails.inc.php';
+				
+				
 			}			
 			
 			
