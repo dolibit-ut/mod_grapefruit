@@ -140,8 +140,52 @@ class TGrappeFruit {
 				
 				if(empty($model)) setEventMessage($langs->trans('ModelRequire'),'errors');
 				
-				$_POST['message'] = $model->topic;
-				$_POST['subject'] = $model->label;
+				//Make substitution
+				$substit['__REF__'] = $object->ref;
+				$substit['__SIGNATURE__'] = $user->signature;
+				$substit['__REFCLIENT__'] = $object->ref_client;
+				$substit['__THIRDPARTY_NAME__'] = $object->thirdparty->name;
+				$substit['__PROJECT_REF__'] = (is_object($object->projet)?$object->projet->ref:'');
+				$substit['__PROJECT_NAME__'] = (is_object($object->projet)?$object->projet->title:'');
+				$substit['__PERSONALIZED__'] = '';
+				$substit['__CONTACTCIVNAME__'] = '';
+
+				// Find the good contact adress
+				$custcontact = '';
+				$contactarr = array();
+				$contactarr = $object->liste_contact(- 1, 'external');
+
+				if (is_array($contactarr) && count($contactarr) > 0) {
+					foreach ($contactarr as $contact) {
+						if ($contact['libelle'] == $langs->trans('TypeContact_facture_external_BILLING')) {
+
+							require_once DOL_DOCUMENT_ROOT . '/contact/class/contact.class.php';
+
+							$contactstatic = new Contact($db);
+							$contactstatic->fetch($contact ['id']);
+							$custcontact = $contactstatic->getFullName($langs, 1);
+						}
+					}
+
+					if (! empty($custcontact)) {
+						$substit->substit['__CONTACTCIVNAME__'] = $custcontact;
+					}
+				}
+
+
+				$topic=make_substitutions($model->topic,$substit);
+				$message=make_substitutions($model->content,$substit);
+
+				$_POST['message'] = $message;
+				$_POST['subject'] = $topic;
+
+				//Add attached files
+				$fileparams = dol_most_recent_file($conf->facture->dir_output . '/' . $object->ref, preg_quote($object->ref, '/').'[^\-]+');
+				if (is_array($fileparams) && array_key_exists('fullname', $fileparams) && !empty($fileparams['fullname'])) {
+					$_SESSION["listofpaths"]=$fileparams['fullname'];
+					$_SESSION["listofnames"]=basename($fileparams['fullname']);
+					$_SESSION["listofmimes"]=dol_mimetype($fileparams['fullname']);
+				}
 				
 				$action='send';
 				$actiontypecode='AC_FAC';
