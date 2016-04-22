@@ -102,6 +102,9 @@ class TGrappeFruit {
 			setEventMessage($langs->trans('BillCreated'));
 		}
 
+		//Transfert Contact from order to invoice
+
+
         return false;
 
 	}
@@ -168,7 +171,7 @@ class TGrappeFruit {
 					}
 
 					if (! empty($custcontact)) {
-						$substit->substit['__CONTACTCIVNAME__'] = $custcontact;
+						$substit['__CONTACTCIVNAME__'] = $custcontact;
 					}
 				}
 
