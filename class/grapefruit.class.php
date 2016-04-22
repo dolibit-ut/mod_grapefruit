@@ -186,6 +186,18 @@ class TGrappeFruit {
 					$_SESSION["listofpaths"]=$fileparams['fullname'];
 					$_SESSION["listofnames"]=basename($fileparams['fullname']);
 					$_SESSION["listofmimes"]=dol_mimetype($fileparams['fullname']);
+				} else {
+					//generate invoice
+					$result = $object->generateDocument($object->modelpdf, $outputlangs, 0, 0, 0);
+					if ($result <= 0) {
+						$this->error=$object->error;
+					}
+					$fileparams = dol_most_recent_file($conf->facture->dir_output . '/' . $ref, preg_quote($ref, '/').'[^\-]+');
+					if (is_array($fileparams) && array_key_exists('fullname', $fileparams) && !empty($fileparams['fullname'])) {
+						$_SESSION["listofpaths"]=$fileparams['fullname'];
+						$_SESSION["listofnames"]=basename($fileparams['fullname']);
+						$_SESSION["listofmimes"]=dol_mimetype($fileparams['fullname']);
+					}
 				}
 
 				$action='send';
