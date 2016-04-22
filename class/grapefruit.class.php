@@ -192,7 +192,7 @@ class TGrappeFruit {
 					if ($result <= 0) {
 						$this->error=$object->error;
 					}
-					$fileparams = dol_most_recent_file($conf->facture->dir_output . '/' . $ref, preg_quote($ref, '/').'[^\-]+');
+					$fileparams = dol_most_recent_file($conf->facture->dir_output . '/' . $object->ref, preg_quote($object->ref, '/').'[^\-]+');
 					if (is_array($fileparams) && array_key_exists('fullname', $fileparams) && !empty($fileparams['fullname'])) {
 						$_SESSION["listofpaths"]=$fileparams['fullname'];
 						$_SESSION["listofnames"]=basename($fileparams['fullname']);
