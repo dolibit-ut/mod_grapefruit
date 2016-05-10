@@ -160,18 +160,24 @@ class TGrappeFruit {
 
 				if (is_array($contactarr) && count($contactarr) > 0) {
 					foreach ($contactarr as $contact) {
+						dol_syslog(get_class($this).'::'.__METHOD__.'lib='.$contact['libelle']);
+						dol_syslog(get_class($this).'::'.__METHOD__.'trans='.$langs->trans('TypeContact_facture_external_BILLING'));
+						
 						if ($contact['libelle'] == $langs->trans('TypeContact_facture_external_BILLING')) {
 
 							require_once DOL_DOCUMENT_ROOT . '/contact/class/contact.class.php';
 
 							$contactstatic = new Contact($db);
-							$contactstatic->fetch($contact ['id']);
+							$contactstatic->fetch($contact['id']);
 							$custcontact = $contactstatic->getFullName($langs, 1);
 						}
 					}
 
 					if (! empty($custcontact)) {
 						$substit['__CONTACTCIVNAME__'] = $custcontact;
+					}
+					if (!empty($contactstatic->email)) {
+						$sendto=$contactstatic->email;
 					}
 				}
 
