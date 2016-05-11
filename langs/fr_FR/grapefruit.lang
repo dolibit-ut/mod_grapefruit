@@ -28,3 +28,4 @@ DefaultWarehouseRequired=Entrepôt requis pour la création de l'expédition
 set_GRAPEFRUIT_DATEEND_NEEDED=Date de fin de projet requise à la création
 set_GRAPEFRUIT_SHIPPING_CREATE_FROM_ORDER_WHERE_BILL_PAID_WAREHOUSE=Entrepôt pour la création de l'expédition
 set_GRAPEFRUIT_SEND_BILL_BY_MAIL_ON_VALIDATE_MODEL=Modèle à utiliser
+set_GRAPEFRUIT_FORCE_VAR_HIDEREF_ON_SUPPLIER_ORDER=Forcer l'affichage de la référence produit sur le PDF d'une commande fournisseur même avec l'utilisation de MAIN_GENERATE_DOCUMENTS_HIDE_REF
