@@ -205,6 +205,14 @@ echo ajax_constantonoff('GRAPEFRUIT_SUPPLIER_CONTACT_SHIP_ADDRESS');
 print '</form>';
 print '</td></tr>';
 
+$var=!$var;
+print '<tr '.$bc[$var].'>';
+print '<td>'.$langs->trans("set_GRAPEFRUIT_FORCE_VAR_HIDEREF_ON_SUPPLIER_ORDER").'</td>';
+print '<td align="center" width="20">&nbsp;</td>';
+print '<td align="right" width="300">';
+echo ajax_constantonoff('GRAPEFRUIT_FORCE_VAR_HIDEREF_ON_SUPPLIER_ORDER');
+print '</td></tr>';
+
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("CustomerOrder").'</td>'."\n";
 print '<td align="center" width="20">&nbsp;</td>';
