@@ -120,7 +120,7 @@ class TGrappeFruit {
 				$sendto = $object->thirdparty->email;
 				$sendtocc = '';
 
-				$from = $user->email;
+				$from = (empty($user->email)?$conf->global->MAIN_MAIL_EMAIL_FROM:$user->email);
 				$id = $object->id;
 
 				$_POST['receiver'] = '-1';
