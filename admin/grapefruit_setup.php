@@ -367,6 +367,21 @@ if($conf->agefodd->enabled) {
 
 }
 
+
+print '<tr class="liste_titre">';
+print '<td>'.$langs->trans("Customer").'</td>'."\n";
+print '<td align="center" width="20">&nbsp;</td>';
+print '<td align="center" width="100">'.$langs->trans("Value").'</td>'."\n";
+
+$var=!$var;
+print '<tr '.$bc[$var].'>';
+print '<td>'.$langs->trans("set_GRAPEFRUIT_DISABLE_PROSPECTCUSTOMER_CHOICE").'</td>';
+print '<td align="center" width="20">&nbsp;</td>';
+print '<td align="right" width="300">';
+echo ajax_constantonoff('GRAPEFRUIT_DISABLE_PROSPECTCUSTOMER_CHOICE');
+print '</td></tr>';
+
+
 print '</table>';
 
 llxFooter();

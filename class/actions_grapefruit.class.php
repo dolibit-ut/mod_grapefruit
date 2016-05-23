@@ -93,6 +93,21 @@ class ActionsGrapeFruit
 				<?php
 			}
 		}
+		
+		elseif ($parameters['currentcontext'] == 'thirdpartycard')
+		{
+			if (!empty($conf->global->GRAPEFRUIT_DISABLE_PROSPECTCUSTOMER_CHOICE) && ($action == 'create' || $action == 'edit'))
+			{
+				?>
+				<script type="text/javascript">
+					$(function() {
+						$('#customerprospect option[value=3]').remove();
+					});
+				</script>
+				<?php	
+			}
+		}
+		
 		/*else if ($parameters['currentcontext'] === 'invoicecard' && $action === 'confirm_valid') { 
 		
 				?>
