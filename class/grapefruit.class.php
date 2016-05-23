@@ -146,7 +146,7 @@ class TGrappeFruit {
 				//Make substitution
 				$substit['__REF__'] = $object->ref;
 				$substit['__SIGNATURE__'] = $user->signature;
-				$substit['__REFCLIENT__'] = $object->ref_client;
+				$substit['__REFCLIENT__'] = $object->ref_client;			
 				$substit['__THIRDPARTY_NAME__'] = $object->thirdparty->name;
 				$substit['__PROJECT_REF__'] = (is_object($object->projet)?$object->projet->ref:'');
 				$substit['__PROJECT_NAME__'] = (is_object($object->projet)?$object->projet->title:'');
@@ -218,13 +218,121 @@ class TGrappeFruit {
 
 
 			}
-
-
-
 		}
-
 	}
 
+	
+	static function sendOrderByMail(&$object) {
+		global $conf,$langs,$user,$db;
+	
+		if(!empty($conf->global->GRAPEFRUIT_SEND_BILL_BY_MAIL_ON_VALIDATE)) {
+	
+			if(empty($object->thirdparty)) $object->fetch_thirdparty();
+	
+			if(!empty($object->thirdparty->email)) {
+				$sendto = $object->thirdparty->email;
+				$sendtocc = '';
+	
+				$from = (empty($user->email)?$conf->global->MAIN_MAIL_EMAIL_FROM:$user->email);
+				$id = $object->id;
+	
+				$_POST['receiver'] = '-1';
+	
+				$_POST['frommail'] =  $_POST['replytomail'] = $from;
+				$_POST['fromname'] =  $_POST['replytoname'] = $user->getFullName($langs);
+	
+				dol_include_once('/core/class/html.formmail.class.php');
+				$formmail=new Formmail($db);
+				$outputlangs = clone $langs;
+				$id_template = (int)$conf->global->GRAPEFRUIT_SEND_BILL_BY_MAIL_ON_VALIDATE_MODEL;
+	
+				$formmail->fetchAllEMailTemplate('facture_send', $user, $outputlangs);
+	
+				foreach($formmail->lines_model as &$model) {
+	
+					if($model->id == $id_template) break;
+	
+				}
+	
+				if(empty($model)) setEventMessage($langs->trans('ModelRequire'),'errors');
+	
+				//Make substitution
+				$substit['__REF__'] = $object->ref;
+				$substit['__SIGNATURE__'] = $user->signature;
+				$substit['__REFCLIENT__'] = $object->ref_client;
+				$substit['__THIRDPARTY_NAME__'] = $object->thirdparty->name;
+				$substit['__PROJECT_REF__'] = (is_object($object->projet)?$object->projet->ref:'');
+				$substit['__PROJECT_NAME__'] = (is_object($object->projet)?$object->projet->title:'');
+				$substit['__PERSONALIZED__'] = '';
+				$substit['__CONTACTCIVNAME__'] = '';
+	
+				// Find the good contact adress
+				$custcontact = '';
+				$contactarr = array();
+				$contactarr = $object->liste_contact(- 1, 'external');
+	
+				if (is_array($contactarr) && count($contactarr) > 0) {
+					foreach ($contactarr as $contact) {
+						dol_syslog(get_class($this).'::'.__METHOD__.'lib='.$contact['libelle']);
+						dol_syslog(get_class($this).'::'.__METHOD__.'trans='.$langs->trans('TypeContact_facture_external_BILLING'));
+	
+						if ($contact['libelle'] == $langs->trans('TypeContact_facture_external_BILLING')) {
+	
+							require_once DOL_DOCUMENT_ROOT . '/contact/class/contact.class.php';
+	
+							$contactstatic = new Contact($db);
+							$contactstatic->fetch($contact['id']);
+							$custcontact = $contactstatic->getFullName($langs, 1);
+						}
+					}
+	
+					if (! empty($custcontact)) {
+						$substit['__CONTACTCIVNAME__'] = $custcontact;
+					}
+					if (!empty($contactstatic->email)) {
+						$sendto=$contactstatic->email;
+					}
+				}
+	
+	
+				$topic=make_substitutions($model->topic,$substit);
+				$message=make_substitutions($model->content,$substit);
+	
+				$_POST['message'] = $message;
+				$_POST['subject'] = $topic;
+	
+				require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+				//Add attached files
+				$fileparams = dol_most_recent_file($conf->commande->dir_output . '/' . $object->ref, preg_quote($object->ref, '/').'[^\-]+');
+				if (is_array($fileparams) && array_key_exists('fullname', $fileparams) && !empty($fileparams['fullname'])) {
+					$_SESSION["listofpaths"]=$fileparams['fullname'];
+					$_SESSION["listofnames"]=basename($fileparams['fullname']);
+					$_SESSION["listofmimes"]=dol_mimetype($fileparams['fullname']);
+				} else {
+					//generate invoice
+					$result = $object->generateDocument($object->modelpdf, $outputlangs, 0, 0, 0);
+					if ($result <= 0) {
+						$this->error=$object->error;
+					}
+					$fileparams = dol_most_recent_file($conf->commande->dir_output . '/' . $object->ref, preg_quote($object->ref, '/').'[^\-]+');
+					if (is_array($fileparams) && array_key_exists('fullname', $fileparams) && !empty($fileparams['fullname'])) {
+						$_SESSION["listofpaths"]=$fileparams['fullname'];
+						$_SESSION["listofnames"]=basename($fileparams['fullname']);
+						$_SESSION["listofmimes"]=dol_mimetype($fileparams['fullname']);
+					}
+				}
+	
+				$action='send';
+				$actiontypecode='AC_FAC';
+				$trigger_name='BILL_SENTBYMAIL';
+				$paramname='id';
+				$mode='emailfrominvoice';
+				require_once __DIR__.'/../tpl/actions_sendmails.inc.php';
+	
+	
+			}
+		}
+	}
 
 	static function createTasks(&$object) {
 		global $conf,$langs,$db,$user;

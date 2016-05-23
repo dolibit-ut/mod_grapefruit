@@ -415,7 +415,20 @@ class InterfaceGrapeFruittrigger
         } elseif ($action === 'BILL_PAYED') {
         		
 			TGrappeFruit::createShippingFromOrderOnBillPayed($object);
-        	TGrappeFruit::sendBillByMail($object);
+			
+			if ($conf->global->GRAPEFRUIT_SEND_BILL_BY_MAIL_ON_VALIDATE_ORDER) {
+				
+				if(empty($object->linked_objects)) $object->fetchObjectLinked(null,null,$object->id,'facture');
+				
+				if(empty($object->linkedObjects['commande'])) return false;
+				
+				foreach($object->linkedObjects['commande'] as &$commande) {
+					TGrappeFruit::sendOrderByMail($commande);
+				}
+			} else {
+				TGrappeFruit::sendBillByMail($object);
+			}
+        	
 			
             dol_syslog(
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id

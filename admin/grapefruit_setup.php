@@ -307,7 +307,17 @@ print '<input type="hidden" name="action" value="set_GRAPEFRUIT_SEND_BILL_BY_MAI
 echo ajax_constantonoff('GRAPEFRUIT_SEND_BILL_BY_MAIL_ON_VALIDATE');
 print '</form>';
 print '</td></tr>';
-
+$var=!$var;
+print '<tr '.$bc[$var].'>';
+print '<td>'.$langs->trans("set_GRAPEFRUIT_SEND_BILL_BY_MAIL_ON_VALIDATE_ORDER").'</td>';
+print '<td align="center" width="20">&nbsp;</td>';
+print '<td align="right" width="300">';
+print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="action" value="set_GRAPEFRUIT_SEND_BILL_BY_MAIL_ON_VALIDATE_ORDER">';
+echo ajax_constantonoff('GRAPEFRUIT_SEND_BILL_BY_MAIL_ON_VALIDATE_ORDER');
+print '</form>';
+print '</td></tr>';
 
 
 $sql = "SELECT rowid, label, topic, content, lang";
