@@ -53,3 +53,50 @@ function grapefruitAdminPrepareHead()
 
     return $head;
 }
+
+function grapefruitGetTasksForProject($name='fk_task', $socid=-1, $showempty=1, $projectid=0)
+{
+	global $db;
+	
+	dol_include_once('/core/class/html.form.class.php');
+	
+	$form = new Form($db);
+	$TTask = getTaskByProjectId($projectid);
+	
+	$return=array();
+	$return['value'] = $form->selectarray('fk_task', $TTask, '', 1, 0, 0, '', 0, 0, 0, '', 'minwidth100 maxwidth300', 1);
+	
+	echo json_encode($return);
+}
+
+function getTaskByProjectId($projectid=0)
+{
+	global $db,$conf;
+	
+	$TRes = array();
+	
+	if (empty($projectid)) return $TRes;
+	
+	$sql = 'SELECT t.rowid, t.ref as tref, t.label as tlabel, p.ref, p.title, p.fk_soc, p.fk_statut, p.public,';
+	$sql.= ' s.nom as name';
+	$sql.= ' FROM '.MAIN_DB_PREFIX .'projet as p';
+	$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe as s ON s.rowid = p.fk_soc';
+	$sql.= ', '.MAIN_DB_PREFIX.'projet_task as t';
+	$sql.= " WHERE p.entity = ".$conf->entity;
+	$sql.= " AND t.fk_projet = p.rowid";
+	$sql.= " AND p.rowid = ".$projectid;
+	//if ($socid == 0) $sql.= " AND (p.fk_soc=0 OR p.fk_soc IS NULL)";
+	//if ($socid > 0)  $sql.= " AND (p.fk_soc=".$socid." OR p.fk_soc IS NULL)";
+	$sql.= " ORDER BY p.ref, t.ref ASC";
+	
+	$resql=$db->query($sql);
+	if ($resql)
+	{
+		while ($line = $db->fetch_object($resql)) 
+		{
+			$TRes[$line->rowid] = $line->tref.' '.$line->tlabel;
+		}
+	}
+	
+	return $TRes;
+}

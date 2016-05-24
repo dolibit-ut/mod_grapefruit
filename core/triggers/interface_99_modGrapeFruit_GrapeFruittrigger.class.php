@@ -111,7 +111,7 @@ class InterfaceGrapeFruittrigger
      * 	@param		conf		$conf		Object conf
      * 	@return		int						<0 if KO, 0 if no triggered ran, >0 if OK
      */
-    public function run_trigger($action, $object, $user, $langs, $conf)
+    public function run_trigger($action, &$object, &$user, &$langs, &$conf)
     {
     	dol_include_once('/grapefruit/class/grapefruit.class.php');
 		$langs->load('grapefruit@grapefruit');
@@ -121,6 +121,25 @@ class InterfaceGrapeFruittrigger
         // Users
       
         
+        if ($action == 'ACTION_CREATE')
+		{
+			dol_syslog(
+                "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
+            );
+			
+			if (!empty($conf->global->GRAPEFRUIT_CAN_ASSOCIATE_TASK_TO_ACTIONCOMM))
+			{
+				//il faut récup le fk_task et fait un lien avec "related"
+				$fk_task = GETPOST('fk_task', 'int');
+				
+				if ($fk_task > 0)
+				{
+					$r = $object->add_object_linked('task', $fk_task);
+				}	
+			}
+		}
+        
+        /*
         if ($action === 'USER_LOGIN') {
             dol_syslog(
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
@@ -634,7 +653,7 @@ class InterfaceGrapeFruittrigger
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
             );
         }
-
+		*/
         return 0;
     }
 }
