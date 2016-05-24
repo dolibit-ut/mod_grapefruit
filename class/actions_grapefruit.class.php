@@ -239,5 +239,49 @@ class ActionsGrapeFruit
 			} // Fin order / order_supplier
 		}
 	}
+
+	function addOptionCalendarEvents($parameters, &$object, &$action, $hookmanager)
+	{
+		global $db,$conf,$langs;
+		
+		if (!empty($conf->global->GRAPEFRUIT_CAN_ASSOCIATE_TASK_TO_ACTIONCOMM) && $parameters['currentcontext']=='fullcalendardao') 
+		{
+			dol_include_once('/core/class/html.form.class.php');
+			
+			$form = new Form($db);
+			
+			ob_start();
+			print '<div id="contentTasks" style="display:inline-block">';
+			print $form->selectarray('fk_task', array(), '', 1, 0, 0, '', 0, 0, 0, '', 'minwidth100 maxwidth300', 1);
+			print '<div>';
+			?>
+				<span rel="task"></span>
+				<script type="text/javascript">
+						$div = $('#pop-new-event');
+			        	$div.find('select#fk_project').on("change", function(e) {
+			        		var fk_project = $(this).val();
+			        		
+			        		$.ajax({
+			        			url: "<?php echo dol_buildpath('/grapefruit/script/interface.php',1); ?>"
+			        			,dataType:'json'
+			        			,data: {
+			        				get: 'fullcalandar_tasks'
+			        				,projectid: fk_project
+			        			}
+			        		}).done(function(data) {
+			        			/*$('#pop-new-event span[rel=tasks]').html(data.value);*/
+			        			$('#pop-new-event div#contentTasks').text("").append(data.value);
+			        			$div.find('select#fk_task').change();
+			        		});
+			        	});
+	        	</script>
+			<?php
+			$option = $langs->trans('Task').' : '.ob_get_clean();
+			$this->resprints = json_encode(array('fk_task' => $option));
+			
+			return 1;
+		}
+		return 0;
+	}
 	
 }
