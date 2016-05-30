@@ -179,6 +179,19 @@ class InterfaceGrapeFruittrigger
 			
 			if (! empty ( $conf->global->GRAPEFRUIT_SEND_BILL_BY_MAIL_ON_VALIDATE )) {
 				if (empty($conf->global->GRAPEFRUIT_SEND_BILL_BY_MAIL_ON_VALIDATE_ORDER)) {
+					
+					// Define output language
+					if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+					{
+						$outputlangs = $langs;
+						
+						$model=$object->modelpdf;
+						$object->ref=$object->newref;
+						$object->generateDocument($model, $outputlangs);
+						//if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
+					}
+					
+					
 					TGrappeFruit::sendBillByMail($object);
 				} else {
 					if (empty($object->linked_objects))
