@@ -276,6 +276,7 @@ class ActionsGrapeFruit
 			        	});
 	        	</script>
 			<?php
+			$langs->load('projects');
 			$option = $langs->trans('Task').' : '.ob_get_clean();
 			$this->resprints = json_encode(array('fk_task' => $option));
 			
