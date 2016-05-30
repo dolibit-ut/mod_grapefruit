@@ -173,7 +173,7 @@ class TGrappeFruit
 		}
 		
 		// Make substitution
-		$substit['__REF__'] = $object->ref;
+		$substit['__REF__'] = (empty($object->newref)?$object->ref:$object->newref);
 		$substit['__ORDER_REF__'] = $orderref;
 		$substit['__SIGNATURE__'] = $user->signature;
 		$substit['__REFCLIENT__'] = $object->ref_client;
