@@ -158,17 +158,38 @@ class InterfaceGrapeFruittrigger
 			
 			TGrappeFruit::createShippingFromOrderOnBillPayed($object);
 			
-			if (empty($conf->global->GRAPEFRUIT_SEND_BILL_BY_MAIL_ON_VALIDATE_ORDER)) {
-				TGrappeFruit::sendBillByMail($object);
-			} else {
-				if (empty($object->linked_objects))
-					$object->fetchObjectLinked(null, null, $object->id, 'facture');
-				
-				if (empty($object->linkedObjects['commande']))
-					return false;
-				
-				foreach ( $object->linkedObjects['commande'] as &$commande ) {
-					TGrappeFruit::sendOrderByMail($commande);
+			if (! empty ( $conf->global->GRAPEFRUIT_SEND_BILL_BY_MAIL_ON_BILLED )) {
+				if (empty($conf->global->GRAPEFRUIT_SEND_BILL_BY_MAIL_ON_VALIDATE_ORDER)) {
+					TGrappeFruit::sendBillByMail($object);
+				} else {
+					if (empty($object->linked_objects))
+						$object->fetchObjectLinked(null, null, $object->id, 'facture');
+					
+					if (empty($object->linkedObjects['commande']))
+						return false;
+					
+					foreach ( $object->linkedObjects['commande'] as &$commande ) {
+						TGrappeFruit::sendOrderByMail($commande);
+					}
+				}
+			}
+		} elseif ($action === 'BILL_VALIDATE') {
+			
+			dol_syslog("Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id);
+			
+			if (! empty ( $conf->global->GRAPEFRUIT_SEND_BILL_BY_MAIL_ON_VALIDATE )) {
+				if (empty($conf->global->GRAPEFRUIT_SEND_BILL_BY_MAIL_ON_VALIDATE_ORDER)) {
+					TGrappeFruit::sendBillByMail($object);
+				} else {
+					if (empty($object->linked_objects))
+						$object->fetchObjectLinked(null, null, $object->id, 'facture');
+					
+					if (empty($object->linkedObjects['commande']))
+						return false;
+					
+					foreach ( $object->linkedObjects['commande'] as &$commande ) {
+						TGrappeFruit::sendOrderByMail($commande);
+					}
 				}
 			}
 		} elseif ($action === 'PROJECT_CREATE') {
