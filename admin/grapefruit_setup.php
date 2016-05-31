@@ -158,6 +158,19 @@ print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">'
 print '</form>';
 print '</td></tr>';
 
+$var=!$var;
+print '<tr '.$bc[$var].'>';
+print '<td>'.$langs->trans("set_GRAPEFRUIT_ADD_PROJECT_TO_PDF").'</td>';
+print '<td colspan="2"  align="right">';
+print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="action" value="set_GRAPEFRUIT_ADD_PROJECT_TO_PDF">';
+echo ajax_constantonoff('GRAPEFRUIT_ADD_PROJECT_TO_PDF');
+print '</form>';
+print '</td></tr>';
+
+
+
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Propal").'</td>'."\n";
 print '<td align="center" width="20">&nbsp;</td>';

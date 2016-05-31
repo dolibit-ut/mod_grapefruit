@@ -75,6 +75,8 @@ class ActionsGrapeFruit
 		return 0;
 	}
 
+	
+
 	function formObjectOptions($parameters, &$object, &$action, $hookmanager)
 	{
 		global $conf;
@@ -160,6 +162,41 @@ class ActionsGrapeFruit
 			}
 		}
 	}
+	
+	
+	function pdf_getLinkedObjects(&$parameters, &$object, &$action, $hookmanager) {
+		
+		global $conf,$user,$langs,$db,$mysoc,$outputlangs;
+		
+		
+		
+		if (in_array( 'pdfgeneration', explode(':',$parameters['context']) ) && !empty($conf->global->GRAPEFRUIT_ADD_PROJECT_TO_PDF)) 
+		{
+			if (empty($object->project->ref)) $object->fetch_projet();
+		
+			if (! empty($object->project->ref))
+			{
+				$outputlangs->load('grapefruit@grapefruit');
+				
+				$linkedobjects = $parameters['linkedobjects'];
+				
+				$objecttype = 'project';
+				$linkedobjects[$objecttype]['ref_title'] = $outputlangs->transnoentities("Project");
+				$linkedobjects[$objecttype]['ref_value'] = $outputlangs->transnoentities(empty($object->project->ref)?'':$object->projet->ref);
+				$linkedobjects[$objecttype]['date_title'] = $outputlangs->transnoentities("ProjectDate");
+				$linkedobjects[$objecttype]['date_value'] = dol_print_date($object->project->date_start,'day','',$outputlangs);
+				
+		
+				$this->results = $linkedobjects;
+				
+			
+				return 1;
+			}
+		
+		}
+		
+	}
+	
 	
 	function beforePDFCreation(&$parameters, &$object, &$action, $hookmanager)
 	{
