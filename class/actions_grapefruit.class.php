@@ -183,9 +183,9 @@ class ActionsGrapeFruit
 				$objecttype = 'project';
 				$linkedobjects[$objecttype]['ref_title'] = $outputlangs->transnoentities("Project");
 				$linkedobjects[$objecttype]['ref_value'] = $outputlangs->transnoentities(empty($object->project->ref)?'':$object->projet->ref);
-				$linkedobjects[$objecttype]['date_title'] = $outputlangs->transnoentities("ProjectDate");
+/*				$linkedobjects[$objecttype]['date_title'] = $outputlangs->transnoentities("ProjectDate");
 				$linkedobjects[$objecttype]['date_value'] = dol_print_date($object->project->date_start,'day','',$outputlangs);
-				
+*/				
 		
 				$this->results = $linkedobjects;
 				
