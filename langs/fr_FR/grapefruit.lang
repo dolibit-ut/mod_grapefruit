@@ -33,3 +33,6 @@ set_GRAPEFRUIT_FORCE_VAR_HIDEREF_ON_SUPPLIER_ORDER=Forcer l'affichage de la réf
 set_GRAPEFRUIT_DISABLE_PROSPECTCUSTOMER_CHOICE=Retirer la possibilité de définir une fiche tiers en tant que "Prospect / Client"
 set_GRAPEFRUIT_SEND_BILL_BY_MAIL_ON_VALIDATE_ORDER=Envoyer les information de commande dans l'email facture
 set_GRAPEFRUIT_CAN_ASSOCIATE_TASK_TO_ACTIONCOMM=Permettre d'associéer une tâche à un évènement agenda via "fullcalendar" (couplé à "related")
+set_GRAPEFRUIT_ADD_PROJECT_TO_PDF=Afficher le projet lié sur les documents PDF
+
+ProjectDate=Date projet
