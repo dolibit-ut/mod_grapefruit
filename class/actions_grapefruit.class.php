@@ -174,7 +174,7 @@ class ActionsGrapeFruit
 		{
 			if (empty($object->project->ref)) $object->fetch_projet();
 		
-			if (! empty($object->project->ref))
+			if (! empty($object->project->ref) && !empty($outputlangs))
 			{
 				$outputlangs->load('grapefruit@grapefruit');
 				
