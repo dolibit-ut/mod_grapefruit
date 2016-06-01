@@ -221,7 +221,37 @@ class InterfaceGrapeFruittrigger
 				return - 1;
 			
 			dol_syslog("Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id);
-		}
+		}elseif ($action === 'PROPAL_CREATE') {
+			$db= $this->db;
+			if (!empty($conf->global->GRAPEFRUIT_LINK_PROPAL_2_PROJECT)){
+				dol_include_once('/projet/class/project.class.php');
+				
+				$projId = 0;
+				$sql  = "SELECT p.rowid AS rowid";
+		        $sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
+		        $sql .= " WHERE p.fk_soc = ".$object->socid;
+		        $sql .= " ORDER BY p.dateo DESC";
+				$sql .= " LIMIT 1";
+				
+				$resql = $db->query($sql);
+		
+				if ($resql){
+					while ($line = $db->fetch_object($resql)){
+								$projId = $line->rowid;
+					}
+				}
+				
+				//On fetch le projet
+				$projet = new Project($db);
+				$projet->fetch($projId);
+				
+				//TODO Ajouter la propale au projet
+				//var_dump($object->table_element, $object->id);exit;
+				$projet->update_element($object->table_element, $object->id);
+		
+			}
+		 	dol_syslog("Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id);
+		 }
 		
 		/*
 		 if ($action === 'USER_LOGIN') {
