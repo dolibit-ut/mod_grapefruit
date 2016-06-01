@@ -9,6 +9,7 @@ set_GRAPEFRUIT_BUDGET_NEEDED=Rendre obligatoire la saisie d'un budget dans un pr
 BudgetRequire=Budget obligatoire
 ValuesUpdated=Valeurs mises à jour
 set_GRAPEFRUIT_PROPAL_DEFAULT_BANK_ACOUNT=Définir un compte bancaire par défaut lors de la création d'une propal (v. d'ajout 3.8)
+set_GRAPEFRUIT_LINK_PROPAL_2_PROJECT=Lier automatiquement une propale au projet du client si celui ci possède un projet ouvert (si plusieurs projets lie la propale au plus récent)
 set_GRAPEFRUIT_SUPPLIER_FORCE_BT_ORDER_TO_INVOICE=Forcer l'accès à la fonctionnalité "Facturer Commandes" sur statut 2,3,4 et 5 et non pas seulement sur 5 (remplacer <b>/fourn/commande/orderstoinvoice.php</b> - spécifique faire une recherche sur "GRAPEFRUIT" - v. d'ajout 3.8 )
 set_GRAPEFRUIT_SUPPLIER_CONTACT_SHIP_ADDRESS=Ajouter le contact livraison sur le PDF d'une Commande Fournisseur
 set_GRAPEFRUIT_ORDER_CONTACT_SHIP_ADDRESS=Ajouter le contact livraison sur le PDF d'une Commande Client
