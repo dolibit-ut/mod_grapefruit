@@ -221,7 +221,7 @@ class InterfaceGrapeFruittrigger
 				return - 1;
 			
 			dol_syslog("Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id);
-		}elseif ($action === 'PROPAL_VALIDATE') {
+		}elseif ($action === 'PROPAL_CREATE') {
 			$db= $this->db;
 			if (!empty($conf->global->GRAPEFRUIT_LINK_PROPAL_2_PROJECT)){
 				dol_include_once('/projet/class/project.class.php');
