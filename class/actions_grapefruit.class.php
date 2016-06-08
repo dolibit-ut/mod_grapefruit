@@ -177,10 +177,11 @@ class ActionsGrapeFruit
 			if (! empty($object->project->ref) && !empty($outputlangs))
 			{
 				$outputlangs->load('grapefruit@grapefruit');
-				
+				$outputlangs->load('projects');
+
 				$linkedobjects = $parameters['linkedobjects'];
 				
-				$objecttype = 'project';
+				$objecttype = 'projet';
 				$linkedobjects[$objecttype]['ref_title'] = $outputlangs->transnoentities("Project");
 				$linkedobjects[$objecttype]['ref_value'] = $outputlangs->transnoentities(empty($object->project->ref)?'':$object->projet->ref);
 /*				$linkedobjects[$objecttype]['date_title'] = $outputlangs->transnoentities("ProjectDate");
