@@ -71,8 +71,10 @@ class pdf_dorade extends ModelePdfExpedition
 
 		// Defini position des colonnes
 		$this->posxdesc=$this->marge_gauche+1;
-		$this->posxqtyordered=$this->page_largeur - $this->marge_droite - 70;
-		$this->posxqtytoship=$this->page_largeur - $this->marge_droite - 35;
+		$this->posxqtyordered=$this->page_largeur - $this->marge_droite - 120;
+		$this->posxqtytoship=$this->page_largeur - $this->marge_droite - 90;
+		$this->posxpuht=$this->page_largeur - $this->marge_droite - 60;
+		$this->posxtotalht=$this->page_largeur - $this->marge_droite - 30;
 	}
 
 	/**
@@ -463,8 +465,23 @@ class pdf_dorade extends ModelePdfExpedition
 		if (empty($hidetop))
 		{
 			$pdf->SetXY($this->posxqtytoship, $tab_top+1);
-			$pdf->MultiCell(($this->page_largeur - $this->marge_droite - $this->posxqtytoship), 2, $outputlangs->transnoentities("QtyToShip"),'','C');
+			$pdf->MultiCell(($this->posxpuht - $this->posxqtytoship), 2, $outputlangs->transnoentities("QtyToShip"),'','C');
 		}
+		
+		$pdf->line($this->posxpuht-1, $tab_top, $this->posxpuht-1, $tab_top + $tab_height);
+		if (empty($hidetop))
+		{
+			$pdf->SetXY($this->posxpuht-1, $tab_top+1);
+			$pdf->MultiCell(($this->posxtotalht - $this->posxpuht), 2, $outputlangs->transnoentities("PriceUHT"),'','C');
+		}
+		
+		$pdf->line($this->posxtotalht-1, $tab_top, $this->posxtotalht-1, $tab_top + $tab_height);
+		if (empty($hidetop))
+		{
+			$pdf->SetXY($this->posxtotalht-1, $tab_top+1);
+			$pdf->MultiCell(($this->page_largeur - $this->marge_droite - $this->posxtotalht), 2, $outputlangs->transnoentities("TotalHT"),'','C');
+		}
+		
 	}
 
 	/**
