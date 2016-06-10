@@ -71,10 +71,10 @@ class pdf_dorade extends ModelePdfExpedition
 
 		// Defini position des colonnes
 		$this->posxdesc=$this->marge_gauche+1;
-		$this->posxqtyordered=$this->page_largeur - $this->marge_droite - 120;
-		$this->posxqtytoship=$this->page_largeur - $this->marge_droite - 90;
-		$this->posxpuht=$this->page_largeur - $this->marge_droite - 60;
-		$this->posxtotalht=$this->page_largeur - $this->marge_droite - 30;
+		$this->posxqtyordered=$this->page_largeur - $this->marge_droite - 110;
+		$this->posxqtytoship=$this->page_largeur - $this->marge_droite - 80;
+		$this->posxpuht=$this->page_largeur - $this->marge_droite - 50;
+		$this->posxtotalht=$this->page_largeur - $this->marge_droite - 25;
 	}
 
 	/**
@@ -314,7 +314,13 @@ class pdf_dorade extends ModelePdfExpedition
 					$pdf->MultiCell(($this->posxqtytoship - $this->posxqtyordered), 3, $object->lines[$i]->qty_asked,'','C');
 
 					$pdf->SetXY($this->posxqtytoship, $curY);
-					$pdf->MultiCell(($this->page_largeur - $this->marge_droite - $this->posxqtytoship), 3, $object->lines[$i]->qty_shipped,'','C');
+					$pdf->MultiCell(($this->posxpuht - $this->posxqtytoship), 3, $object->lines[$i]->qty_shipped,'','C');
+
+					$pdf->SetXY($this->posxpuht, $curY);
+					$pdf->MultiCell(($this->posxtotalht - $this->posxpuht-1), 3, price($object->lines[$i]->subprice, 0, $outputlangs),'','R');
+
+					$pdf->SetXY($this->posxtotalht, $curY);
+					$pdf->MultiCell(($this->page_largeur - $this->marge_droite - $this->posxtotalht), 3, price($object->lines[$i]->total_ht, 0, $outputlangs),'','R');
 
 					// Add line
 					if ($conf->global->MAIN_PDF_DASH_BETWEEN_LINES && $i < ($nblignes - 1))
@@ -374,6 +380,8 @@ class pdf_dorade extends ModelePdfExpedition
 					$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforfooter - $heightforfreetext - $heightforinfotot, 0, $outputlangs, 1, 0);
 					$bottomlasttab=$this->page_hauteur - $heightforfooter - $heightforfreetext - $heightforinfotot + 1;
 				}
+
+				$this->_tableau_tot($pdf, $object, 0, $bottomlasttab, $outputlangs);
 
 				// Pied de page
 				$this->_pagefoot($pdf,$object,$outputlangs);
@@ -721,6 +729,40 @@ class pdf_dorade extends ModelePdfExpedition
 			$pdf->MultiCell($widthrecbox, 4, $carac_client, 0, 'L');
 		}
 
+	}
+
+	function _tableau_tot(&$pdf, $object, $deja_regle, $posy, $outputlangs)
+	{
+		global $conf,$mysoc;
+
+        $sign=1;
+
+        $default_font_size = pdf_getPDFFontSize($outputlangs);
+
+		$tab2_top = $posy;
+		$tab2_hl = 4;
+		$pdf->SetFont('','', $default_font_size - 1);
+
+		// Tableau total
+		$col1x = 120; $col2x = 170;
+		if ($this->page_largeur < 210) // To work with US executive format
+		{
+			$col2x-=20;
+		}
+		$largcol2 = ($this->page_largeur - $this->marge_droite - $col2x);
+
+		$useborder=0;
+		$index = 0;
+
+		// Total HT
+		$pdf->SetFillColor(255,255,255);
+		$pdf->SetXY($col1x, $tab2_top + 0);
+		$pdf->SetTextColor(0,0,60);
+		$pdf->SetFillColor(224,224,224);
+		$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalHT"), 0, 'L', 1);
+		$pdf->SetXY($col2x, $tab2_top + 0);
+		$pdf->MultiCell($largcol2, $tab2_hl, price($sign * ($object->total_ht + (! empty($object->remise)?$object->remise:0)), 0, $outputlangs), 0, 'R', 1);
+		
 	}
 
 	/**
