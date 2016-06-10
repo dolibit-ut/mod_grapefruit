@@ -37,3 +37,6 @@ set_GRAPEFRUIT_CAN_ASSOCIATE_TASK_TO_ACTIONCOMM=Permettre d'associéer une tâch
 set_GRAPEFRUIT_ADD_PROJECT_TO_PDF=Afficher le projet lié sur les documents PDF
 
 ProjectDate=Date projet
+
+# Models
+DocumentModelDorade=Modèle d'expédition chiffré
