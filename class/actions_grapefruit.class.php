@@ -82,6 +82,32 @@ class ActionsGrapeFruit
 		global $conf;
 		//var_dump($action, $parameters);exit;
 		//Context : frm creation propal
+		
+		// Script pour gérer les champs obligatoires sur une fiche contact
+		if($parameters['currentcontext'] === 'contactcard' && !empty($conf->global->GRAPEFRUIT_CONTACT_FORCE_FIELDS) && $action == 'edit') {
+			$TChamps = explode(',',$conf->global->GRAPEFRUIT_CONTACT_FORCE_FIELDS);
+			$first = true;
+			$match1 = '';
+			$match2 = '#lastname';
+			foreach($TChamps as $champ) {
+				if(!$first) {
+					$match1 .=', ';
+				}
+				$match2 .=', ';
+				$match1 .= 'td > label[for="'.$champ.'"]';
+				$match2 .= '#'.$champ;
+				$first=false;
+			}
+			?>
+			<script type="text/javascript">
+				$(document).ready(function(){
+					$('<?php echo $match1; ?>').toggleClass('fieldrequired');
+					$('<?php echo $match2; ?>').attr('required','required');
+				})
+			</script>
+			<?php
+		}
+		
 		if ($parameters['currentcontext'] === 'propalcard' && $action === 'create') 
 		{
 			if ($conf->grapefruit->enabled && $conf->global->GRAPEFRUIT_PROPAL_DEFAULT_BANK_ACOUNT > 0)
