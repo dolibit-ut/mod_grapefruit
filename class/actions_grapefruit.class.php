@@ -101,7 +101,7 @@ class ActionsGrapeFruit
 			?>
 			<script type="text/javascript">
 				$(document).ready(function(){
-					$('<?php echo $match1; ?>').toggleClass('fieldrequired');
+					$('<?php echo $match1; ?>').addClass('fieldrequired');
 					$('<?php echo $match2; ?>').attr('required','required');
 				})
 			</script>
