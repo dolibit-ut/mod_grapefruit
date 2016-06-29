@@ -84,7 +84,7 @@ class ActionsGrapeFruit
 		//Context : frm creation propal
 		
 		// Script pour gérer les champs obligatoires sur une fiche contact
-		if($parameters['currentcontext'] === 'contactcard' && !empty($conf->global->GRAPEFRUIT_CONTACT_FORCE_FIELDS) && $action == 'edit') {
+		if($parameters['currentcontext'] === 'contactcard' && !empty($conf->global->GRAPEFRUIT_CONTACT_FORCE_FIELDS) && ($action == 'edit' || $action == 'create')) {
 			$TChamps = explode(',',$conf->global->GRAPEFRUIT_CONTACT_FORCE_FIELDS);
 			$first = true;
 			$match1 = '';
