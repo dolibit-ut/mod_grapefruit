@@ -455,6 +455,19 @@ print '</form>';
 print '</td></tr>';
 
 
+$var=!$var;
+print '<tr '.$bc[$var].'>';
+print '<td>'.$langs->trans("set_MAIN_ADD_EVENT_ON_ELEMENT_CARD").'</td>';
+print '<td align="center" width="20">&nbsp;</td>';
+print '<td align="right" width="300">';
+print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="action" value="set_MAIN_ADD_EVENT_ON_ELEMENT_CARD">';
+echo ajax_constantonoff('MAIN_ADD_EVENT_ON_ELEMENT_CARD');
+print '</form>';
+print '</td></tr>';
+
+
 print '</table>';
 
 llxFooter();
