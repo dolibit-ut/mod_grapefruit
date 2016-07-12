@@ -2,6 +2,21 @@
 class TGrappeFruit
 {
 	
+	static function checkNoDuplicateRef(&$object) {
+		global $conf, $langs, $db;
+		
+		$res = $db->query("SELECT rowid FROM ".MAIN_DB_PREFIX."projet WHERE ref = '".$object->ref."' AND rowid!=".(int)$object->id." LIMIT 1");
+		if($obj = $db->fetch_object($res)) {
+			setEventMessage($langs->trans('DuplicateProjectRef'), 'errors');
+		
+			return false;
+			
+		}
+		
+		return true;
+		
+	}
+	
 	/**
 	 *
 	 * @param unknown $object

@@ -169,7 +169,18 @@ echo ajax_constantonoff('GRAPEFRUIT_ADD_PROJECT_TO_PDF');
 print '</form>';
 print '</td></tr>';
 
-
+if(!empty($conf->multicompany->enabled)) {
+	$var=!$var;
+	print '<tr '.$bc[$var].'>';
+	print '<td>'.$langs->trans("set_GRAPEFRUIT_DISALLOW_SAME_REF_MULTICOMPANY").'</td>';
+	print '<td colspan="2"  align="right">';
+	print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="action" value="set_GRAPEFRUIT_DISALLOW_SAME_REF_MULTICOMPANY">';
+	echo ajax_constantonoff('GRAPEFRUIT_DISALLOW_SAME_REF_MULTICOMPANY');
+	print '</form>';
+	print '</td></tr>';
+}
 
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Propal").'</td>'."\n";
