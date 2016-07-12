@@ -37,6 +37,7 @@ set_GRAPEFRUIT_CAN_ASSOCIATE_TASK_TO_ACTIONCOMM=Permettre d'associéer une tâch
 set_GRAPEFRUIT_ADD_PROJECT_TO_PDF=Afficher le projet lié sur les documents PDF
 set_GRAPEFRUIT_CONTACT_FORCE_FIELDS=Champs obligatoires supplémentaires sur une fiche contact (ex:firstname,town ...)
 set_MAIN_ADD_EVENT_ON_ELEMENT_CARD=Permettre l'ajout d'événements à partir de propale, commande,...
+set_GRAPEFRUIT_DISALLOW_SAME_REF_MULTICOMPANY=Empêcher un projet d'avoir la même référence à travers les entités
 DuplicateProjectRef=Référence de projet déjà utilisée
 ProjectDate=Date projet
 
