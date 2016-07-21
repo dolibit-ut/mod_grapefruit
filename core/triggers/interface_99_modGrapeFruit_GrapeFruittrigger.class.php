@@ -206,6 +206,10 @@ class InterfaceGrapeFruittrigger
 				}
 			}
 		} elseif ($action === 'PROJECT_CREATE') {
+			if (! TGrappeFruit::checkNoDuplicateRef($object))
+				return - 1;
+			
+			
 			if (! TGrappeFruit::checkBudgetNotEmpty($object))
 				return - 1;
 			if (! TGrappeFruit::checkDateEndNotEmpty($object))

@@ -169,7 +169,18 @@ echo ajax_constantonoff('GRAPEFRUIT_ADD_PROJECT_TO_PDF');
 print '</form>';
 print '</td></tr>';
 
-
+if(!empty($conf->multicompany->enabled)) {
+	$var=!$var;
+	print '<tr '.$bc[$var].'>';
+	print '<td>'.$langs->trans("set_GRAPEFRUIT_DISALLOW_SAME_REF_MULTICOMPANY").'</td>';
+	print '<td colspan="2"  align="right">';
+	print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="action" value="set_GRAPEFRUIT_DISALLOW_SAME_REF_MULTICOMPANY">';
+	echo ajax_constantonoff('GRAPEFRUIT_DISALLOW_SAME_REF_MULTICOMPANY');
+	print '</form>';
+	print '</td></tr>';
+}
 
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Propal").'</td>'."\n";
@@ -419,6 +430,24 @@ print '</td></tr>';
 
 
 print '<tr class="liste_titre">';
+print '<td>'.$langs->trans("Contact").'</td>'."\n";
+print '<td align="center" width="20">&nbsp;</td>';
+print '<td align="center" width="100">'.$langs->trans("Value").'</td>'."\n";
+
+$var=!$var;
+print '<tr '.$bc[$var].'>';
+print '<td>'.$langs->trans("set_GRAPEFRUIT_CONTACT_FORCE_FIELDS").'</td>';
+print '<td align="center" width="20">&nbsp;</td>';
+print '<td align="right" width="300">';
+print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="action" value="set_GRAPEFRUIT_CONTACT_FORCE_FIELDS">';
+print '<input type="text" name="GRAPEFRUIT_CONTACT_FORCE_FIELDS" value="'.$conf->global->GRAPEFRUIT_CONTACT_FORCE_FIELDS.'" style="width:300px;max-width:100%;" />';
+print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+print '</form>';
+print '</td></tr>';
+
+print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Agenda").'</td>'."\n";
 print '<td align="center" width="20">&nbsp;</td>';
 print '<td align="center" width="100">'.$langs->trans("Value").'</td>'."\n";
@@ -433,6 +462,19 @@ print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="set_GRAPEFRUIT_CAN_ASSOCIATE_TASK_TO_ACTIONCOMM">';
 print $form->selectyesno('GRAPEFRUIT_CAN_ASSOCIATE_TASK_TO_ACTIONCOMM', $conf->global->GRAPEFRUIT_CAN_ASSOCIATE_TASK_TO_ACTIONCOMM, 1);
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+print '</form>';
+print '</td></tr>';
+
+
+$var=!$var;
+print '<tr '.$bc[$var].'>';
+print '<td>'.$langs->trans("set_MAIN_ADD_EVENT_ON_ELEMENT_CARD").'</td>';
+print '<td align="center" width="20">&nbsp;</td>';
+print '<td align="right" width="300">';
+print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="action" value="set_MAIN_ADD_EVENT_ON_ELEMENT_CARD">';
+echo ajax_constantonoff('MAIN_ADD_EVENT_ON_ELEMENT_CARD');
 print '</form>';
 print '</td></tr>';
 

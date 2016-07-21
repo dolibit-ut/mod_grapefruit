@@ -295,7 +295,7 @@ class pdf_dorade extends ModelePdfExpedition
 					$pageposbefore=$pdf->getPage();
 
 					// Description de la ligne produit
-					pdf_writelinedesc($pdf,$object,$i,$outputlangs,$this->posxqtyordered-10,3,$this->posxdesc,$curY,0,1);
+					pdf_writelinedesc($pdf,$object,$i,$outputlangs,$this->posxqtyordered-10,3,$this->posxdesc,$curY,$hideref,$hidedesc);
 
 					$nexY = $pdf->GetY();
 					$pageposafter=$pdf->getPage();
