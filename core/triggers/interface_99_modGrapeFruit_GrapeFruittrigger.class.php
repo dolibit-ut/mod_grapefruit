@@ -259,9 +259,9 @@ class InterfaceGrapeFruittrigger
         	// classify supplier order delivery status
         	dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
-        	if (! empty($conf->commande->enabled) && ! empty($conf->fournisseur->enabled) && ! empty($conf->global->WORKFLOW_SUPPLIER_ORDER_CLASSIFY_RECEIPT_ORDER))
+        	if (! empty($conf->commande->enabled) && ! empty($conf->fournisseur->enabled) && ! empty($conf->global->GRAPEFRUIT_SUPPLIER_ORDER_CLASSIFY_RECEIPT_ORDER))
         	{
-        		require_once '../class/supplier.commande.dispatch.class.php';
+        		dol_include_once('/grapefruit/class/supplier.commande.dispatch.class.php');
 
         		$qtydelivered=array();
         		$qtywished=array();

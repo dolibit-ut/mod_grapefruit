@@ -234,6 +234,21 @@ print '<td align="right" width="300">';
 echo ajax_constantonoff('GRAPEFRUIT_FORCE_VAR_HIDEREF_ON_SUPPLIER_ORDER');
 print '</td></tr>';
 
+if (! empty($conf->fournisseur->enabled) && ! empty($conf->commande->enabled) && ! empty($conf->stock->enabled) && ! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER)) {
+
+	$var = ! $var;
+	print '<tr ' . $bc[$var] . '>';
+	print '<td>' . $langs->trans("set_GRAPEFRUIT_SUPPLIER_ORDER_CLASSIFY_RECEIPT_ORDER") . '</td>';
+	print '<td align="center" width="20">&nbsp;</td>';
+	print '<td align="right" width="300">';
+	print '<form method="POST" action="' . $_SERVER['PHP_SELF'] . '">';
+	print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
+	print '<input type="hidden" name="action" value="set_GRAPEFRUIT_SUPPLIER_ORDER_CLASSIFY_RECEIPT_ORDER">';
+	echo ajax_constantonoff('GRAPEFRUIT_SUPPLIER_ORDER_CLASSIFY_RECEIPT_ORDER');
+	print '</form>';
+	print '</td></tr>';
+}
+
 print '<tr class="liste_titre">';
 print '<td>' . $langs->trans("CustomerOrder") . '</td>' . "\n";
 print '<td align="center" width="20">&nbsp;</td>';
@@ -390,25 +405,6 @@ if ($conf->agefodd->enabled) {
 	print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
 	print '<input type="hidden" name="action" value="set_GRAPEFRUIT_LINK_INVOICE_TO_SESSION_IF_PROPAL_IS">';
 	echo ajax_constantonoff('GRAPEFRUIT_LINK_INVOICE_TO_SESSION_IF_PROPAL_IS');
-	print '</form>';
-	print '</td></tr>';
-}
-
-if (! empty($conf->fournisseur->enabled) && ! empty($conf->commande->enabled) && ! empty($conf->stock->enabled) && ! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER)) {
-	print '<tr class="liste_titre">';
-	print '<td>' . $langs->trans("Agefodd") . '</td>' . "\n";
-	print '<td align="center" width="20">&nbsp;</td>';
-	print '<td align="center" width="100">' . $langs->trans("Value") . '</td>' . "\n";
-
-	$var = ! $var;
-	print '<tr ' . $bc[$var] . '>';
-	print '<td>' . $langs->trans("set_SUPPLIER_ORDER_CLASSIFY_RECEIPT_ORDER") . '</td>';
-	print '<td align="center" width="20">&nbsp;</td>';
-	print '<td align="right" width="300">';
-	print '<form method="POST" action="' . $_SERVER['PHP_SELF'] . '">';
-	print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
-	print '<input type="hidden" name="action" value="set_SUPPLIER_ORDER_CLASSIFY_RECEIPT_ORDER">';
-	echo ajax_constantonoff('SUPPLIER_ORDER_CLASSIFY_RECEIPT_ORDER');
 	print '</form>';
 	print '</td></tr>';
 }
