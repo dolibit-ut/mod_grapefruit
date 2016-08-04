@@ -34,8 +34,13 @@ require_once '../lib/grapefruit.lib.php';
 
 // Translations
 $langs->load("grapefruit@grapefruit");
-$langs->load("contract");
+$langs->load("contracts");
 $langs->load("fournisseur");
+$langs->load("orders");
+$langs->load("sendings");
+$langs->load("bills");
+$langs->load("projects");
+$langs->load("propal");
 
 // Access control
 if (! $user->admin) {
@@ -168,7 +173,7 @@ if (! empty($conf->multicompany->enabled)) {
 }
 
 print '<tr class="liste_titre">';
-print '<td>' . $langs->trans("Propal") . '</td>' . "\n";
+print '<td>' . $langs->trans("Proposal") . '</td>' . "\n";
 print '<td align="center" width="20">&nbsp;</td>';
 print '<td align="center" width="100">' . $langs->trans("Value") . '</td>' . "\n";
 
@@ -194,6 +199,18 @@ print '<form method="POST" action="' . $_SERVER['PHP_SELF'] . '">';
 print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
 print '<input type="hidden" name="action" value="set_GRAPEFRUIT_LINK_PROPAL_2_PROJECT">';
 echo ajax_constantonoff('GRAPEFRUIT_LINK_PROPAL_2_PROJECT');
+print '</form>';
+print '</td></tr>';
+
+$var = ! $var;
+print '<tr ' . $bc[$var] . '>';
+print '<td>' . $langs->trans("set_GRAPEFRUIT_INVOICE_CLASSIFY_BILLED_PROPAL") . '</td>';
+print '<td align="center" width="20">&nbsp;</td>';
+print '<td align="right" width="300">';
+print '<form method="POST" action="' . $_SERVER['PHP_SELF'] . '">';
+print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
+print '<input type="hidden" name="action" value="set_GRAPEFRUIT_INVOICE_CLASSIFY_BILLED_PROPAL">';
+echo ajax_constantonoff('GRAPEFRUIT_INVOICE_CLASSIFY_BILLED_PROPAL');
 print '</form>';
 print '</td></tr>';
 
@@ -277,7 +294,7 @@ print '</form>';
 print '</td></tr>';
 
 print '<tr class="liste_titre">';
-print '<td>' . $langs->trans("Shipping") . '</td>' . "\n";
+print '<td>' . $langs->trans("Sending") . '</td>' . "\n";
 print '<td align="center" width="20">&nbsp;</td>';
 print '<td align="center" width="100">' . $langs->trans("Value") . '</td>' . "\n";
 $var = ! $var;

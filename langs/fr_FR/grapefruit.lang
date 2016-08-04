@@ -41,6 +41,7 @@ set_GRAPEFRUIT_DISALLOW_SAME_REF_MULTICOMPANY=Empêcher un projet d'avoir la mê
 DuplicateProjectRef=Référence de projet déjà utilisée
 ProjectDate=Date projet
 set_GRAPEFRUIT_SUPPLIER_ORDER_CLASSIFY_RECEIPT_ORDER=Calcul le status de la commande fournisseur sur ventilation manuel
+set_GRAPEFRUIT_INVOICE_CLASSIFY_BILLED_PROPAL=Classer facturé une proposition commerciale si la facture associées est validé
 
 # Models
 DocumentModelDorade=Modèle d'expédition chiffré

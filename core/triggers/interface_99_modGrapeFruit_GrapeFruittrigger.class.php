@@ -205,6 +205,18 @@ class InterfaceGrapeFruittrigger
 					}
 				}
 			}
+
+			if (! empty($conf->propal->enabled) && ! empty($conf->global->GRAPEFRUIT_INVOICE_CLASSIFY_BILLED_PROPAL))
+			{
+				$object->fetchObjectLinked('','propal',$object->id,$object->element);
+				if (! empty($object->linkedObjects))
+				{
+					foreach($object->linkedObjects['propal'] as $element)
+					{
+						$ret=$element->classifyBilled($user);
+					}
+				}
+			}
 		} elseif ($action === 'PROJECT_CREATE') {
 			if (! TGrappeFruit::checkNoDuplicateRef($object))
 				return - 1;
@@ -291,22 +303,20 @@ class InterfaceGrapeFruittrigger
 							$ret=$object->setStatus($user,5);
 							if ($ret<0) {
 								$this->error=$object->error; $this->errors=$object->errors;
+								return $ret;
 							}
 						} else {
 							//Diff => received partially
 							$ret=$object->setStatus($user,4);
 							if ($ret<0) {
 								$this->error=$object->error; $this->errors=$object->errors;
+								return $ret;
 							}
 						}
 					}
         		}
-
-        		return $ret;
         	}
         }
-
-
 
 		/*
 		 if ($action === 'USER_LOGIN') {
