@@ -169,6 +169,18 @@ echo ajax_constantonoff('GRAPEFRUIT_ADD_PROJECT_TO_PDF');
 print '</form>';
 print '</td></tr>';
 
+$var=!$var;
+print '<tr '.$bc[$var].'>';
+print '<td>'.$langs->trans("set_GRAPEFRUIT_PROJECT_AUTO_WIN").'</td>';
+print '<td align="center" width="20">&nbsp;</td>';
+print '<td align="right" width="300">';
+print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="action" value="set_GRAPEFRUIT_PROJECT_AUTO_WIN">';
+echo ajax_constantonoff('GRAPEFRUIT_PROJECT_AUTO_WIN');
+print '</form>';
+print '</td></tr>';
+
 if(!empty($conf->multicompany->enabled)) {
 	$var=!$var;
 	print '<tr '.$bc[$var].'>';

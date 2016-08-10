@@ -107,6 +107,7 @@ class InterfaceGrapeFruittrigger
 	 * @return int <0 if KO, 0 if no triggered ran, >0 if OK
 	 */
 	public function run_trigger($action, &$object, &$user, &$langs, &$conf) {
+		global $user,$db;
 		dol_include_once('/grapefruit/class/grapefruit.class.php');
 		$langs->load('grapefruit@grapefruit');
 		
@@ -256,6 +257,26 @@ class InterfaceGrapeFruittrigger
 			}
 		 	dol_syslog("Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id);
 		 }
+		
+		//Passage d'une opportunité au statut gagné dès son affectation à un devis ou une commande
+		
+		if($action === 'PROPAL_CREATE' || $action === 'ORDER_CREATE'){
+			
+			if($conf->global->GRAPEFRUIT_PROJECT_AUTO_WIN){
+				
+				if($object->fk_project){
+					$projet = new Project($db);
+					$projet->fetch($object->fk_project);
+					
+					if($projet->opp_status != 6){
+						
+						$projet->opp_status = 6;
+						$projet->update($user);
+					}
+				}
+			}
+			
+		}
 		
 		/*
 		 if ($action === 'USER_LOGIN') {
