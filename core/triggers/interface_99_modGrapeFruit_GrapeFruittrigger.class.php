@@ -107,6 +107,7 @@ class InterfaceGrapeFruittrigger
 	 * @return int <0 if KO, 0 if no triggered ran, >0 if OK
 	 */
 	public function run_trigger($action, &$object, &$user, &$langs, &$conf) {
+		global $user, $db;
 		dol_include_once('/grapefruit/class/grapefruit.class.php');
 		$langs->load('grapefruit@grapefruit');
 
