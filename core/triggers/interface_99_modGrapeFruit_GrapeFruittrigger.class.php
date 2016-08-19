@@ -291,10 +291,14 @@ class InterfaceGrapeFruittrigger
 					if (is_array($supplierorderdispatch->lines) && count($supplierorderdispatch->lines)>0) {
 						//Build array with quantity deliverd by product
 						foreach($supplierorderdispatch->lines as $line) {
-							$qtydelivered[$line->fk_product]+=$line->qty;
+							if (!empty($line->fk_product)) {
+								$qtydelivered[$line->fk_product]+=$line->qty;
+							}
 						}
 						foreach($object->lines as $line) {
-							$qtywished[$line->fk_product]+=$line->qty;
+							if (!empty($line->fk_product)) {
+								$qtywished[$line->fk_product]+=$line->qty;
+							}
 						}
 						//Compare array
 						$diff_array=array_diff_assoc($qtydelivered,$qtywished);
