@@ -477,15 +477,19 @@ class TGrappeFruit
 		
 		// Rangement des quantités dans la commande par produit, uniquement les produits avec un fk_product
 		$TOrderProductQty = array();
-		foreach($order->lines as $order_line) {
-			if($order_line->product_type == 0) $TOrderProductQty[$order_line->fk_product] += $order_line->qty;
+		if(!empty($order->lines)) {
+			foreach($order->lines as $order_line) {
+				if($order_line->product_type == 0) $TOrderProductQty[$order_line->fk_product] += $order_line->qty;
+			}
 		}
 		
 		// Rangement des quantités dans l'expédition par produit
 		$TShippingProductQty = array();
 		foreach($TShipping as $shipping) {
-			foreach($shipping->lines as $shipping_line) {
-				$TShippingProductQty[$shipping_line->fk_product] += $shipping_line->qty;
+			if(!empty($shipping->lines)) {
+				foreach($shipping->lines as $shipping_line) {
+					$TShippingProductQty[$shipping_line->fk_product] += $shipping_line->qty;
+				}
 			}
 		}
 		
