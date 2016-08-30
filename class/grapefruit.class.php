@@ -459,4 +459,45 @@ class TGrappeFruit
 			}
 		}
 	}
+	
+	/**
+	 * @param $object : object expédition
+	 */
+	static function setOrderShippedIfAllProductShipped(&$object) {
+		
+		// Récupération de la commande d'origine
+		$object->fetchObjectLinked();
+		$TOriginOrder = array_values($object->linkedObjects['commande']);
+		$order = $TOriginOrder[0];
+		if(empty($order)) return 0; 
+		
+		// On refait la fonction dans l'autre sens car la commande peut avoir été expédiée en plusieurs fois
+		$order->fetchObjectLinked();
+		$TShipping = array_values($order->linkedObjects['shipping']);
+		
+		// Rangement des quantités dans la commande par produit, uniquement les produits avec un fk_product
+		$TOrderProductQty = array();
+		foreach($order->lines as $order_line) {
+			if($order_line->product_type == 0) $TOrderProductQty[$order_line->fk_product] += $order_line->qty;
+		}
+		
+		// Rangement des quantités dans l'expédition par produit
+		$TShippingProductQty = array();
+		foreach($TShipping as $shipping) {
+			foreach($shipping->lines as $shipping_line) {
+				$TShippingProductQty[$shipping_line->fk_product] += $shipping_line->qty;
+			}
+		}
+		
+		if(count($TOrderProductQty) != count($TShippingProductQty)) return 0;
+		
+		foreach($TShippingProductQty as $fk_product=>$qty) {
+			if($qty < $TOrderProductQty[$fk_product]) return 0;
+		}
+
+		// Si on a passé le test des quantités sans problèmes, on passe la commande au statut "Livrée"
+		if($order->setStatut(3) > 0) setEventMessage('Commande '.$order->getNomUrl().' passée au statut "livrée"');
+		
+	}
+	
 }
