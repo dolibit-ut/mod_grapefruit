@@ -321,7 +321,11 @@ class InterfaceGrapeFruittrigger
 					}
         		}
         	}
-        }
+        } elseif ($action === 'SHIPPING_VALIDATE') {
+        	
+			if(!empty($conf->global->GRAPEFRUIT_SET_ORDER_SHIPPED_IF_ALL_PRODUCT_SHIPPED)) TGrappeFruit::setOrderShippedIfAllProductShipped($object);
+			
+		} 
 		
 		//Passage d'une opportunité au statut gagné dès son affectation à un devis ou une commande
 		
@@ -825,10 +829,6 @@ class InterfaceGrapeFruittrigger
 		 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
 		 );
 		 } elseif ($action === 'SHIPPING_MODIFY') {
-		 dol_syslog(
-		 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
-		 );
-		 } elseif ($action === 'SHIPPING_VALIDATE') {
 		 dol_syslog(
 		 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
 		 );
