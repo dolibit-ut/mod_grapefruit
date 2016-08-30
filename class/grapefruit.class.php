@@ -503,5 +503,13 @@ class TGrappeFruit
 		if($order->setStatut(3) > 0) setEventMessage('Commande '.$order->getNomUrl().' passée au statut "livrée"');
 		
 	}
+
+	function orderSupplierOrder(&$object, $fk_status) {
+		
+		global $user;
+		
+		$object->commande($user, time(), $fk_status);
+		
+	}
 	
 }

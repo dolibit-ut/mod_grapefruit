@@ -325,7 +325,11 @@ class InterfaceGrapeFruittrigger
         	
 			if(!empty($conf->global->GRAPEFRUIT_SET_ORDER_SHIPPED_IF_ALL_PRODUCT_SHIPPED)) TGrappeFruit::setOrderShippedIfAllProductShipped($object);
 			
-		} 
+		} elseif ($action === 'ORDER_SUPPLIER_VALIDATE') {
+			
+			if($conf->global->GRAPEFRUIT_AUTO_ORDER_ON_SUPPLIERORDER_VALIDATION_WITH_METHOD > 0) TGrappeFruit::orderSupplierOrder($object, $conf->global->GRAPEFRUIT_AUTO_ORDER_ON_SUPPLIERORDER_VALIDATION_WITH_METHOD);
+			
+		}
 		
 		//Passage d'une opportunité au statut gagné dès son affectation à un devis ou une commande
 		
