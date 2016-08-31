@@ -504,11 +504,11 @@ class TGrappeFruit
 		
 	}
 
-	function orderSupplierOrder(&$object, $fk_status) {
+	function orderSupplierOrder(&$object, $methode_id) {
 		
 		global $user;
 		
-		$object->commande($user, time(), $fk_status);
+		$object->commande($user, time(), $methode_id);
 		
 	}
 	
