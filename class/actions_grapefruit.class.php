@@ -79,7 +79,7 @@ class ActionsGrapeFruit
 
 	function formObjectOptions($parameters, &$object, &$action, $hookmanager)
 	{
-		global $conf;
+		global $conf, $langs;
 		//var_dump($action, $parameters);exit;
 		//Context : frm creation propal
 		
@@ -108,18 +108,44 @@ class ActionsGrapeFruit
 			<?php
 		}
 		
-		if ($parameters['currentcontext'] === 'propalcard' && $action === 'create') 
+		if ($parameters['currentcontext'] === 'propalcard') 
 		{
-			if ($conf->grapefruit->enabled && $conf->global->GRAPEFRUIT_PROPAL_DEFAULT_BANK_ACOUNT > 0)
-			{
+			if($action === 'create') {
+				
+				if ($conf->grapefruit->enabled && $conf->global->GRAPEFRUIT_PROPAL_DEFAULT_BANK_ACOUNT > 0)
+				{
+					?>
+					<script type="text/javascript">
+						$(function() {
+							$("select[name=fk_account] option[value=<?php echo $conf->global->GRAPEFRUIT_PROPAL_DEFAULT_BANK_ACOUNT; ?>]").attr('selected', true);
+						});
+					</script>
+					<?php
+				}
+				
+			} elseif(!empty($conf->global->GRAPEFRUIT_ALLOW_CREATE_ORDER_AND_BILL_ON_UNSIGNED_PROPAL) && $object->statut == 1) {
+				
 				?>
-				<script type="text/javascript">
-					$(function() {
-						$("select[name=fk_account] option[value=<?php echo $conf->global->GRAPEFRUIT_PROPAL_DEFAULT_BANK_ACOUNT; ?>]").attr('selected', true);
-					});
-				</script>
+					<script type="text/javascript">
+						$(document).ready(function() {
+							
+							var bt_cmd = $('<a class="butAction" href="<?php echo dol_buildpath('/commande/card.php', 2); ?>?action=create&amp;origin=<?php echo $object->element; ?>&amp;originid=<?php echo $object->id; ?>&amp;socid=<?php echo $object->socid; ?>"><?php echo $langs->trans('AddOrder'); ?></a>');
+							var bt_bill = $('<a class="butAction" href="<?php echo dol_buildpath('/compta/facture.php', 2); ?>?action=create&amp;origin=<?php echo $object->element; ?>&amp;originid=<?php echo $object->id; ?>&amp;socid=<?php echo $object->socid; ?>"><?php echo $langs->trans('AddBill'); ?></a>');
+							
+							if ($('div.tabsAction a.butAction:contains("<?php print $langs->trans('SendByMail'); ?>")').length > 0) {
+								$('div.tabsAction a.butAction:contains("<?php print $langs->trans('SendByMail'); ?>")').after(bt_bill);
+								$('div.tabsAction a.butAction:contains("<?php print $langs->trans('SendByMail'); ?>")').after(bt_cmd);
+							} else {
+								$('div.tabsAction').append(bt_bill);
+								$('div.tabsAction').append(bt_cmd);
+							}
+							
+						});
+					</script>
 				<?php
+				
 			}
+			
 		}
 		
 		elseif ($parameters['currentcontext'] == 'thirdpartycard')

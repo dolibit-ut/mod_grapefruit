@@ -44,6 +44,7 @@ set_GRAPEFRUIT_SUPPLIER_ORDER_CLASSIFY_RECEIPT_ORDER=Calcul le status de la comm
 set_GRAPEFRUIT_INVOICE_CLASSIFY_BILLED_PROPAL=Classer facturé une proposition commerciale si la facture associées est validé
 set_GRAPEFRUIT_PROJECT_AUTO_WIN=Passer automatiquement un projet/opportunité au satut gagné lors de l'affectation à un devis ou une commande
 set_GRAPEFRUIT_SET_ORDER_SHIPPED_IF_ALL_PRODUCT_SHIPPED=Classer la commande d'origine au statut "livrée" sur la validation d'une expédition si tous les produits ont été envoyés
+set_GRAPEFRUIT_ALLOW_CREATE_ORDER_AND_BILL_ON_UNSIGNED_PROPAL=Autoriser la création d'une commande ou facture sur un devis au statut "validé" (ce dernier sera classé "signé" lors de la validation du premier document de destination) 
 
 # Models
 DocumentModelDorade=Modèle d'expédition chiffré
