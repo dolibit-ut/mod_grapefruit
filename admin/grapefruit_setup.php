@@ -31,6 +31,8 @@ if (! $res) {
 // Libraries
 require_once DOL_DOCUMENT_ROOT . "/core/lib/admin.lib.php";
 require_once '../lib/grapefruit.lib.php';
+dol_include_once('/product/class/html.formproduct.class.php');
+dol_include_once('/core/class/html.formorder.class.php');
 
 // Translations
 $langs->load("grapefruit@grapefruit");
@@ -290,6 +292,20 @@ if (! empty($conf->fournisseur->enabled) && ! empty($conf->commande->enabled) &&
 	print '</td></tr>';
 }
 
+$formorder = new FormOrder($db);
+$var = ! $var;
+print '<tr ' . $bc[$var] . '>';
+print '<td>' . $langs->trans("set_GRAPEFRUIT_AUTO_ORDER_ON_SUPPLIERORDER_VALIDATION_WITH_METHOD") . '</td>';
+print '<td align="center" width="20">&nbsp;</td>';
+print '<td align="right" width="300">';
+print '<form method="POST" action="' . $_SERVER['PHP_SELF'] . '">';
+print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '" />';
+print '<input type="hidden" name="action" value="set_GRAPEFRUIT_AUTO_ORDER_ON_SUPPLIERORDER_VALIDATION_WITH_METHOD" />';
+$formorder->selectInputMethod($conf->global->GRAPEFRUIT_AUTO_ORDER_ON_SUPPLIERORDER_VALIDATION_WITH_METHOD, "GRAPEFRUIT_AUTO_ORDER_ON_SUPPLIERORDER_VALIDATION_WITH_METHOD", 1);
+print '<input type="submit" class="button" value="' . $langs->trans("Modify") . '">';
+print '</form>';
+print '</td></tr>';
+
 print '<tr class="liste_titre">';
 print '<td>' . $langs->trans("CustomerOrder") . '</td>' . "\n";
 print '<td align="center" width="20">&nbsp;</td>';
@@ -333,7 +349,6 @@ echo ajax_constantonoff('GRAPEFRUIT_SHIPPING_CREATE_FROM_ORDER_WHERE_BILL_PAID')
 print '</form>';
 print '</td></tr>';
 
-dol_include_once('/product/class/html.formproduct.class.php');
 $formProduct = new FormProduct($db);
 $var = ! $var;
 print '<tr ' . $bc[$var] . '>';

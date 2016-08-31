@@ -504,6 +504,14 @@ class TGrappeFruit
 		
 	}
 
+	function orderSupplierOrder(&$object, $methode_id) {
+		
+		global $user;
+		
+		$object->commande($user, time(), $methode_id);
+		
+	}
+
 	static function clotureOriginPropal(&$object) {
 		
 		global $user;
