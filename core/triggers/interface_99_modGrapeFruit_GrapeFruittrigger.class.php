@@ -130,6 +130,8 @@ class InterfaceGrapeFruittrigger
 			TGrappeFruit::checkContractFourn($object);
 		} elseif ($action === 'ORDER_VALIDATE') {
 			TGrappeFruit::createBillOnOrderValidate($object);
+			
+			if(!empty($conf->global->GRAPEFRUIT_ALLOW_CREATE_ORDER_AND_BILL_ON_UNSIGNED_PROPAL)) TGrappeFruit::clotureOriginPropal($object);
 
 			dol_syslog("Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id);
 		} elseif ($action === 'BILL_CREATE') {
