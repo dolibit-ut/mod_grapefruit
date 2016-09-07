@@ -45,6 +45,7 @@ set_GRAPEFRUIT_INVOICE_CLASSIFY_BILLED_PROPAL=Classer facturé une proposition c
 set_GRAPEFRUIT_PROJECT_AUTO_WIN=Passer automatiquement un projet/opportunité au satut gagné lors de l'affectation à un devis ou une commande
 set_GRAPEFRUIT_SET_ORDER_SHIPPED_IF_ALL_PRODUCT_SHIPPED=Classer la commande d'origine au statut "livrée" sur la validation d'une expédition si tous les produits ont été envoyés
 set_GRAPEFRUIT_AUTO_ORDER_ON_SUPPLIERORDER_VALIDATION_WITH_METHOD=Passer automatiquement la commande chez le fournisseur lors de sa validation/approbation de la méthode suivante
+set_GRAPEFRUIT_ORDER_CLASSIFY_SHIPPED_SHIPPING=Passer la commande client au satus livrée si les quantité expedier sont égale aux quantitées commandées (à la validation d'une expedition) (intégré dans le module workflow en 5.0)
 
 # Models
 DocumentModelDorade=Modèle d'expédition chiffré
