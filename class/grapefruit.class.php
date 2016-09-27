@@ -511,5 +511,21 @@ class TGrappeFruit
 		$object->commande($user, time(), $methode_id);
 		
 	}
+
+	static function clotureOriginPropal(&$object) {
+		
+		global $user;
+		
+		$object->fetchObjectLinked();
+		$TOriginPropal = array_values($object->linkedObjects['propal']);
+		$propal = $TOriginPropal[0];
+		
+		if(empty($propal)) return 0;
+		
+		if($propal->statut < 2) {
+			if($propal->cloture($user, 2, '') > 0) setEventMessage('Proposition '.$propal->getNomUrl().' clôturée au statut "Signée" automatiquement');
+		}
+		
+	}
 	
 }
