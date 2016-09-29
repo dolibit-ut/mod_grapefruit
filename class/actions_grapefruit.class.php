@@ -255,9 +255,13 @@ class ActionsGrapeFruit
 	{
 		global $conf,$user,$langs,$db,$mysoc;
 		
-		if ($parameters['currentcontext'] === 'pdfgeneration') 
+		// Sur version 5.0 le $parameters['currentcontext'] == ordersuppliercard et le "pdfgeneration" est dans $parameters['context']
+		$TContext = explode(':', $parameters['context']);
+		
+		if ($parameters['currentcontext'] === 'pdfgeneration' || in_array('pdfgeneration', $TContext)) 
 		{
 			$base_object = $parameters['object'];
+			
 			if(isset($base_object) && in_array($base_object->element, array('order_supplier','commande')))
 			{
 				require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
@@ -266,6 +270,7 @@ class ActionsGrapeFruit
 				$usecommande=$usecontact=false;
 				// Load des contacts livraison
 				$arrayidcontact=$base_object->getIdContact('external','SHIPPING');
+				
 				if (count($arrayidcontact) > 0)
 				{
 					$usecontact=true;
