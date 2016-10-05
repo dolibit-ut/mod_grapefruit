@@ -5,6 +5,9 @@ class TGrappeFruit
 	static function checkNoDuplicateRef(&$object) {
 		global $conf, $langs, $db;
 		
+		if (empty($conf->global->GRAPEFRUIT_DISALLOW_SAME_REF_MULTICOMPANY))
+			return true;
+		
 		$res = $db->query("SELECT rowid FROM ".MAIN_DB_PREFIX."projet WHERE ref = '".$object->ref."' AND rowid!=".(int)$object->id." LIMIT 1");
 		if($obj = $db->fetch_object($res)) {
 			setEventMessage($langs->trans('DuplicateProjectRef'), 'errors');
