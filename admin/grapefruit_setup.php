@@ -538,6 +538,24 @@ echo ajax_constantonoff('MAIN_ADD_EVENT_ON_ELEMENT_CARD');
 print '</form>';
 print '</td></tr>';
 
+print '<tr class="liste_titre">';
+print '<td>' . $langs->trans("Global") . '</td>' . "\n";
+print '<td align="center" width="20">&nbsp;</td>';
+print '<td align="center" width="100">' . $langs->trans("Value") . '</td>' . "\n";
+
+$var = ! $var;
+print '<tr ' . $bc[$var] . '>';
+print '<td>' . $langs->trans("set_GRAPEFRUIT_BYPASS_CONFIRM_ACTIONS") . '</td>';
+print '<td align="center" width="20">&nbsp;</td>';
+print '<td align="right" width="300">';
+print '<form method="POST" action="' . $_SERVER['PHP_SELF'] . '">';
+print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
+print '<input type="hidden" name="action" value="set_GRAPEFRUIT_BYPASS_CONFIRM_ACTIONS">';
+print '<input type="text" name="GRAPEFRUIT_BYPASS_CONFIRM_ACTIONS" value="' . $conf->global->GRAPEFRUIT_BYPASS_CONFIRM_ACTIONS . '" style="width:300px;max-width:100%;" />';
+print '<input type="submit" class="button" value="' . $langs->trans("Modify") . '">';
+print '</form>';
+print '</td></tr>';
+
 print '</table>';
 
 llxFooter();

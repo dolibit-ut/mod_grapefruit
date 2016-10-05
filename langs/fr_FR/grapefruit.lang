@@ -49,3 +49,6 @@ set_GRAPEFRUIT_ALLOW_CREATE_ORDER_AND_BILL_ON_UNSIGNED_PROPAL=Autoriser la créa
 
 # Models
 DocumentModelDorade=Modèle d'expédition chiffré
+
+# Global
+set_GRAPEFRUIT_BYPASS_CONFIRM_ACTIONS=Ne pas demander de confirmation sur les actions

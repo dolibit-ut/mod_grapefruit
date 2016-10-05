@@ -63,12 +63,26 @@ class ActionsGrapeFruit
 	{
 		global $conf;
 		
+		$TContext = explode(':', $parameters['context']);
+		
 		if ($parameters['currentcontext'] == 'ordersuppliercard')
 		{
 			if ($action == 'builddoc' && !empty($conf->global->GRAPEFRUIT_FORCE_VAR_HIDEREF_ON_SUPPLIER_ORDER))
 			{
 				global $hideref;
 				$hideref = 0;
+			}
+		}
+		
+		// Bypass des confirmation
+		if (in_array('globalcard', $TContext))
+		{
+			$actionList = explode(',', $conf->global->GRAPEFRUIT_BYPASS_CONFIRM_ACTIONS);
+			if (in_array($action, $actionList))
+			{
+				global $confirm;
+				$confirm = 'yes';
+				$action = 'confirm_'.$action;
 			}
 		}
 		
