@@ -531,4 +531,27 @@ class TGrappeFruit
 		
 	}
 	
+	function createFactureFromObject(&$object) {
+		
+		global $db, $conf;
+		
+		dol_include_once('/compta/facture/class/facture.class.php');
+		
+		$dateinvoice = dol_mktime(0, 0, 0, date('m'), date('d'), date('Y'));
+		
+		$f = new Facture($db);
+		
+		$f->socid				= $object->socid;
+		$f->type				= Facture::TYPE_STANDARD;
+		$f->number				= $_POST['facnumber'];
+		$f->date				= $dateinvoice;
+		$f->note_public			= $object->note_public;
+		$f->note_private		= $object->note_private;
+		$f->ref_client			= $object->ref_client;
+		$f->fk_project			= $object->fk_project;
+		$f->cond_reglement_id	= $object->cond_reglement_id;
+		$f->mode_reglement_id	= $object->mode_reglement_id;
+		
+	}
+	
 }

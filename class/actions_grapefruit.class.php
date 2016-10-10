@@ -65,6 +65,13 @@ class ActionsGrapeFruit
 		
 		$TContext = explode(':', $parameters['context']);
 		
+		$actionATM = GETPOST('actionATM');
+		if ($parameters['currentcontext'] == 'ordercard' && $object->statut >= 1 && !empty($conf->global->GRAPEFRUIT_ALLOW_CREATE_BILL_EXPRESS))
+		{
+			if($actionATM === 'create_bill_express') {
+				
+			}
+		}
 		if ($parameters['currentcontext'] == 'ordersuppliercard')
 		{
 			if ($action == 'builddoc' && !empty($conf->global->GRAPEFRUIT_FORCE_VAR_HIDEREF_ON_SUPPLIER_ORDER))
@@ -174,6 +181,25 @@ class ActionsGrapeFruit
 				</script>
 				<?php	
 			}
+		}
+		
+		if ($parameters['currentcontext'] == 'ordercard' && $object->statut >= 1 && !empty($conf->global->GRAPEFRUIT_ALLOW_CREATE_BILL_EXPRESS))
+		{
+			?>
+			<script type="text/javascript">
+				var bt_create_fact_express = $('<a class="butAction" href="<?php echo dol_buildpath('/commande/card.php?actionATM=create_bill_express&id='.GETPOST('id'), 2); ?>"><?php echo $langs->trans('CreateBillExpress'); ?></a>');
+				$(document).ready(function() {
+					
+					if ($('div.tabsAction a.butAction:contains("<?php print $langs->trans('CreateBill'); ?>")').length > 0) {
+						
+						$('div.tabsAction a.butAction:contains("<?php print $langs->trans('CreateBill'); ?>")').after(bt_create_fact_express);
+					} else {
+						$('div.tabsAction').append(bt_create_fact_express);
+					}
+				});
+			</script>
+			<?php	
+			
 		}
 		
 		/*else if ($parameters['currentcontext'] === 'invoicecard' && $action === 'confirm_valid') { 
