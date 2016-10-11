@@ -61,14 +61,24 @@ class ActionsGrapeFruit
 	 */
 	function doActions($parameters, &$object, &$action, $hookmanager)
 	{
-		global $conf;
+		global $conf, $user;
+		
+		dol_include_once('/grapefruit/class/grapefruit.class.php');
 		
 		$TContext = explode(':', $parameters['context']);
 		
 		$actionATM = GETPOST('actionATM');
 		if ($parameters['currentcontext'] == 'ordercard' && $object->statut >= 1 && !empty($conf->global->GRAPEFRUIT_ALLOW_CREATE_BILL_EXPRESS))
 		{
-			if($actionATM === 'create_bill_express') {
+			if($actionATM === 'create_bill_express'
+				&& !empty($conf->global->GRAPEFRUIT_ALLOW_CREATE_BILL_EXPRESS)
+				&& $object->statut > Commande::STATUS_DRAFT
+				&& !$object->billed
+				&& !empty($conf->facture->enabled)
+				&& $user->rights->facture->creer
+				&& empty($conf->global->WORKFLOW_DISABLE_CREATE_INVOICE_FROM_ORDER)) {
+				
+				TGrappeFruit::createFactureFromObject($object);
 				
 			}
 		}
@@ -100,9 +110,12 @@ class ActionsGrapeFruit
 
 	function formObjectOptions($parameters, &$object, &$action, $hookmanager)
 	{
-		global $conf, $langs;
+		global $conf, $langs, $user;
 		//var_dump($action, $parameters);exit;
 		//Context : frm creation propal
+		
+		$langs->load('bills');
+		$langs->load('grapefruit@grapefruit');
 		
 		// Script pour gérer les champs obligatoires sur une fiche contact
 		if($parameters['currentcontext'] === 'contactcard' && !empty($conf->global->GRAPEFRUIT_CONTACT_FORCE_FIELDS) && ($action == 'edit' || $action == 'create')) {
@@ -183,23 +196,40 @@ class ActionsGrapeFruit
 			}
 		}
 		
-		if ($parameters['currentcontext'] == 'ordercard' && $object->statut >= 1 && !empty($conf->global->GRAPEFRUIT_ALLOW_CREATE_BILL_EXPRESS))
-		{
-			?>
-			<script type="text/javascript">
-				var bt_create_fact_express = $('<a class="butAction" href="<?php echo dol_buildpath('/commande/card.php?actionATM=create_bill_express&id='.GETPOST('id'), 2); ?>"><?php echo $langs->trans('CreateBillExpress'); ?></a>');
-				$(document).ready(function() {
-					
-					if ($('div.tabsAction a.butAction:contains("<?php print $langs->trans('CreateBill'); ?>")').length > 0) {
-						
-						$('div.tabsAction a.butAction:contains("<?php print $langs->trans('CreateBill'); ?>")').after(bt_create_fact_express);
-					} else {
-						$('div.tabsAction').append(bt_create_fact_express);
-					}
-				});
-			</script>
-			<?php	
+		if ($parameters['currentcontext'] == 'ordercard') {
 			
+			if(!empty($conf->global->GRAPEFRUIT_ALLOW_CREATE_BILL_EXPRESS)
+				&& $object->statut > Commande::STATUS_DRAFT
+				&& !$object->billed
+				&& !empty($conf->facture->enabled)
+				&& $user->rights->facture->creer
+				&& empty($conf->global->WORKFLOW_DISABLE_CREATE_INVOICE_FROM_ORDER)) {
+				
+				?>
+				
+				<script type="text/javascript">
+					var bt_create_fact_express = $('<a class="butAction" href="<?php echo dol_buildpath('/commande/card.php?actionATM=create_bill_express&id='.GETPOST('id'), 2); ?>"><?php echo $langs->trans('GrapefruitCreateBillExpress'); ?></a>');
+					$(document).ready(function() {
+						
+						if ($('div.tabsAction a.butAction:contains("<?php print $langs->transnoentities('CreateBill'); ?>")').length > 0) {
+							
+							$('div.tabsAction a.butAction:contains("<?php print $langs->transnoentities('CreateBill'); ?>")').after(bt_create_fact_express);
+						} else {
+							$('div.tabsAction').append(bt_create_fact_express);
+						}
+						
+						// Pour éviter le double clic
+						bt_create_fact_express.click(function() {
+							this.remove();
+						});
+						
+					});
+				</script>
+				
+				<?php	
+				
+			}
+		
 		}
 		
 		/*else if ($parameters['currentcontext'] === 'invoicecard' && $action === 'confirm_valid') { 

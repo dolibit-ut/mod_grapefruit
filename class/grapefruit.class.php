@@ -531,11 +531,13 @@ class TGrappeFruit
 		
 	}
 	
-	function createFactureFromObject(&$object) {
+	static function createFactureFromObject(&$object) {
 		
-		global $db, $conf;
+		global $db, $conf, $user, $langs;
 		
 		dol_include_once('/compta/facture/class/facture.class.php');
+		
+		$langs->load('grapefruit@grapefruit');
 		
 		$dateinvoice = dol_mktime(0, 0, 0, date('m'), date('d'), date('Y'));
 		
@@ -551,6 +553,113 @@ class TGrappeFruit
 		$f->fk_project			= $object->fk_project;
 		$f->cond_reglement_id	= $object->cond_reglement_id;
 		$f->mode_reglement_id	= $object->mode_reglement_id;
+		
+		$origin = 'commande';
+		$originid = $object->id;
+		$f->linked_objects[$origin] = $originid;
+		
+		$id = $f->create($user);
+		
+		$lines = $object->lines;
+		if (empty($lines) && method_exists($object, 'fetch_lines'))
+		{
+			$object->fetch_lines();
+			$lines = $object->lines;
+		}
+		
+		$fk_parent_line=0;
+		$num=count($lines);
+		for ($i=0;$i<$num;$i++)
+		{
+
+			$label=(! empty($lines[$i]->label)?$lines[$i]->label:'');
+			$desc=(! empty($lines[$i]->desc)?$lines[$i]->desc:$lines[$i]->libelle);
+			if ($f->situation_counter == 1) $lines[$i]->situation_percent =  0;
+
+			if ($lines[$i]->subprice < 0)
+			{
+				// Negative line, we create a discount line
+				$discount = new DiscountAbsolute($db);
+				$discount->fk_soc = $f->socid;
+				$discount->amount_ht = abs($lines[$i]->total_ht);
+				$discount->amount_tva = abs($lines[$i]->total_tva);
+				$discount->amount_ttc = abs($lines[$i]->total_ttc);
+				$discount->tva_tx = $lines[$i]->tva_tx;
+				$discount->fk_user = $user->id;
+				$discount->description = $desc;
+				$discountid = $discount->create($user);
+				if ($discountid > 0) {
+					$result = $f->insert_discount($discountid); // This include link_to_invoice
+				} else {
+					setEventMessages($discount->error, $discount->errors, 'errors');
+					$error ++;
+					break;
+				}
+			} else {
+				// Positive line
+				$product_type = ($lines[$i]->product_type ? $lines[$i]->product_type : 0);
+
+				// Date start
+				$date_start = false;
+				if ($lines[$i]->date_debut_prevue)
+					$date_start = $lines[$i]->date_debut_prevue;
+				if ($lines[$i]->date_debut_reel)
+					$date_start = $lines[$i]->date_debut_reel;
+				if ($lines[$i]->date_start)
+					$date_start = $lines[$i]->date_start;
+
+					// Date end
+				$date_end = false;
+				if ($lines[$i]->date_fin_prevue)
+					$date_end = $lines[$i]->date_fin_prevue;
+				if ($lines[$i]->date_fin_reel)
+					$date_end = $lines[$i]->date_fin_reel;
+				if ($lines[$i]->date_end)
+					$date_end = $lines[$i]->date_end;
+
+					// Reset fk_parent_line for no child products and special product
+				if (($lines[$i]->product_type != 9 && empty($lines[$i]->fk_parent_line)) || $lines[$i]->product_type == 9) {
+					$fk_parent_line = 0;
+				}
+
+				// Extrafields
+				if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && method_exists($lines[$i], 'fetch_optionals')) {
+					$lines[$i]->fetch_optionals($lines[$i]->rowid);
+					$array_options = $lines[$i]->array_options;
+				}
+
+				// View third's localtaxes for now
+				$localtax1_tx = get_localtax($lines[$i]->tva_tx, 1, $f->client);
+				$localtax2_tx = get_localtax($lines[$i]->tva_tx, 2, $f->client);
+
+				$result = $f->addline($desc, $lines[$i]->subprice, $lines[$i]->qty, $lines[$i]->tva_tx, $localtax1_tx, $localtax2_tx, $lines[$i]->fk_product, $lines[$i]->remise_percent, $date_start, $date_end, 0, $lines[$i]->info_bits, $lines[$i]->fk_remise_except, 'HT', 0, $product_type, $lines[$i]->rang, $lines[$i]->special_code, $f->origin, $lines[$i]->rowid, $fk_parent_line, $lines[$i]->fk_fournprice, $lines[$i]->pa_ht, $label, $array_options, $lines[$i]->situation_percent, $lines[$i]->fk_prev_id, $lines[$i]->fk_unit);
+
+				if ($result > 0) {
+					$lineid = $result;
+				} else {
+					$lineid = 0;
+					$error ++;
+					break;
+				}
+
+				// Defined the new fk_parent_line
+				if ($result > 0 && $lines[$i]->product_type == 9) {
+					$fk_parent_line = $result;
+				}
+			}
+		}
+
+		if(empty($error)) {
+			if($f->validate($user) > 0) {
+				
+				$object->classifyBilled();
+				
+				// Redirection vers écrand de paiement
+				setEventMessage($langs->trans('BillCreated'));
+				header('Location: '.dol_buildpath('/compta/paiement.php?action=create&facid='.$f->id, 1));
+				
+			}
+		}
 		
 	}
 	
