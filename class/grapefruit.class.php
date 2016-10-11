@@ -506,6 +506,15 @@ class TGrappeFruit
 		if($order->setStatut(3) > 0) setEventMessage('Commande '.$order->getNomUrl().' passée au statut "livrée"');
 		
 	}
+	
+	/**
+	 * @param $object : object facture
+	 */
+	static function setOrderBilledIfSameMontant(&$object) {
+		
+		
+		
+	}
 
 	function orderSupplierOrder(&$object, $methode_id) {
 		

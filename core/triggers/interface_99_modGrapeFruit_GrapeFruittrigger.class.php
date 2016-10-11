@@ -220,6 +220,13 @@ class InterfaceGrapeFruittrigger
 					}
 				}
 			}
+			
+			if(!empty($conf->global->GRAPEFRUIT_SET_ORDER_BILLED_IF_SAME_MONTANT)) {
+				
+				
+				
+			}
+			
 		} elseif ($action === 'PROJECT_CREATE') {
 			if (! TGrappeFruit::checkNoDuplicateRef($object))
 				return - 1;
