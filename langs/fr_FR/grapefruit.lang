@@ -23,7 +23,7 @@ set_GRAPEFRUIT_ORDER_CREATE_BILL_ON_VALIDATE=Créer une facture à partir de la 
 set_GRAPEFRUIT_SEND_BILL_BY_MAIL_ON_VALIDATE=Envoyer la facture par mail à la validation de cette dernière
 set_GRAPEFRUIT_SEND_BILL_BY_MAIL_ON_BILLED=Envoyer la facture par mail au paiement de cette dernière
 BillSendedByMailTo=Facture envoyée par mail à %s
-BillCreated=Facture créée
+BillCreated=Facture créée avec succès
 ShipingCreated=Expédition créée
 ModelRequire=Modèle de mail requis pour envoi automatique
 DefaultWarehouseRequired=Entrepôt requis pour la création de l'expédition
@@ -45,10 +45,14 @@ set_GRAPEFRUIT_INVOICE_CLASSIFY_BILLED_PROPAL=Classer facturé une proposition c
 set_GRAPEFRUIT_PROJECT_AUTO_WIN=Passer automatiquement un projet/opportunité au satut gagné lors de l'affectation à un devis ou une commande
 set_GRAPEFRUIT_SET_ORDER_SHIPPED_IF_ALL_PRODUCT_SHIPPED=Classer la commande d'origine au statut "livrée" sur la validation d'une expédition si tous les produits ont été envoyés
 set_GRAPEFRUIT_AUTO_ORDER_ON_SUPPLIERORDER_VALIDATION_WITH_METHOD=Passer automatiquement la commande chez le fournisseur lors de sa validation/approbation de la méthode suivante
-set_GRAPEFRUIT_ALLOW_CREATE_ORDER_AND_BILL_ON_UNSIGNED_PROPAL=Autoriser la création d'une commande ou facture sur un devis au statut "validé" (ce dernier sera classé "signé" automatiquement lors de la validation de la commande de destination) 
+set_GRAPEFRUIT_ALLOW_CREATE_ORDER_AND_BILL_ON_UNSIGNED_PROPAL=Autoriser la création d'une commande ou facture sur un devis au statut "validé" (ce dernier sera classé "signé" automatiquement lors de la validation de la commande de destination)
+set_GRAPEFRUIT_ALLOW_CREATE_BILL_EXPRESS=Autoriser la création express d'une facture depuis la fiche commande (création, validation de la facture, accès direct à l'écran de paiement et classement de la commande au statut "facturée") 
 
 # Models
 DocumentModelDorade=Modèle d'expédition chiffré
 
 # Global
 set_GRAPEFRUIT_BYPASS_CONFIRM_ACTIONS=Ne pas demander de confirmation sur les actions
+
+# Facture expres
+GrapefruitCreateBillExpress=Créer Facture Express

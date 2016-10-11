@@ -321,6 +321,7 @@ print '<input type="hidden" name="action" value="set_GRAPEFRUIT_ORDER_CONTACT_SH
 echo ajax_constantonoff('GRAPEFRUIT_ORDER_CONTACT_SHIP_ADDRESS');
 print '</form>';
 print '</td></tr>';
+
 $var = ! $var;
 print '<tr ' . $bc[$var] . '>';
 print '<td>' . $langs->trans("set_GRAPEFRUIT_ORDER_CREATE_BILL_ON_VALIDATE") . '</td>';
@@ -331,6 +332,14 @@ print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">'
 print '<input type="hidden" name="action" value="set_GRAPEFRUIT_ORDER_CREATE_BILL_ON_VALIDATE">';
 echo ajax_constantonoff('GRAPEFRUIT_ORDER_CREATE_BILL_ON_VALIDATE');
 print '</form>';
+print '</td></tr>';
+
+$var = ! $var;
+print '<tr ' . $bc[$var] . '>';
+print '<td>' . $langs->trans("set_GRAPEFRUIT_ALLOW_CREATE_BILL_EXPRESS") . '</td>';
+print '<td align="center" width="20">&nbsp;</td>';
+print '<td align="right" width="300">';
+echo ajax_constantonoff('GRAPEFRUIT_ALLOW_CREATE_BILL_EXPRESS');
 print '</td></tr>';
 
 print '<tr class="liste_titre">';

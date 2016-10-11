@@ -89,7 +89,7 @@ class modGrapeFruit extends DolibarrModules
 		//                        );
 		$this->module_parts = array(
 			'triggers' => 1
-			,'hooks' => array('contactcard', 'propalcard', 'suppliercard', 'pdfgeneration','invoicecard','ordersuppliercard', 'thirdpartycard', 'fullcalendardao','globalcard')
+			,'hooks' => array('contactcard', 'propalcard', 'suppliercard', 'pdfgeneration','invoicecard','ordercard', 'ordersuppliercard', 'thirdpartycard', 'fullcalendardao','globalcard')
 			,'models' => 1
 		);
 
