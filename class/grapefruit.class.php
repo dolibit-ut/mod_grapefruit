@@ -512,7 +512,24 @@ class TGrappeFruit
 	 */
 	static function setOrderBilledIfSameMontant(&$object) {
 		
+		// Récupération de la commande d'origine
+		$object->fetchObjectLinked();
+		$TOriginOrder = array_values($object->linkedObjects['commande']);
+		$order = $TOriginOrder[0];
+		if(empty($order)) return 0; 
 		
+		// On refait la fonction dans l'autre sens car la commande peut avoir été facturée en plusieurs fois
+		$order->fetchObjectLinked();
+		$TFact = array_values($order->linkedObjects['facture']);
+		
+		$total_ttc = 0;
+		foreach($TFact as $f) $total_ttc+=$f->total_ttc;
+		
+		// On compare les montants
+		if($total_ttc == $order->total_ttc) {
+			// On classe facturée la commande uniquement si elle ne l'est pas déjà (peut avoir été fait avant)
+			if(empty($order->billed) && $order->classifyBilled() > 0) setEventMessage('Commande '.$order->getNomUrl().' passée au statut "facturée"');
+		}
 		
 	}
 

@@ -223,7 +223,7 @@ class InterfaceGrapeFruittrigger
 			
 			if(!empty($conf->global->GRAPEFRUIT_SET_ORDER_BILLED_IF_SAME_MONTANT)) {
 				
-				
+				TGrappeFruit::setOrderBilledIfSameMontant($object);
 				
 			}
 			
