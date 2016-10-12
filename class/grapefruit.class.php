@@ -523,7 +523,9 @@ class TGrappeFruit
 		$TFact = array_values($order->linkedObjects['facture']);
 		
 		$total_ttc = 0;
-		foreach($TFact as $f) $total_ttc+=$f->total_ttc;
+		foreach($TFact as $f) {
+			if($f->statut > 0) $total_ttc+=$f->total_ttc;
+		}
 		
 		// On compare les montants
 		if($total_ttc == $order->total_ttc) {
