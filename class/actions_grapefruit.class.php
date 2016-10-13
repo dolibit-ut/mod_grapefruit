@@ -388,8 +388,16 @@ class ActionsGrapeFruit
 					
 					$carac_client=pdf_build_address($parameters['outputlangs'],$object->emetteur,$base_object->client,$base_object->contact,$usecontact,'target');
 					
+					/*echo '<pre>';
+					var_dump($base_object->contact,true);exit;*/
+					
+					if($conf->global->GRAPEFRUIT_SUPPLIER_CONTACT_SHIP_ADDRESS_SHOW_DETAILS){
+						
+						$carac_client .= 'email : '.$base_object->contact->email." \ntel : ".$base_object->contact->phone_pro;
+					}
+					
 					$newcontent = $parameters['outputlangs']->trans('DeliveryAddress').' :'."\n".'<strong>'.$carac_client_name.'</strong>'."\n".$carac_client;
-					if($usecommande)
+					if($usecommande && $conf->global->GRAPEFRUIT_SHOW_SUPPLIER_ORDER_REFS)
 					{
 						if(isset($ref_client))
 							$newcontent .= "\n"."<strong>".$parameters['outputlangs']->trans('RefOrder').' client : </strong>'.$ref_client;
