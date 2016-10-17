@@ -1,6 +1,8 @@
 Module104997Name = Pamplemousse
 Module104997Desc = Boîte à outil de workflow générique
 
+Permission1049970=Télécharger des documents dans la fiche utilisateur
+
 ATMAbout = Ce module a été développé par <a href="http://www.atm-consulting.fr" target="_blank">ATM Consulting</a><br>Vous pouvez retrouver la documentation sur notre <a href="http://wiki.atm-consulting.fr/index.php/Accueil" target="_blank">wiki</a><br><br>Pour toute question technique ou retour, contactez-nous sur <a href="mailto:support@atm-consulting.fr">support@atm-consulting.fr</a><br><br>Pour toute question commerciale, contactez-nous sur <a href="mailto:contact@atm-consulting.fr">contact@atm-consulting.fr</a> ou au +33 9 77 19 50 70<br><br>Retrouvez nos autres modules sur <a href="http://www.dolistore.com/search.php?orderby=position&orderway=desc&search_query=atm&submit_search=Rechercher" target="_blank">Dolistore</a>
 
 GrapeFruitSetup = Configuration du module GrapeFruit
@@ -54,6 +56,7 @@ DocumentModelDorade=Modèle d'expédition chiffré
 
 # Global
 set_GRAPEFRUIT_BYPASS_CONFIRM_ACTIONS=Ne pas demander de confirmation sur les actions
+set_GRAPEFRUIT_MANAGE_DOWNLOAD_OWN_DOC_USERS=Ajoute une permissions pour permettre aux utilisateurs de télécharger les documents dans l'onglet "Fichier joint" de leurs fiches utilisateurs (si il n'ont pas la permission de voir tout les utilisateurs)
 
 # Facture expres
 GrapefruitCreateBillExpress=Créer Facture Express

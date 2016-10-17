@@ -184,6 +184,13 @@ class modGrapeFruit extends DolibarrModules
 		// $this->rights[$r][5] = 'level2';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		// $r++;
 
+		$this->rights[$r][0] = $this->numero . $r;	// Permission id (must not be already used)
+		$this->rights[$r][1] = 'user download own docs';	// Permission label
+		$this->rights[$r][3] = 0; 					// Permission by default for new user (0/1)
+		$this->rights[$r][4] = 'user';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+		$this->rights[$r][5] = 'owndowload';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+		$r++;
+
 
 		// Main menu entries
 		$this->menu = array();			// List of menus to add
@@ -251,7 +258,7 @@ class modGrapeFruit extends DolibarrModules
 	function init($options='')
 	{
 		$sql = array();
-		
+
 		define('INC_FROM_DOLIBARR',true);
 
 		dol_include_once('/grapefruit/config.php');

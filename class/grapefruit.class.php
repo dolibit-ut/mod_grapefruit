@@ -1,35 +1,36 @@
 <?php
 class TGrappeFruit
 {
-	
+	public $error;
+
 	static function checkNoDuplicateRef(&$object) {
 		global $conf, $langs, $db;
-		
+
 		if (empty($conf->global->GRAPEFRUIT_DISALLOW_SAME_REF_MULTICOMPANY))
 			return true;
-		
+
 		$res = $db->query("SELECT rowid FROM ".MAIN_DB_PREFIX."projet WHERE ref = '".$object->ref."' AND rowid!=".(int)$object->id." LIMIT 1");
 		if($obj = $db->fetch_object($res)) {
 			setEventMessage($langs->trans('DuplicateProjectRef'), 'errors');
-		
+
 			return false;
-			
+
 		}
-		
+
 		return true;
-		
+
 	}
-	
+
 	/**
 	 *
 	 * @param unknown $object
 	 */
 	static function checkBudgetNotEmpty(&$object) {
 		global $conf, $langs;
-		
+
 		if (empty($conf->global->GRAPEFRUIT_BUDGET_NEEDED))
 			return true;
-		
+
 		if (empty($object->budget_amount)) {
 			setEventMessage($langs->trans('BudgetRequire'), 'errors');
 			return false;
@@ -37,7 +38,7 @@ class TGrappeFruit
 			return true;
 		}
 	}
-	
+
 	/**
 	 *
 	 * @param unknown $object
@@ -53,7 +54,7 @@ class TGrappeFruit
 			return true;
 		}
 	}
-	
+
 	/**
 	 *
 	 * @param unknown $object
@@ -62,68 +63,68 @@ class TGrappeFruit
 		global $conf, $langs, $db, $user;
 		if (empty($conf->global->GRAPEFRUIT_SHIPPING_CREATE_FROM_ORDER_WHERE_BILL_PAID) || $object->element != 'facture')
 			return true;
-		
+
 		if (empty($object->linked_objects))
 			$object->fetchObjectLinked(null, null, $object->id, 'facture');
-		
+
 		if (empty($object->linkedObjects['commande']))
 			return false;
-		
+
 		dol_include_once('/expedition/class/expedition.class.php');
-		
+
 		$TNotCopy = array (
 				'db',
 				'element',
 				'table_element',
-				'fk_element' 
+				'fk_element'
 		);
-		
+
 		foreach ( $object->linkedObjects['commande'] as &$commande ) {
-			
+
 			$expedition = new Expedition($db);
-			
+
 			foreach ( $commande as $k => $v ) {
 				if (! in_array($k, $TNotCopy)) {
 					$expedition->{$k} = $commande->{$k};
 				}
 			}
 			$expedition->tracking_number = '';
-			
+
 			$expedition->size = 0;
 			$expedition->weight = 0;
-			
+
 			$expedition->sizeS = $expedition->sizeH = $expedition->sizeW = 0; // TODO Should use this->trueDepth
-			
+
 			$expedition->width = 0;
 			$expedition->height = 0;
 			$expedition->weight_units = 0;
 			$expedition->size_units = 0;
-			
+
 			if (empty($conf->global->GRAPEFRUIT_SHIPPING_CREATE_FROM_ORDER_WHERE_BILL_PAID_WAREHOUSE)) {
 				setEventMessage($langs->trans('DefaultWarehouseRequired'));
 				return false;
 			}
-			
+
 			foreach ( $expedition->lines as &$line ) {
 				$line->entrepot_id = ( int ) $conf->global->GRAPEFRUIT_SHIPPING_CREATE_FROM_ORDER_WHERE_BILL_PAID_WAREHOUSE;
 				$line->origin_line_id = $line->id;
 			}
-			
+
 			$res = $expedition->create($user);
 			if ($res > 0) {
-				
+
 				$expedition->add_object_linked($commande->element, $commande->id);
-				
+
 				setEventMessage($langs->trans('ShippingCreated'));
 			} else {
 				var_dump($expedition);
 				exit();
 			}
 		}
-		
+
 		return true;
 	}
-	
+
 	/**
 	 *
 	 * @param unknown $object
@@ -132,64 +133,64 @@ class TGrappeFruit
 		global $conf, $langs, $db, $user;
 		if (empty($conf->global->GRAPEFRUIT_ORDER_CREATE_BILL_ON_VALIDATE))
 			return true;
-		
+
 		dol_include_once('/compta/facture/class/facture.class.php');
-		
+
 		$facture = new Facture($db);
 		$res = $facture->createFromOrder($object);
 		if ($res > 0) {
 			setEventMessage($langs->trans('BillCreated'));
 		}
-		
+
 		// Transfert Contact from order to invoice
-		
+
 		return false;
 	}
-	
+
 	/**
 	 *
 	 * @param unknown $object
 	 */
 	static function sendBillByMail(&$object) {
 		global $conf, $langs, $user, $db;
-		
+
 		if (empty($object->thirdparty))
 			$object->fetch_thirdparty();
-		
+
 		$sendto = $object->thirdparty->email;
 		$sendtocc = '';
-		
+
 		$from = (empty($user->email) ? $conf->global->MAIN_MAIL_EMAIL_FROM : $user->email);
 		$id = $object->id;
-		
+
 		$_POST['receiver'] = '-1';
-		
+
 		$_POST['frommail'] = $_POST['replytomail'] = $from;
 		$_POST['fromname'] = $_POST['replytoname'] = $user->getFullName($langs);
-		
+
 		dol_include_once('/core/class/html.formmail.class.php');
 		$formmail = new Formmail($db);
 		$outputlangs = clone $langs;
 		$id_template = ( int ) $conf->global->GRAPEFRUIT_SEND_BILL_BY_MAIL_ON_VALIDATE_MODEL;
-		
+
 		$formmail->fetchAllEMailTemplate('facture_send', $user, $outputlangs);
-		
+
 		foreach ( $formmail->lines_model as &$model ) {
-			
+
 			if ($model->id == $id_template)
 				break;
 		}
-		
+
 		if (empty($model))
 			setEventMessage($langs->trans('ModelRequire'), 'errors');
-			
+
 			// Find Order to put it into ref
 		if (empty($object->linked_objects))
 			$object->fetchObjectLinked(null, null, $object->id, 'facture');
 		foreach ( $object->linkedObjects['commande'] as $commande ) {
 			$orderref .= $commande->ref;
 		}
-		
+
 		// Make substitution
 		$substit['__REF__'] = (empty($object->newref)?$object->ref:$object->newref);
 		$substit['__ORDER_REF__'] = $orderref;
@@ -200,29 +201,29 @@ class TGrappeFruit
 		$substit['__PROJECT_NAME__'] = (is_object($object->projet) ? $object->projet->title : '');
 		$substit['__PERSONALIZED__'] = '';
 		$substit['__CONTACTCIVNAME__'] = '';
-		
+
 		// Find the good contact adress
 		$custcontact = '';
 		$contactarr = array ();
 		$contactarr = $object->liste_contact(- 1, 'external');
-		
+
 		if (is_array($contactarr) && count($contactarr) > 0) {
 			foreach ( $contactarr as $contact ) {
 				dol_syslog(get_class($this) . '::' . __METHOD__ . 'lib=' . $contact['libelle']);
 				dol_syslog(get_class($this) . '::' . __METHOD__ . 'trans=' . $langs->trans('TypeContact_facture_external_BILLING'));
-				
+
 				if ($contact['libelle'] == $langs->trans('TypeContact_facture_external_BILLING')) {
-					
+
 					require_once DOL_DOCUMENT_ROOT . '/contact/class/contact.class.php';
-					
+
 					$contactstatic = new Contact($db);
 					$contactstatic->fetch($contact['id']);
 					$custcontact = $contactstatic->getFullName($langs, 1);
-					
+
 					dol_syslog(get_class($this) . '::' . __METHOD__ . ' email=' . $contactstatic->email);
 				}
 			}
-			
+
 			if (! empty($custcontact)) {
 				$substit['__CONTACTCIVNAME__'] = $custcontact;
 			}
@@ -230,13 +231,13 @@ class TGrappeFruit
 				$sendto = $contactstatic->email;
 			}
 		}
-		
+
 		$topic = make_substitutions($model->topic, $substit);
 		$message = make_substitutions($model->content, $substit);
-		
+
 		$_POST['message'] = $message;
 		$_POST['subject'] = $topic;
-		
+
 		require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
 		// Add attached files
 		$fileparams = dol_most_recent_file($conf->facture->dir_output . '/' . $object->ref, preg_quote($object->ref, '/') . '[^\-]+');
@@ -257,55 +258,55 @@ class TGrappeFruit
 				$_SESSION["listofmimes"] = dol_mimetype($fileparams['fullname']);
 			}
 		}
-		
+
 		$action = 'send';
 		$actiontypecode = 'AC_FAC';
 		$trigger_name = 'BILL_SENTBYMAIL';
 		$paramname = 'id';
 		$mode = 'emailfrominvoice';
-		
+
 		if (! empty($sendto)) {
 			require_once __DIR__ . '/../tpl/actions_sendmails.inc.php';
 		}
 	}
-	
+
 	/**
 	 *
 	 * @param unknown $object
 	 */
 	static function sendOrderByMail(&$object) {
 		global $conf, $langs, $user, $db;
-		
+
 		if (empty($object->thirdparty))
 			$object->fetch_thirdparty();
-		
+
 		$sendto = $object->thirdparty->email;
 		$sendtocc = '';
-		
+
 		$from = (empty($user->email) ? $conf->global->MAIN_MAIL_EMAIL_FROM : $user->email);
 		$id = $object->id;
-		
+
 		$_POST['receiver'] = '-1';
-		
+
 		$_POST['frommail'] = $_POST['replytomail'] = $from;
 		$_POST['fromname'] = $_POST['replytoname'] = $user->getFullName($langs);
-		
+
 		dol_include_once('/core/class/html.formmail.class.php');
 		$formmail = new Formmail($db);
 		$outputlangs = clone $langs;
 		$id_template = ( int ) $conf->global->GRAPEFRUIT_SEND_BILL_BY_MAIL_ON_VALIDATE_MODEL;
-		
+
 		$formmail->fetchAllEMailTemplate('facture_send', $user, $outputlangs);
-		
+
 		foreach ( $formmail->lines_model as &$model ) {
-			
+
 			if ($model->id == $id_template)
 				break;
 		}
-		
+
 		if (empty($model))
 			setEventMessage($langs->trans('ModelRequire'), 'errors');
-			
+
 			// Make substitution
 		$substit['__REF__'] = $object->ref;
 		$substit['__SIGNATURE__'] = $user->signature;
@@ -315,29 +316,29 @@ class TGrappeFruit
 		$substit['__PROJECT_NAME__'] = (is_object($object->projet) ? $object->projet->title : '');
 		$substit['__PERSONALIZED__'] = '';
 		$substit['__CONTACTCIVNAME__'] = '';
-		
+
 		// Find the good contact adress
 		$custcontact = '';
 		$contactarr = array ();
 		$contactarr = $object->liste_contact(- 1, 'external');
-		
+
 		if (is_array($contactarr) && count($contactarr) > 0) {
 			foreach ( $contactarr as $contact ) {
 				dol_syslog(get_class($this) . '::' . __METHOD__ . ' lib=' . $contact['libelle']);
 				dol_syslog(get_class($this) . '::' . __METHOD__ . ' trans=' . $langs->trans('TypeContact_commande_external_BILLING'));
-				
+
 				if ($contact['libelle'] == $langs->trans('TypeContact_commande_external_BILLING')) {
-					
+
 					require_once DOL_DOCUMENT_ROOT . '/contact/class/contact.class.php';
-					
+
 					$contactstatic = new Contact($db);
 					$contactstatic->fetch($contact['id']);
 					$custcontact = $contactstatic->getFullName($langs, 1);
-					
+
 					dol_syslog(get_class($this) . '::' . __METHOD__ . ' email=' . $contactstatic->email);
 				}
 			}
-			
+
 			if (! empty($custcontact)) {
 				$substit['__CONTACTCIVNAME__'] = $custcontact;
 			}
@@ -345,13 +346,13 @@ class TGrappeFruit
 				$sendto = $contactstatic->email;
 			}
 		}
-		
+
 		$topic = make_substitutions($model->topic, $substit);
 		$message = make_substitutions($model->content, $substit);
-		
+
 		$_POST['message'] = $message;
 		$_POST['subject'] = $topic;
-		
+
 		require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
 		// Add attached files
 		$fileparams = dol_most_recent_file($conf->commande->dir_output . '/' . $object->ref, preg_quote($object->ref, '/') . '[^\-]+');
@@ -372,7 +373,7 @@ class TGrappeFruit
 				$_SESSION["listofmimes"] = dol_mimetype($fileparams['fullname']);
 			}
 		}
-		
+
 		$action = 'send';
 		$actiontypecode = 'AC_FAC';
 		$trigger_name = 'BILL_SENTBYMAIL';
@@ -382,26 +383,26 @@ class TGrappeFruit
 			require_once __DIR__ . '/../tpl/actions_sendmails.inc.php';
 		}
 	}
-	
+
 	/**
 	 *
 	 * @param unknown $object
 	 */
 	static function createTasks(&$object) {
 		global $conf, $langs, $db, $user;
-		
+
 		if (! empty($conf->global->GRAPEFRUIT_PROJECT_AUTO_ADD_TASKS_ON_CREATE)) {
-			
+
 			$TLabel = explode("\n", $conf->global->GRAPEFRUIT_PROJECT_AUTO_ADD_TASKS_ON_CREATE);
-			
+
 			dol_include_once('/projet/class/task.class.php');
-			
+
 			foreach ( $TLabel as $label ) {
-				
+
 				$label = trim($label);
-				
+
 				$t = new Task($db);
-				
+
 				$defaultref = '';
 				$obj = empty($conf->global->PROJECT_TASK_ADDON) ? 'mod_task_simple' : $conf->global->PROJECT_TASK_ADDON;
 				if (! empty($conf->global->PROJECT_TASK_ADDON) && is_readable(DOL_DOCUMENT_ROOT . "/core/modules/project/task/" . $conf->global->PROJECT_TASK_ADDON . ".php")) {
@@ -409,26 +410,26 @@ class TGrappeFruit
 					$modTask = new $obj();
 					$defaultref = $modTask->getNextValue($soc, $object);
 				}
-				
+
 				if (is_numeric($defaultref) && $defaultref <= 0)
 					$defaultref = '';
-				
+
 				$t->ref = $defaultref;
 				$t->label = $label;
 				$t->fk_project = $object->id;
 				$t->fk_task_parent = 0;
-				
+
 				$res = $t->create($user);
-				
+
 				if ($res < 0) {
 					setEventMessage($langs->trans('ImpossibleToAdd', $label));
 				}
 			}
-			
+
 			setEventMessage($langs->trans('autoTasksAdded'));
 		}
 	}
-	
+
 	/**
 	 *
 	 * @param unknown $object
@@ -436,21 +437,21 @@ class TGrappeFruit
 	 */
 	static function checkContractFourn(&$object) {
 		global $conf, $langs, $db;
-		
+
 		if (empty($conf->global->GRAPEFRUIT_CONTRACT_DEFAUL_FOURN) || $conf->global->GRAPEFRUIT_CONTRACT_DEFAUL_FOURN < 0)
 			return true;
-		
+
 		dol_include_once('/fourn/class/fournisseur.product.class.php');
-		
+
 		foreach ( $object->lines as &$line ) {
-			
+
 			if (empty($line->fk_fournprice) && $line->fk_product > 0) {
-				
+
 				$p_static = new ProductFournisseur($db);
 				$TPrice = $p_static->list_product_fournisseur_price($line->fk_product);
-				
+
 				foreach ( $TPrice as &$price ) {
-					
+
 					if ($price->fourn_id == $conf->global->GRAPEFRUIT_CONTRACT_DEFAUL_FOURN) {
 						// TODO AA updateline sur contrat, là j'ai la flemme, no comment
 						$db->query("UPDATE " . MAIN_DB_PREFIX . "contratdet
@@ -462,22 +463,22 @@ class TGrappeFruit
 			}
 		}
 	}
-	
+
 	/**
 	 * @param $object : object expédition
 	 */
 	static function setOrderShippedIfAllProductShipped(&$object) {
-		
+
 		// Récupération de la commande d'origine
 		$object->fetchObjectLinked();
 		$TOriginOrder = array_values($object->linkedObjects['commande']);
 		$order = $TOriginOrder[0];
-		if(empty($order)) return 0; 
-		
+		if(empty($order)) return 0;
+
 		// On refait la fonction dans l'autre sens car la commande peut avoir été expédiée en plusieurs fois
 		$order->fetchObjectLinked();
 		$TShipping = array_values($order->linkedObjects['shipping']);
-		
+
 		// Rangement des quantités dans la commande par produit, uniquement les produits avec un fk_product
 		$TOrderProductQty = array();
 		if(!empty($order->lines)) {
@@ -485,7 +486,7 @@ class TGrappeFruit
 				if($order_line->product_type == 0) $TOrderProductQty[$order_line->fk_product] += $order_line->qty;
 			}
 		}
-		
+
 		// Rangement des quantités dans l'expédition par produit
 		$TShippingProductQty = array();
 		foreach($TShipping as $shipping) {
@@ -495,82 +496,82 @@ class TGrappeFruit
 				}
 			}
 		}
-		
+
 		if(count($TOrderProductQty) != count($TShippingProductQty)) return 0;
-		
+
 		foreach($TShippingProductQty as $fk_product=>$qty) {
 			if($qty < $TOrderProductQty[$fk_product]) return 0;
 		}
 
 		// Si on a passé le test des quantités sans problèmes, on passe la commande au statut "Livrée"
 		if($order->setStatut(3) > 0) setEventMessage('Commande '.$order->getNomUrl().' passée au statut "livrée"');
-		
+
 	}
-	
+
 	/**
 	 * @param $object : object facture
 	 */
 	static function setOrderBilledIfSameMontant(&$object) {
-		
+
 		// Récupération de la commande d'origine
 		$object->fetchObjectLinked();
 		$TOriginOrder = array_values($object->linkedObjects['commande']);
 		$order = $TOriginOrder[0];
-		if(empty($order)) return 0; 
-		
+		if(empty($order)) return 0;
+
 		// On refait la fonction dans l'autre sens car la commande peut avoir été facturée en plusieurs fois
 		$order->fetchObjectLinked();
 		$TFact = array_values($order->linkedObjects['facture']);
-		
+
 		$total_ttc = 0;
 		foreach($TFact as $f) {
 			if($f->statut > 0) $total_ttc+=$f->total_ttc;
 		}
-		
+
 		// On compare les montants
 		if($total_ttc == $order->total_ttc) {
 			// On classe facturée la commande uniquement si elle ne l'est pas déjà (peut avoir été fait avant)
 			if(empty($order->billed) && $order->classifyBilled() > 0) setEventMessage('Commande '.$order->getNomUrl().' passée au statut "facturée"');
 		}
-		
+
 	}
 
 	function orderSupplierOrder(&$object, $methode_id) {
-		
+
 		global $user;
-		
+
 		$object->commande($user, time(), $methode_id);
-		
+
 	}
 
 	static function clotureOriginPropal(&$object) {
-		
+
 		global $user;
-		
+
 		$object->fetchObjectLinked();
 		$TOriginPropal = array_values($object->linkedObjects['propal']);
 		$propal = $TOriginPropal[0];
-		
+
 		if(empty($propal)) return 0;
-		
+
 		if($propal->statut < 2) {
 			if($propal->cloture($user, 2, '') > 0) setEventMessage('Proposition '.$propal->getNomUrl().' clôturée au statut "Signée" automatiquement');
 		}
-		
+
 	}
-	
+
 	static function createFactureFromObject(&$object) {
-		
+
 		global $db, $conf, $user, $langs;
-		
+
 		dol_include_once('/compta/facture/class/facture.class.php');
-		
+
 		$langs->load('grapefruit@grapefruit');
-		
+
 		$dateinvoice = dol_mktime(0, 0, 0, date('m'), date('d'), date('Y'));
-		
+
 		$f = new Facture($db);
-		
+
 		$f->socid				= $object->socid;
 		$f->type				= Facture::TYPE_STANDARD;
 		$f->number				= $_POST['facnumber'];
@@ -581,20 +582,20 @@ class TGrappeFruit
 		$f->fk_project			= $object->fk_project;
 		$f->cond_reglement_id	= $object->cond_reglement_id;
 		$f->mode_reglement_id	= $object->mode_reglement_id;
-		
+
 		$origin = 'commande';
 		$originid = $object->id;
 		$f->linked_objects[$origin] = $originid;
-		
+
 		$id = $f->create($user);
-		
+
 		$lines = $object->lines;
 		if (empty($lines) && method_exists($object, 'fetch_lines'))
 		{
 			$object->fetch_lines();
 			$lines = $object->lines;
 		}
-		
+
 		$fk_parent_line=0;
 		$num=count($lines);
 		for ($i=0;$i<$num;$i++)
@@ -679,16 +680,107 @@ class TGrappeFruit
 
 		if(empty($error)) {
 			if($f->validate($user) > 0) {
-				
+
 				$object->classifyBilled();
-				
+
 				// Redirection vers écrand de paiement
 				setEventMessage($langs->trans('BillCreated'));
 				header('Location: '.dol_buildpath('/compta/paiement.php?action=create&facid='.$f->id, 1));
-				
+
 			}
 		}
-		
+
 	}
-	
+
+	/**
+	 *
+	 * @param unknown $action
+	 * @return number
+	 */
+	public function setupUserDownloadRights($action='') {
+
+		global $db, $conf, $user, $langs;
+		$error=0;
+
+		if ($action==1) {
+			if (dolibarr_set_const($db, 'USER_SUBPERMCATEGORY_FOR_DOCUMENTS', 'download', 'chaine', 0, '', $conf->entity) >0) {
+				$sql = "INSERT INTO ".MAIN_DB_PREFIX."rights_def";
+				$sql.= " (id, entity, libelle, module, type, bydefault, perms, subperms)";
+				$sql.= " VALUES ";
+				$sql.= "(1049970,1,'DownloadDoc','user','r',0,'download','download')";
+				$resqlinsert=$db->query($sql);
+				if (!$resqlinsert) {
+					if ($db->errno() != "DB_ERROR_RECORD_ALREADY_EXISTS")
+					{
+						$this->error=$db->lasterror();
+						$error++;
+					}
+				}
+
+				if (empty($error) && $conf->multicompany->enabled) {
+					//Create rights on each entity
+					$sqlentity="SELECT rowid FROM ".MAIN_DB_PREFIX."entity WHERE active=1 AND rowid<>1";
+					$resqlentity=$db->query($sqlentity);
+					if (!$resqlentity) {
+						$this->error=$db->lasterror();
+						$error++;
+					} else {
+						while ($obj=$db->fetch_object($resqlentity) && empty($error)) {
+							$sql = "INSERT INTO ".MAIN_DB_PREFIX."rights_def";
+							$sql.= " (id, entity, libelle, module, type, bydefault, perms, subperms)";
+							$sql.= " VALUES ";
+							$sql.= "(1049970,".$obj->rowid.",'DownloadDoc','user','r',0,'download','download')";
+							$resqlinsert=$db->query($sql);
+							if (!$resqlinsert) {
+								if ($db->errno() != "DB_ERROR_RECORD_ALREADY_EXISTS")
+								{
+									$this->error=$db->lasterror();
+									$error++;
+								}
+							}
+						}
+					}
+				}
+			}else {
+				$this->error=$db->lasterror();
+				$error++;
+			}
+		}
+
+		if ($action==0) {
+			if (dolibarr_del_const($db, 'USER_SUBPERMCATEGORY_FOR_DOCUMENTS', 0) > 0) {
+				$sql = "DELETE FROM ".MAIN_DB_PREFIX."rights_def";
+				$sql.= " WHERE id=1049970";
+				$resql=$db->query($sql);
+				if (!$resql) {
+					$this->error=$db->lasterror();
+					$error++;
+				}
+				$sql = "DELETE FROM ".MAIN_DB_PREFIX."usergroup_rights";
+				$sql.= " WHERE fk_id=1049970";
+				$resql=$db->query($sql);
+				if (!$resql) {
+					$this->error=$db->lasterror();
+					$error++;
+				}
+				$sql = "DELETE FROM ".MAIN_DB_PREFIX."user_rights";
+				$sql.= " WHERE fk_id=1049970";
+				$resql=$db->query($sql);
+				if (!$resql) {
+					$this->error=$db->lasterror();
+					$error++;
+				}
+			} else {
+				$this->error=$db->lasterror();
+				$error++;
+			}
+		}
+
+		if(!empty($error)) {
+			return -1;
+		} else {
+			return 1;
+		}
+	}
+
 }

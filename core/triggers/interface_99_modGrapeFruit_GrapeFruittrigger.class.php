@@ -130,7 +130,7 @@ class InterfaceGrapeFruittrigger
 			TGrappeFruit::checkContractFourn($object);
 		} elseif ($action === 'ORDER_VALIDATE') {
 			TGrappeFruit::createBillOnOrderValidate($object);
-			
+
 			if(!empty($conf->global->GRAPEFRUIT_ALLOW_CREATE_ORDER_AND_BILL_ON_UNSIGNED_PROPAL)) TGrappeFruit::clotureOriginPropal($object);
 
 			dol_syslog("Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id);
@@ -220,13 +220,13 @@ class InterfaceGrapeFruittrigger
 					}
 				}
 			}
-			
+
 			if(!empty($conf->global->GRAPEFRUIT_SET_ORDER_BILLED_IF_SAME_MONTANT)) {
-				
+
 				TGrappeFruit::setOrderBilledIfSameMontant($object);
-				
+
 			}
-			
+
 		} elseif ($action === 'PROJECT_CREATE') {
 			if (! TGrappeFruit::checkNoDuplicateRef($object))
 				return - 1;
@@ -331,33 +331,33 @@ class InterfaceGrapeFruittrigger
         		}
         	}
         } elseif ($action === 'SHIPPING_VALIDATE') {
-        	
+
 			if(!empty($conf->global->GRAPEFRUIT_SET_ORDER_SHIPPED_IF_ALL_PRODUCT_SHIPPED)) TGrappeFruit::setOrderShippedIfAllProductShipped($object);
-			
+
 		} elseif ($action === 'ORDER_SUPPLIER_VALIDATE') {
-			
+
 			if($conf->global->GRAPEFRUIT_AUTO_ORDER_ON_SUPPLIERORDER_VALIDATION_WITH_METHOD > 0) TGrappeFruit::orderSupplierOrder($object, $conf->global->GRAPEFRUIT_AUTO_ORDER_ON_SUPPLIERORDER_VALIDATION_WITH_METHOD);
-			
+
 		}
-		
+
 		//Passage d'une opportunité au statut gagné dès son affectation à un devis ou une commande
-		
+
 		if($action === 'PROPAL_CREATE' || $action === 'ORDER_CREATE'){
-			
+
 			if($conf->global->GRAPEFRUIT_PROJECT_AUTO_WIN){
-				
+
 				if($object->fk_project){
 					$projet = new Project($db);
 					$projet->fetch($object->fk_project);
-					
+
 					if($projet->opp_status != 6){
-						
+
 						$projet->opp_status = 6;
 						$projet->update($user);
 					}
 				}
 			}
-			
+
 		}
 		/*
 		 if ($action === 'USER_LOGIN') {
