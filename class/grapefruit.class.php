@@ -725,17 +725,19 @@ class TGrappeFruit
 						$this->error=$db->lasterror();
 						$error++;
 					} else {
-						while ($obj=$db->fetch_object($resqlentity) && empty($error)) {
-							$sql = "INSERT INTO ".MAIN_DB_PREFIX."rights_def";
-							$sql.= " (id, entity, libelle, module, type, bydefault, perms, subperms)";
-							$sql.= " VALUES ";
-							$sql.= "(1049970,".$obj->rowid.",'DownloadDoc','user','r',0,'download','download')";
-							$resqlinsert=$db->query($sql);
-							if (!$resqlinsert) {
-								if ($db->errno() != "DB_ERROR_RECORD_ALREADY_EXISTS")
-								{
-									$this->error=$db->lasterror();
-									$error++;
+						while ($obj=$db->fetch_object($resqlentity)) {
+							if  (empty($error)) {
+								$sql = "INSERT INTO ".MAIN_DB_PREFIX."rights_def";
+								$sql.= " (id, entity, libelle, module, type, bydefault, perms, subperms)";
+								$sql.= " VALUES ";
+								$sql.= "(1049970,".$obj->rowid.",'DownloadDoc','user','r',0,'download','download')";
+								$resqlinsert=$db->query($sql);
+								if (!$resqlinsert) {
+									if ($db->errno() != "DB_ERROR_RECORD_ALREADY_EXISTS")
+									{
+										$this->error=$db->lasterror();
+										$error++;
+									}
 								}
 							}
 						}
