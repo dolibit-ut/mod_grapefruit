@@ -702,7 +702,7 @@ class TGrappeFruit
 		global $db, $conf, $user, $langs;
 		$error=0;
 
-		if ($action===1) {
+		if ($action==='1') {
 			if (dolibarr_set_const($db, 'USER_SUBPERMCATEGORY_FOR_DOCUMENTS', 'download', 'chaine', 0, '', $conf->entity) >0) {
 				$sql = "INSERT INTO ".MAIN_DB_PREFIX."rights_def";
 				$sql.= " (id, entity, libelle, module, type, bydefault, perms, subperms)";
@@ -745,7 +745,7 @@ class TGrappeFruit
 				$this->error=$db->lasterror();
 				$error++;
 			}
-		}elseif ($action===0) {
+		}elseif ($action==='0') {
 			if (dolibarr_del_const($db, 'USER_SUBPERMCATEGORY_FOR_DOCUMENTS', 0) > 0) {
 				$sql = "DELETE FROM ".MAIN_DB_PREFIX."rights_def";
 				$sql.= " WHERE id=1049970";
