@@ -312,6 +312,8 @@ class InterfaceGrapeFruittrigger
 						}
 						//Compare array
 						$diff_array=array_diff_assoc($qtydelivered,$qtywished);
+						$diff_array=array_merge($diff_array, array_diff_assoc($qtywished,$qtydelivered)); // dans les 2 sens parce que la fonction teste pas dans les 2 sens (array_diff_assoc($a, $b) ne donne pas forcement le meme res que array_diff_assoc($b, $a))
+						
 						if (count($diff_array)==0) {
 							//No diff => mean everythings is received
 							$ret=$object->setStatus($user,5);
