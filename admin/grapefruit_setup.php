@@ -33,6 +33,7 @@ require_once DOL_DOCUMENT_ROOT . "/core/lib/admin.lib.php";
 require_once '../lib/grapefruit.lib.php';
 dol_include_once('/product/class/html.formproduct.class.php');
 dol_include_once('/core/class/html.formorder.class.php');
+dol_include_once('/grapefruit/class/grapefruit.class.php');
 
 // Translations
 $langs->load("grapefruit@grapefruit");
@@ -52,12 +53,21 @@ if (! $user->admin) {
 // Parameters
 $action = GETPOST('action', 'alpha');
 
+$object=new TGrappeFruit();
+
 /*
  * Actions
  */
 if (preg_match('/set_(.*)/', $action, $reg)) {
 	$code = $reg[1];
 	if (dolibarr_set_const($db, $code, GETPOST($code), 'chaine', 0, '', $conf->entity) > 0) {
+
+		if ($code=='GRAPEFRUIT_MANAGE_DOWNLOAD_OWN_DOC_USERS') {
+			$result=$object->setupUserDownloadRights(GETPOST($code));
+			if ($result<0) {
+				setEventMessage($object->error,'errors');
+			}
+		}
 
 		setEventMessage("ValuesUpdated");
 
@@ -569,6 +579,24 @@ print '<form method="POST" action="' . $_SERVER['PHP_SELF'] . '">';
 print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
 print '<input type="hidden" name="action" value="set_GRAPEFRUIT_BYPASS_CONFIRM_ACTIONS">';
 print '<input type="text" name="GRAPEFRUIT_BYPASS_CONFIRM_ACTIONS" value="' . $conf->global->GRAPEFRUIT_BYPASS_CONFIRM_ACTIONS . '" style="width:300px;max-width:100%;" />';
+print '<input type="submit" class="button" value="' . $langs->trans("Modify") . '">';
+print '</form>';
+print '</td></tr>';
+
+print '<tr class="liste_titre">';
+print '<td>' . $langs->trans("User") . '</td>' . "\n";
+print '<td align="center" width="20">&nbsp;</td>';
+print '<td align="center" width="100">' . $langs->trans("Value") . '</td>' . "\n";
+
+$var = ! $var;
+print '<tr ' . $bc[$var] . '>';
+print '<td>' . $langs->trans("set_GRAPEFRUIT_MANAGE_DOWNLOAD_OWN_DOC_USERS") . '</td>';
+print '<td align="center" width="20">&nbsp;</td>';
+print '<td align="right" width="300">';
+print '<form method="POST" action="' . $_SERVER['PHP_SELF'] . '">';
+print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
+print '<input type="hidden" name="action" value="set_GRAPEFRUIT_MANAGE_DOWNLOAD_OWN_DOC_USERS">';
+print $form->selectyesno('GRAPEFRUIT_MANAGE_DOWNLOAD_OWN_DOC_USERS', $conf->global->GRAPEFRUIT_MANAGE_DOWNLOAD_OWN_DOC_USERS, 1);
 print '<input type="submit" class="button" value="' . $langs->trans("Modify") . '">';
 print '</form>';
 print '</td></tr>';

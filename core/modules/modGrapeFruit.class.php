@@ -184,7 +184,6 @@ class modGrapeFruit extends DolibarrModules
 		// $this->rights[$r][5] = 'level2';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		// $r++;
 
-
 		// Main menu entries
 		$this->menu = array();			// List of menus to add
 		$r=0;
@@ -251,7 +250,7 @@ class modGrapeFruit extends DolibarrModules
 	function init($options='')
 	{
 		$sql = array();
-		
+
 		define('INC_FROM_DOLIBARR',true);
 
 		dol_include_once('/grapefruit/config.php');
