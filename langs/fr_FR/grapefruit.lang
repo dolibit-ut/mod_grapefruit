@@ -50,6 +50,7 @@ set_GRAPEFRUIT_AUTO_ORDER_ON_SUPPLIERORDER_VALIDATION_WITH_METHOD=Passer automat
 set_GRAPEFRUIT_ALLOW_CREATE_ORDER_AND_BILL_ON_UNSIGNED_PROPAL=Autoriser la création d'une commande ou facture sur un devis au statut "validé" (ce dernier sera classé "signé" automatiquement lors de la validation de la commande de destination)
 set_GRAPEFRUIT_ALLOW_CREATE_BILL_EXPRESS=Autoriser la création express d'une facture depuis la fiche commande (création, validation de la facture, accès direct à l'écran de paiement et classement de la commande au statut "facturée")
 set_GRAPEFRUIT_SET_ORDER_BILLED_IF_SAME_MONTANT=Classer la commande d'origine au statut "Facturée" si son montant est égal à la somme des montants des factures associées (action faite sur validation de facture)
+set_GRAPEFRUIT_BILL_COPY_LINKS_ON_CLONE=Copier les liens de la facture au clone de cette dernière
 
 # Models
 DocumentModelDorade=Modèle d'expédition chiffré
