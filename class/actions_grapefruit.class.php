@@ -261,6 +261,21 @@ class ActionsGrapeFruit
 		}*/
 	}
 	
+	function createFrom($parameters, &$object, &$action, $hookmanager) {
+			
+		global $conf,$user,$langs;
+		
+		if ($parameters['currentcontext'] === 'invoicecard') 
+		{
+			dol_include_once('/grapefruit/class/grapefruit.class.php');
+			$langs->load('grapefruit@grapefruit');
+			
+			TGrappeFruit::billCloneLink($object,$parameters['objFrom']);
+			
+			
+		}
+	}
+	
 	function addMoreActionsButtons($parameters, &$object, &$action, $hookmanager)
 	{
 		global $conf,$user,$langs;

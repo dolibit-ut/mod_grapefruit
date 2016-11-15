@@ -147,6 +147,28 @@ class TGrappeFruit
 		return false;
 	}
 
+	static function billCloneLink(&$object, &$originObject) {
+		global $conf, $db;
+		
+		if(!empty($conf->global->GRAPEFRUIT_BILL_COPY_LINKS_ON_CLONE)) {
+		
+				$originObject->fetchObjectLinked( $originObject->id, 'facture' ,  $originObject->id, 'facture' );
+			//var_dump($originObject->linkedObjectsIds);exit;
+			
+				foreach($originObject->linkedObjectsIds as $typeObject=>$TId) {
+					
+					foreach($TId as $id) {
+						
+						$object->add_object_linked($typeObject,$id);
+						
+					}
+					
+				}
+			
+		}
+		
+	}
+
 	/**
 	 *
 	 * @param unknown $object
