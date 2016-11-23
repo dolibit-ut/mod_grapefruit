@@ -95,7 +95,7 @@ class ActionsGrapeFruit
 		if (in_array('globalcard', $TContext))
 		{
 			$actionList = explode(',', $conf->global->GRAPEFRUIT_BYPASS_CONFIRM_ACTIONS);
-			if (in_array($action, $actionList))
+			if (!empty($action) && !empty($conf->global->GRAPEFRUIT_BYPASS_CONFIRM_ACTIONS) && in_array($action, $actionList))
 			{
 				global $confirm;
 				$confirm = 'yes';
