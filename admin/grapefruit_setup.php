@@ -68,6 +68,7 @@ if (preg_match('/set_(.*)/', $action, $reg)) {
 				setEventMessage($object->error,'errors');
 			}
 		}
+		elseif ($code == 'GRAPEFRUIT_DEFAULT_TVA_ON_DOCUMENT_CLIENT_ENABLED') manageDefaultTvaOnDocumentClient(GETPOST($code));
 
 		setEventMessage("ValuesUpdated");
 
@@ -527,6 +528,19 @@ print '<td>' . $langs->trans("set_GRAPEFRUIT_DISABLE_PROSPECTCUSTOMER_CHOICE") .
 print '<td align="center" width="20">&nbsp;</td>';
 print '<td align="right" width="300">';
 echo ajax_constantonoff('GRAPEFRUIT_DISABLE_PROSPECTCUSTOMER_CHOICE');
+print '</td></tr>';
+
+$var = ! $var;
+print '<tr ' . $bc[$var] . '>';
+print '<td>' . $langs->trans("set_GRAPEFRUIT_DEFAULT_TVA_ON_DOCUMENT_CLIENT_ENABLED") . '</td>';
+print '<td align="center" width="20">&nbsp;</td>';
+print '<td align="right" width="300">';
+print '<form method="POST" action="' . $_SERVER['PHP_SELF'] . '">';
+print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
+print '<input type="hidden" name="action" value="set_GRAPEFRUIT_DEFAULT_TVA_ON_DOCUMENT_CLIENT_ENABLED">';
+print $form->selectyesno('GRAPEFRUIT_DEFAULT_TVA_ON_DOCUMENT_CLIENT_ENABLED', $conf->global->GRAPEFRUIT_DEFAULT_TVA_ON_DOCUMENT_CLIENT_ENABLED, 1);
+print '<input type="submit" class="button" value="' . $langs->trans("Modify") . '">';
+print '</form>';
 print '</td></tr>';
 
 print '<tr class="liste_titre">';
