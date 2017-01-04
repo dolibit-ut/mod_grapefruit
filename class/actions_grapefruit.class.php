@@ -476,7 +476,7 @@ class ActionsGrapeFruit
 			if (in_array('propalcard', $context) || in_array('ordercard', $context) || in_array('invoicecard', $context))
 			{
 				$tva_tx = price2num(GETPOST('options_grapefruit_default_doc_tva'));
-				if (!empty($tva_tx))
+				if ($tva_tx != '')
 				{
 					$langs->load('grapefruit@grapefruit');
 					
