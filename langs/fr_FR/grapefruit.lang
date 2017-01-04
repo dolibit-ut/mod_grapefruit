@@ -61,3 +61,9 @@ set_GRAPEFRUIT_MANAGE_DOWNLOAD_OWN_DOC_USERS=Ajoute une permissions pour permett
 
 # Facture expres
 GrapefruitCreateBillExpress=Créer Facture Express
+
+
+
+grapefruit_error_tva=Erreur sur le taux de TVA Ligne %s
+grapefruit_error_tva_updateline=Erreur sur la mise à jour des TVA
+grapefruit_success_tva_updateline=Mise à jour des TVA effectuée
