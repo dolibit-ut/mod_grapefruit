@@ -284,7 +284,9 @@ class ActionsGrapeFruit
 	
 	function addMoreActionsButtons($parameters, &$object, &$action, $hookmanager)
 	{
-		global $conf,$user,$langs;
+		global $conf,$user,$langs,$db,$mysoc;
+		
+		$context = explode(':', $parameters['context']);
 		
 		if ($parameters['currentcontext'] === 'suppliercard' && !empty($conf->global->GRAPEFRUIT_SUPPLIER_FORCE_BT_ORDER_TO_INVOICE)) 
 		{
@@ -304,6 +306,88 @@ class ActionsGrapeFruit
 				<?php
 			}
 		}
+		
+		
+		if (in_array('propalcard', $context) || in_array('ordercard', $context) || in_array('invoicecard', $context))
+		{
+			if (!empty($conf->global->GRAPEFRUIT_DEFAULT_TVA_ON_DOCUMENT_CLIENT_ENABLED))
+			{
+				if (
+					($object->element == 'propal' && $object->statut == Propal::STATUS_DRAFT)
+					|| ($object->element == 'commande' && $object->statut == Commande::STATUS_DRAFT)
+					|| ($object->element == 'facture' && $object->statut == Facture::STATUS_DRAFT)
+				)
+				{
+					dol_include_once('/core/class/html.form.class.php');
+
+					$object->fetch_thirdparty();
+
+					$form = new Form($db);
+					$TOption = $form->load_tva('grapefruit_default_tva', '', $mysoc, $object->thirdparty, 0, 0, '', true);
+
+					$select = '<select class="flat" id="grapefruit_default_tva" name="grapefruit_default_tva"><option selected="selected" value=""></option>'.str_replace('selected', '', $TOption).'</select>';
+					?>
+					<script type="text/javascript">
+						$(function() {
+							$('#tablelines td.linecolvat').first().append(<?php echo json_encode($select); ?>);
+
+							$('#grapefruit_default_tva').change(function(event) {
+								var default_tva = $(this).val();
+								if (default_tva != '')
+								{
+									$.ajax({
+										url: '<?php echo dol_buildpath('/grapefruit/script/interface.php', 1); ?>'
+										,type: 'POST'
+										,data: {
+											set: 'defaultTVA'
+											,element: '<?php echo $object->element; ?>'
+											,element_id: '<?php echo $object->id; ?>'
+											,default_tva: default_tva
+										}
+									}).done(function() {
+										var idvar = '<?php echo ($object->element == 'facture') ? 'facid' : 'id'; ?>';
+										document.location.href = '?'+idvar+'=<?php echo $object->id; ?>';
+									});
+								}
+							});
+						});
+					</script>
+					<?php	
+				}
+					
+			}
+			
+		}
+		
+		if (!empty($conf->global->GRAPEFRUIT_SITUATION_INVOICE_DEFAULT_PROGRESS) && in_array('invoicecard', $context) && $object->type == Facture::TYPE_SITUATION && $object->statut == Facture::STATUS_DRAFT)
+		{
+			?>
+			<script type="text/javascript">
+				$(function() {
+					$('#tablelines td.linecolcycleref').first().append('<br /><input type="text" id="grapefruit_default_progress" name="grapefruit_default_progress" value="" size="2" />');
+					
+					$('#grapefruit_default_progress').blur(function() {
+						var default_progress = $(this).val();
+						if ($.isNumeric(default_progress))
+						{
+							$.ajax({
+								url: '<?php echo dol_buildpath('/grapefruit/script/interface.php', 1); ?>'
+								,type: 'POST'
+								,data: {
+									set: 'defaultProgress'
+									,element_id: '<?php echo $object->id; ?>'
+									,default_progress: default_progress
+								}
+							}).done(function() {
+								document.location.href = '?facid=<?php echo $object->id; ?>';
+							});
+						}
+					});
+				});
+			</script>
+			<?php
+		}
+		
 	}
 	
 	
@@ -471,115 +555,4 @@ class ActionsGrapeFruit
 		return 0;
 	}
 	
-	function insertExtraFields($parameters, &$object, &$action, $hookmanager)
-	{
-		global $db,$mysoc,$langs,$conf;
-		
-		if ($action == 'update_extras')
-		{
-			$context = explode(':', $parameters['context']);
-			
-			if (in_array('propalcard', $context) || in_array('ordercard', $context) || in_array('invoicecard', $context))
-			{
-				$tva_tx = price2num(GETPOST('options_grapefruit_default_doc_tva'));
-				if ($tva_tx != '')
-				{
-					$langs->load('grapefruit@grapefruit');
-					
-					$object->fetch_thirdparty();
-					
-					$code_country="'".$mysoc->country_code."'";
-					$code_country.=",'".$object->thirdparty->country_code."'";
-					
-					$form = new Form($db);
-					$form->load_cache_vatrates($code_country);
-					
-					$found = false;
-					$TTxAllowed = array();
-					foreach ($form->cache_vatrates as $rate)
-					{
-						if ($rate['txtva'] == $tva_tx)
-						{
-							$found = true;
-							break;
-						}
-						
-						$TTxAllowed[] = $rate['txtva'];
-					}
-					
-					$object->array_options['options_grapefruit_default_doc_tva'] = '';
-					
-					if ($found)
-					{
-						$object->db->begin();
-						$res = 1;
-						foreach ($object->lines as &$l)
-						{
-							if (!empty($conf->subtotal->enabled) && (TSubtotal::isTitle($l) || TSubtotal::isSubtotal($l)) ) continue;
-							
-							switch ($object->element) {
-								case 'propal':
-									//$rowid, $pu, $qty, $remise_percent, $txtva, $txlocaltax1=0.0, $txlocaltax2=0.0, $desc='', $price_base_type='HT', $info_bits=0, $special_code=0, $fk_parent_line=0, $skip_update_total=0, $fk_fournprice=0, $pa_ht=0, $label='', $type=0, $date_start='', $date_end='', $array_options=0, $fk_unit=null
-									$res = $object->updateline($l->id, $l->subprice, $l->qty, $l->remise_percent, $tva_tx, $l->localtax1_tx, $l->localtax1_tx, $l->desc, 'HT', $l->info_bits, $l->special_code, $l->fk_parent_line, 0, $l->fk_fournprice, $l->pa_ht, '', $l->product_type, $l->date_start, $l->date_end, $l->array_options, $l->fk_unit);
-									break;
-								case 'commande':
-									//$rowid, $desc, $pu, $qty, $remise_percent, $txtva, $txlocaltax1=0.0,$txlocaltax2=0.0, $price_base_type='HT', $info_bits=0, $date_start='', $date_end='', $type=0, $fk_parent_line=0, $skip_update_total=0, $fk_fournprice=null, $pa_ht=0, $label='', $special_code=0, $array_options=0, $fk_unit=null
-									$res = $object->updateline($l->id, $l->desc, $l->subprice, $l->qty, $l->remise_percent, $tva_tx, $l->localtax1_tx, $l->localtax2_tx, 'HT', $l->info_bits, $l->date_start, $l->date_end, $l->product_type, $l->fk_parent_line, 0, $l->fk_fournprice, $l->pa_ht, '', $l->special_code, $l->array_options, $l->fk_unit);
-									break;
-								case 'facture':
-									//$rowid, $desc, $pu, $qty, $remise_percent, $date_start, $date_end, $txtva, $txlocaltax1=0, $txlocaltax2=0, $price_base_type='HT', $info_bits=0, $type= self::TYPE_STANDARD, $fk_parent_line=0, $skip_update_total=0, $fk_fournprice=null, $pa_ht=0, $label='', $special_code=0, $array_options=0, $situation_percent=0, $fk_unit = null
-									$res = $object->updateline($l->id, $l->desc, $l->subprice, $l->qty, $l->remise_percent, $l->date_start, $l->date_end, $tva_tx, $l->localtax1_tx, $l->localtax2_tx, 'HT', $l->info_bits, $l->product_type, $l->fk_parent_line, 0, $l->fk_fournprice, $l->pa_ht, '', $l->special_code, $l->array_options, $l->situation_percent, $l->fk_unit);
-									break;
-							}
-							
-							if ($res <= 0) break;
-						}
-						
-						if ($res <= 0)
-						{
-							$object->db->rollback();
-							setEventMessage($langs->trans('grapefruit_error_tva_updateline'), 'errors');
-							return -2;
-						}
-						else
-						{
-							$object->db->commit();
-							setEventMessage($langs->trans('grapefruit_success_tva_updateline'));
-							return 0;
-						}
-					}
-					else
-					{
-						setEventMessage($langs->trans('grapefruit_error_tva', '('.implode(', ', $TTxAllowed).')'), 'warnings');
-						return -1;
-					}
-				}
-			}
-			
-			if (in_array('invoicecard', $context) && $object->type == Facture::TYPE_SITUATION)
-			{
-				$progress = price2num(GETPOST('options_grapefruit_default_situation_progress_line'));
-				if ($progress != '')
-				{
-					foreach ($object->lines as &$l)
-					{
-						if (!empty($conf->subtotal->enabled) && (TSubtotal::isTitle($l) || TSubtotal::isSubtotal($l)) ) continue;
-						
-						$prev_percent = $l->get_prev_progress($object->id);
-						
-						if ($progress >= $prev_percent)
-						{
-							$res = $object->updateline($l->id, $l->desc, $l->subprice, $l->qty, $l->remise_percent, $l->date_start, $l->date_end, $tva_tx, $l->localtax1_tx, $l->localtax2_tx, 'HT', $l->info_bits, $l->product_type, $l->fk_parent_line, 0, $l->fk_fournprice, $l->pa_ht, '', $l->special_code, $l->array_options, $progress, $l->fk_unit);
-						}
-						else $nb_progress_not_updated++;
-					}
-					
-					$object->array_options['options_grapefruit_default_situation_progress_line'] = '';
-					if ($nb_progress_not_updated > 0) setEventMessage($langs->trans('grapefruit_nb_progress_not_updated', $nb_progress_not_updated), 'warnings');
-				}
-			}
-			
-		}
-		
-	}
 }
