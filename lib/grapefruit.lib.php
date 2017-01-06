@@ -137,3 +137,21 @@ function _deleteExtraForDocumentClient(&$extra, $type)
 {
 	$extra->delete('grapefruit_default_doc_tva', $type);
 }
+
+function manageDefaultProgressOnSituationInvoice($action)
+{
+	global $db;
+	
+	dol_include_once('/core/class/extrafields.class.php');
+	$extra = new Extrafields($db);
+	
+	if ($action == 1)
+	{
+		$extra->fetch_name_optionals_label('facture');
+		if (!isset($extra->attribute_list['grapefruit_default_situation_progress_line'])) $extra->addExtraField('grapefruit_default_situation_progress_line', 'Progression Lignes', 'double', 2, '24,8', 'facture', 0, 0, '', unserialize('a:1:{s:7:"options";a:1:{s:0:"";N;}}'), 1, '', 0, 0);
+	}
+	else
+	{
+		$extra->delete('grapefruit_default_situation_progress_line', 'facture');
+	}
+}

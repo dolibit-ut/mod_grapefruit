@@ -501,6 +501,8 @@ class ActionsGrapeFruit
 						$TTxAllowed[] = $rate['txtva'];
 					}
 					
+					$object->array_options['options_grapefruit_default_doc_tva'] = '';
+					
 					if ($found)
 					{
 						$object->db->begin();
@@ -547,6 +549,30 @@ class ActionsGrapeFruit
 					}
 				}
 			}
+			
+			if (in_array('invoicecard', $context) && $object->type == Facture::TYPE_SITUATION)
+			{
+				$progress = price2num(GETPOST('options_grapefruit_default_situation_progress_line'));
+				if ($progress != '')
+				{
+					foreach ($object->lines as &$l)
+					{
+						if (!empty($conf->subtotal->enabled) && (TSubtotal::isTitle($l) || TSubtotal::isSubtotal($l)) ) continue;
+						
+						$prev_percent = $l->get_prev_progress($object->id);
+						
+						if ($progress >= $prev_percent)
+						{
+							$res = $object->updateline($l->id, $l->desc, $l->subprice, $l->qty, $l->remise_percent, $l->date_start, $l->date_end, $tva_tx, $l->localtax1_tx, $l->localtax2_tx, 'HT', $l->info_bits, $l->product_type, $l->fk_parent_line, 0, $l->fk_fournprice, $l->pa_ht, '', $l->special_code, $l->array_options, $progress, $l->fk_unit);
+						}
+						else $nb_progress_not_updated++;
+					}
+					
+					$object->array_options['options_grapefruit_default_situation_progress_line'] = '';
+					if ($nb_progress_not_updated > 0) setEventMessage($langs->trans('grapefruit_nb_progress_not_updated', $nb_progress_not_updated), 'warnings');
+				}
+			}
+			
 		}
 		
 	}

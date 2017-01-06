@@ -69,7 +69,8 @@ if (preg_match('/set_(.*)/', $action, $reg)) {
 			}
 		}
 		elseif ($code == 'GRAPEFRUIT_DEFAULT_TVA_ON_DOCUMENT_CLIENT_ENABLED') manageDefaultTvaOnDocumentClient(GETPOST($code));
-
+		elseif ($code == "GRAPEFRUIT_SITUATION_INVOICE_DEFAULT_PROGRESS") manageDefaultProgressOnSituationInvoice(GETPOST($code));
+		
 		setEventMessage("ValuesUpdated");
 
 		header("Location: " . $_SERVER["PHP_SELF"]);
@@ -493,6 +494,19 @@ if ($conf->facture->enabled) {
 	print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
 	print '<input type="hidden" name="action" value="set_GRAPEFRUIT_BILL_COPY_LINKS_ON_CLONE">';
 	echo ajax_constantonoff('GRAPEFRUIT_BILL_COPY_LINKS_ON_CLONE');
+	print '</form>';
+	print '</td></tr>';
+	
+	$var = ! $var;
+	print '<tr ' . $bc[$var] . '>';
+	print '<td>' . $langs->trans("set_GRAPEFRUIT_SITUATION_INVOICE_DEFAULT_PROGRESS") . '</td>';
+	print '<td align="center" width="20">&nbsp;</td>';
+	print '<td align="right" width="300">';
+	print '<form method="POST" action="' . $_SERVER['PHP_SELF'] . '">';
+	print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
+	print '<input type="hidden" name="action" value="set_GRAPEFRUIT_SITUATION_INVOICE_DEFAULT_PROGRESS">';
+	print $form->selectyesno('GRAPEFRUIT_SITUATION_INVOICE_DEFAULT_PROGRESS', $conf->global->GRAPEFRUIT_SITUATION_INVOICE_DEFAULT_PROGRESS, 1);
+	print '<input type="submit" class="button" value="' . $langs->trans("Modify") . '">';
 	print '</form>';
 	print '</td></tr>';
 }
