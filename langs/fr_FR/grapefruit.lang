@@ -68,3 +68,4 @@ GrapefruitCreateBillExpress=Créer Facture Express
 grapefruit_error_tva=Erreur sur le taux de TVA Ligne %s
 grapefruit_error_tva_updateline=Erreur sur la mise à jour des TVA
 grapefruit_success_tva_updateline=Mise à jour des TVA effectuée
+grapefruit_nb_progress_not_updated=Attention : progression non mise à jour pour %d lignes (progression précédente inférieur au nouveau taux)
