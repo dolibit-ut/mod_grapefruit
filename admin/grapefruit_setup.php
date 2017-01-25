@@ -502,6 +502,19 @@ if ($conf->facture->enabled) {
 	print '<td align="right" width="300">';
 	echo ajax_constantonoff('GRAPEFRUIT_SITUATION_INVOICE_DEFAULT_PROGRESS');
 	print '</td></tr>';
+	
+	$var = ! $var;
+	print '<tr ' . $bc[$var] . '>';
+	print '<td>' . $langs->trans("set_GRAPEFRUIT_STIMULUS_BILL_DELAY") . '</td>';
+	print '<td align="center" width="20">&nbsp;</td>';
+	print '<td align="right" width="300">';
+	print '<form method="POST" action="' . $_SERVER['PHP_SELF'] . '">';
+	print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
+	print '<input type="hidden" name="action" value="set_GRAPEFRUIT_STIMULUS_BILL_DELAY">';
+	print '<input type="text" name="GRAPEFRUIT_STIMULUS_BILL_DELAY" value="' . $conf->global->GRAPEFRUIT_STIMULUS_BILL_DELAY . '" style="width:300px;max-width:100%;" />';
+	print '<input type="submit" class="button" value="' . $langs->trans("Modify") . '">';
+	print '</form>';
+	print '</td></tr>';
 }
 
 if ($conf->agefodd->enabled) {

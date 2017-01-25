@@ -52,6 +52,7 @@ set_GRAPEFRUIT_ALLOW_CREATE_BILL_EXPRESS=Autoriser la création express d'une fa
 set_GRAPEFRUIT_SET_ORDER_BILLED_IF_SAME_MONTANT=Classer la commande d'origine au statut "Facturée" si son montant est égal à la somme des montants des factures associées (action faite sur validation de facture)
 set_GRAPEFRUIT_BILL_COPY_LINKS_ON_CLONE=Copier les liens de la facture au clone de cette dernière
 set_GRAPEFRUIT_DEFAULT_TVA_ON_DOCUMENT_CLIENT_ENABLED=Ajouter un champ sur proposition commmerciale, commande et facture client pour mettre à jour rapidement la TVA des lignes
+set_GRAPEFRUIT_STIMULUS_BILL_DELAY= Délai pour facture de relance
 
 # Models
 DocumentModelDorade=Modèle d'expédition chiffré
@@ -63,8 +64,8 @@ set_GRAPEFRUIT_MANAGE_DOWNLOAD_OWN_DOC_USERS=Ajoute une permissions pour permett
 # Facture expres
 GrapefruitCreateBillExpress=Créer Facture Express
 
-
-
+Stimulus Bill=Facture de Relance
+Create Stimulus Bill=Créer facture relance
 grapefruit_error_tva=Erreur sur le taux de TVA Ligne %s
 grapefruit_error_tva_updateline=Erreur sur la mise à jour des TVA
 grapefruit_success_tva_updateline=Mise à jour des TVA effectuée
