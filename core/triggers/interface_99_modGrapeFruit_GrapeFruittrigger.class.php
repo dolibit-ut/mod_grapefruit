@@ -208,6 +208,42 @@ class InterfaceGrapeFruittrigger
 					}
 				}
 			}
+			if(!empty($object->array_options['options_grapefruitStimulusBill']) ){
+				if((!empty($conf->global->GRAPEFRUIT_STIMULUS_BILL_DELAY) )){
+					$actioncomm = new ActionComm($db);
+					$actioncomm->type_code = 'AC_STI_BILL';
+					$actioncomm->label='Facture de relance : '.$object->ref;
+					$actioncomm->datep = $object->date_lim_reglement+(3600 * 24) * $conf->global->GRAPEFRUIT_STIMULUS_BILL_DELAY;
+					$actioncomm->punctual =1;
+					$actioncomm->transparency = 1;
+					$actioncomm->fulldayevent=1;
+					if(!empty($user)){
+						$actioncomm->userassigned = array();
+						$actioncomm->userassigned[$user->id]['id']=$user->id;
+						$actioncomm->userassigned[$user->id]['transparency']=1;
+						$actioncomm->userownerid=$user->id;
+					}
+					if(!empty($object->thirdparty)){
+						$actioncomm->societe=$object->thirdparty;
+						$actioncomm->socid=$object->thirdparty->id;
+						$actioncomm->thirdparty=$object->thirdparty;
+					}
+					$idcontacts=$object->getIdBillingContact();
+					if(!empty($idcontacts)){
+						$actioncomm->contactid=$idcontacts[0];
+						$actioncomm->contact=$object->contact;
+						
+					}
+					if(!empty($object->fk_project)){
+						$actioncomm->fk_project=$object->fk_project;
+					}
+					$actioncomm->fk_element  = $object->id;
+					$actioncomm->elementtype = $object->element;
+					$res = $actioncomm->create($user);
+				}else {
+					setEventMessage($langs->trans('StimulusBillDelayForgotten'),'errors');
+				}
+			}
 
 			if (! empty($conf->propal->enabled) && ! empty($conf->global->GRAPEFRUIT_INVOICE_CLASSIFY_BILLED_PROPAL))
 			{

@@ -63,7 +63,7 @@ set_GRAPEFRUIT_MANAGE_DOWNLOAD_OWN_DOC_USERS=Ajoute une permissions pour permett
 
 # Facture expres
 GrapefruitCreateBillExpress=Créer Facture Express
-
+StimulusBillDelayForgotten=Délai facture non renseigné (configuration du module pamplemousse)
 Stimulus Bill=Facture de Relance
 Create Stimulus Bill=Créer facture relance
 grapefruit_error_tva=Erreur sur le taux de TVA Ligne %s
