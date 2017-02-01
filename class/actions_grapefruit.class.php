@@ -95,12 +95,18 @@ class ActionsGrapeFruit
 		if (in_array('globalcard', $TContext))
 		{
 			$actionList = explode(',', $conf->global->GRAPEFRUIT_BYPASS_CONFIRM_ACTIONS);
-			if (in_array($action, $actionList))
+			if (!empty($action) && !empty($conf->global->GRAPEFRUIT_BYPASS_CONFIRM_ACTIONS) && in_array($action, $actionList))
 			{
 				global $confirm;
 				$confirm = 'yes';
 				$action = 'confirm_'.$action;
 			}
+		}
+		
+		if (in_array('invoicecard', $TContext))
+		{
+			if ($object->type == Facture::TYPE_SITUATION) $object->setValueFrom('ishidden', 0, 'extrafields', '"grapefruit_default_situation_progress_line"', '', 'name');
+			else $object->setValueFrom('ishidden', 1, 'extrafields', '"grapefruit_default_situation_progress_line"', '', 'name');
 		}
 		
 		return 0;
@@ -261,9 +267,26 @@ class ActionsGrapeFruit
 		}*/
 	}
 	
+	function createFrom($parameters, &$object, &$action, $hookmanager) {
+			
+		global $conf,$user,$langs;
+		
+		if ($parameters['currentcontext'] === 'invoicecard') 
+		{
+			dol_include_once('/grapefruit/class/grapefruit.class.php');
+			$langs->load('grapefruit@grapefruit');
+			
+			TGrappeFruit::billCloneLink($object,$parameters['objFrom']);
+			
+			
+		}
+	}
+	
 	function addMoreActionsButtons($parameters, &$object, &$action, $hookmanager)
 	{
-		global $conf,$user,$langs;
+		global $conf,$user,$langs,$db,$mysoc;
+		
+		$context = explode(':', $parameters['context']);
 		
 		if ($parameters['currentcontext'] === 'suppliercard' && !empty($conf->global->GRAPEFRUIT_SUPPLIER_FORCE_BT_ORDER_TO_INVOICE)) 
 		{
@@ -283,6 +306,88 @@ class ActionsGrapeFruit
 				<?php
 			}
 		}
+		
+		
+		if (in_array('propalcard', $context) || in_array('ordercard', $context) || in_array('invoicecard', $context))
+		{
+			if (!empty($conf->global->GRAPEFRUIT_DEFAULT_TVA_ON_DOCUMENT_CLIENT_ENABLED) && $action != 'editline')
+			{
+				if (
+					($object->element == 'propal' && $object->statut == Propal::STATUS_DRAFT)
+					|| ($object->element == 'commande' && $object->statut == Commande::STATUS_DRAFT)
+					|| ($object->element == 'facture' && $object->statut == Facture::STATUS_DRAFT)
+				)
+				{
+					dol_include_once('/core/class/html.form.class.php');
+
+					$object->fetch_thirdparty();
+
+					$form = new Form($db);
+					$TOption = $form->load_tva('grapefruit_default_tva', '', $mysoc, $object->thirdparty, 0, 0, '', true);
+
+					$select = '<select class="flat" id="grapefruit_default_tva" name="grapefruit_default_tva"><option selected="selected" value=""></option>'.str_replace('selected', '', $TOption).'</select>';
+					?>
+					<script type="text/javascript">
+						$(function() {
+							$('#tablelines td.linecolvat').first().append(<?php echo json_encode($select); ?>);
+
+							$('#grapefruit_default_tva').change(function(event) {
+								var default_tva = $(this).val();
+								if (default_tva != '')
+								{
+									$.ajax({
+										url: '<?php echo dol_buildpath('/grapefruit/script/interface.php', 1); ?>'
+										,type: 'POST'
+										,data: {
+											set: 'defaultTVA'
+											,element: '<?php echo $object->element; ?>'
+											,element_id: '<?php echo $object->id; ?>'
+											,default_tva: default_tva
+										}
+									}).done(function() {
+										var idvar = '<?php echo ($object->element == 'facture') ? 'facid' : 'id'; ?>';
+										document.location.href = '?'+idvar+'=<?php echo $object->id; ?>';
+									});
+								}
+							});
+						});
+					</script>
+					<?php	
+				}
+					
+			}
+			
+		}
+		
+		if (!empty($conf->global->GRAPEFRUIT_SITUATION_INVOICE_DEFAULT_PROGRESS) && in_array('invoicecard', $context) && $object->type == Facture::TYPE_SITUATION && $object->statut == Facture::STATUS_DRAFT)
+		{
+			?>
+			<script type="text/javascript">
+				$(function() {
+					$('#tablelines td.linecolcycleref').first().append('<br /><input type="text" id="grapefruit_default_progress" name="grapefruit_default_progress" value="" size="2" />');
+					
+					$('#grapefruit_default_progress').blur(function() {
+						var default_progress = $(this).val();
+						if ($.isNumeric(default_progress))
+						{
+							$.ajax({
+								url: '<?php echo dol_buildpath('/grapefruit/script/interface.php', 1); ?>'
+								,type: 'POST'
+								,data: {
+									set: 'defaultProgress'
+									,element_id: '<?php echo $object->id; ?>'
+									,default_progress: default_progress
+								}
+							}).done(function() {
+								document.location.href = '?facid=<?php echo $object->id; ?>';
+							});
+						}
+					});
+				});
+			</script>
+			<?php
+		}
+		
 	}
 	
 	

@@ -1,6 +1,8 @@
 Module104997Name = Pamplemousse
 Module104997Desc = Boîte à outil de workflow générique
 
+Permission1049970=Télécharger des documents dans la fiche utilisateur
+
 ATMAbout = Ce module a été développé par <a href="http://www.atm-consulting.fr" target="_blank">ATM Consulting</a><br>Vous pouvez retrouver la documentation sur notre <a href="http://wiki.atm-consulting.fr/index.php/Accueil" target="_blank">wiki</a><br><br>Pour toute question technique ou retour, contactez-nous sur <a href="mailto:support@atm-consulting.fr">support@atm-consulting.fr</a><br><br>Pour toute question commerciale, contactez-nous sur <a href="mailto:contact@atm-consulting.fr">contact@atm-consulting.fr</a> ou au +33 9 77 19 50 70<br><br>Retrouvez nos autres modules sur <a href="http://www.dolistore.com/search.php?orderby=position&orderway=desc&search_query=atm&submit_search=Rechercher" target="_blank">Dolistore</a>
 
 GrapeFruitSetup = Configuration du module GrapeFruit
@@ -48,14 +50,28 @@ set_GRAPEFRUIT_AUTO_ORDER_ON_SUPPLIERORDER_VALIDATION_WITH_METHOD=Passer automat
 set_GRAPEFRUIT_ALLOW_CREATE_ORDER_AND_BILL_ON_UNSIGNED_PROPAL=Autoriser la création d'une commande ou facture sur un devis au statut "validé" (ce dernier sera classé "signé" automatiquement lors de la validation de la commande de destination)
 set_GRAPEFRUIT_ALLOW_CREATE_BILL_EXPRESS=Autoriser la création express d'une facture depuis la fiche commande (création, validation de la facture, accès direct à l'écran de paiement et classement de la commande au statut "facturée")
 set_GRAPEFRUIT_SET_ORDER_BILLED_IF_SAME_MONTANT=Classer la commande d'origine au statut "Facturée" si son montant est égal à la somme des montants des factures associées (action faite sur validation de facture)
+
 set_GRAPEFRUIT_SHOW_SUPPLIER_ORDER_REFS=---> Afficher la référence commande client associée, la référence commande interne associée et la date de commande
 set_GRAPEFRUIT_SUPPLIER_CONTACT_SHIP_ADDRESS_SHOW_DETAILS= ---> Afficher le numéro de téléphone du contact et son email
+
+set_GRAPEFRUIT_BILL_COPY_LINKS_ON_CLONE=Copier les liens de la facture au clone de cette dernière
+set_GRAPEFRUIT_DEFAULT_TVA_ON_DOCUMENT_CLIENT_ENABLED=Ajouter un champ sur proposition commmerciale, commande et facture client pour mettre à jour rapidement la TVA des lignes
 
 # Models
 DocumentModelDorade=Modèle d'expédition chiffré
 
 # Global
 set_GRAPEFRUIT_BYPASS_CONFIRM_ACTIONS=Ne pas demander de confirmation sur les actions
+set_GRAPEFRUIT_MANAGE_DOWNLOAD_OWN_DOC_USERS=Ajoute une permissions pour permettre aux utilisateurs de télécharger les documents dans l'onglet "Fichier joint" de leurs fiches utilisateurs (si il n'ont pas la permission de voir tout les utilisateurs)
 
 # Facture expres
 GrapefruitCreateBillExpress=Créer Facture Express
+
+
+
+grapefruit_error_tva=Erreur sur le taux de TVA Ligne %s
+grapefruit_error_tva_updateline=Erreur sur la mise à jour des TVA
+grapefruit_success_tva_updateline=Mise à jour des TVA effectuée
+grapefruit_nb_progress_updated=Mise à jour de %d lignes
+grapefruit_nb_progress_not_updated=Attention : progression non mise à jour pour %d lignes (progression précédente inférieur au nouveau taux)
+set_GRAPEFRUIT_SITUATION_INVOICE_DEFAULT_PROGRESS=Ajouter un champ sur les facture de situation pour mettre à jour rapidement le pourcentage de progression
