@@ -208,10 +208,12 @@ class InterfaceGrapeFruittrigger
 					}
 				}
 			}
-			if(!empty($object->array_options['options_grapefruitStimulusBill']) ){
+			
+			//Création de l'évènement de la facture de relance
+			if(!empty($object->array_options['options_grapefruitStimulusBill']) ){//verification facture de relance
 				if((!empty($conf->global->GRAPEFRUIT_STIMULUS_BILL_DELAY) )){
-					$actioncomm = new ActionComm($db);
-					$actioncomm->type_code = 'AC_STI_BILL';
+					$actioncomm = new ActionComm($db);//evenement agenda
+					$actioncomm->type_code = 'AC_STI_BILL';//code pour la relance facture
 					$actioncomm->label='Facture de relance : '.$object->ref;
 					$actioncomm->datep = $object->date_lim_reglement+(3600 * 24) * $conf->global->GRAPEFRUIT_STIMULUS_BILL_DELAY+(3600*10);
 					$actioncomm->punctual =1;
