@@ -208,6 +208,68 @@ class InterfaceGrapeFruittrigger
 					}
 				}
 			}
+			
+			//Création de l'évènement de la facture de relance
+			if(!empty($object->array_options['options_grapefruitStimulusBill']) ){//verification facture de relance
+				if((!empty($conf->global->GRAPEFRUIT_STIMULUS_BILL_DELAY) )){
+					$actioncomm = new ActionComm($db);//evenement agenda
+					$actioncomm->type_code = 'AC_STI_BILL';//code pour la relance facture
+					$actioncomm->label='Facture de relance : '.$object->ref;
+					$actioncomm->datep = $object->date_lim_reglement+(3600 * 24) * $conf->global->GRAPEFRUIT_STIMULUS_BILL_DELAY+(3600*10);
+					$actioncomm->punctual =1;
+					$actioncomm->transparency = 1;
+					$actioncomm->fulldayevent=0;
+					$bill_rep = $object->getIdcontact('internal', 'SALESREPFOLL');
+					if(!empty($bill_rep)){
+						$u = new User($db);
+						$u->fetch($bill_rep[0]);
+						$actioncomm->userassigned = array();
+						$actioncomm->userassigned[$u->id]['id']=$u->id;
+						$actioncomm->userassigned[$u->id]['transparency']=1;
+						$actioncomm->userownerid=$user->id;
+					}else
+					 if(!empty($user)){
+						$actioncomm->userassigned = array();
+						$actioncomm->userassigned[$user->id]['id']=$user->id;
+						$actioncomm->userassigned[$u->id]['transparency']=1;
+						$actioncomm->userownerid=$user->id;
+					}
+					if(!empty($object->thirdparty)){
+						$actioncomm->societe=$object->thirdparty;
+						$actioncomm->socid=$object->thirdparty->id;
+						$actioncomm->thirdparty=$object->thirdparty;
+					}
+					$idcontacts=$object->getIdBillingContact();
+					if(!empty($idcontacts)){
+						$actioncomm->contactid=$idcontacts[0];
+						$actioncomm->contact=$object->contact;
+						
+					}
+					if(!empty($object->fk_project)){
+						$actioncomm->fk_project=$object->fk_project;
+					}
+					$actioncomm->fk_element  = $object->id;
+					$actioncomm->elementtype = $object->element;
+					$object->fetchObjectLinked();
+					if(!empty($object->linkedObjectsIds['ActionComm'])){
+						foreach($object->linkedObjectsIds['ActionComm'] as $k => $v){
+						
+							$tempActionComm = new ActionComm($db);
+							$tempActionComm->fetch($v);
+							if($tempActionComm->type_code =='AC_STI_BILL' ){
+								$tempActionComm->delete();
+								$object->deleteObjectLinked($v,'ActionComm',null,'',$k);
+							}
+						}
+					}
+					$res = $actioncomm->create($user);
+					$object->add_object_linked(get_class($actioncomm),$actioncomm->id);
+					
+					
+				}else {
+					setEventMessage($langs->trans('StimulusBillDelayForgotten'),'errors');
+				}
+			}
 
 			if (! empty($conf->propal->enabled) && ! empty($conf->global->GRAPEFRUIT_INVOICE_CLASSIFY_BILLED_PROPAL))
 			{

@@ -249,13 +249,15 @@ class modGrapeFruit extends DolibarrModules
 	 */
 	function init($options='')
 	{
+		global $db;
 		$sql = array();
 
 		define('INC_FROM_DOLIBARR',true);
-
+		$ext = new ExtraFields($db);
+		$ext->addExtraField('grapefruitStimulusBill', 'Stimulus Bill', 'boolean', 100, 1, 'facture');
 		dol_include_once('/grapefruit/config.php');
 		dol_include_once('/grapefruit/script/create-maj-base.php');
-
+		
 		$result=$this->_load_tables('/grapefruit/sql/');
 
 		return $this->_init($sql, $options);
