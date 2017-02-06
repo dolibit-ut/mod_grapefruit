@@ -529,13 +529,25 @@ if ($conf->facture->enabled) {
 	
 	$var = ! $var;
 	print '<tr ' . $bc[$var] . '>';
-	print '<td>' . $langs->trans("set_GRAPEFRUIT_STIMULUS_BILL_DELAY") . '</td>';
+	print '<td>' . $langs->trans("set_GRAPEFRUIT_REMINDER_BILL_DELAY") . '</td>';
 	print '<td align="center" width="20">&nbsp;</td>';
 	print '<td align="right" width="300">';
 	print '<form method="POST" action="' . $_SERVER['PHP_SELF'] . '">';
 	print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
-	print '<input type="hidden" name="action" value="set_GRAPEFRUIT_STIMULUS_BILL_DELAY">';
-	print '<input type="text" name="GRAPEFRUIT_STIMULUS_BILL_DELAY" value="' . $conf->global->GRAPEFRUIT_STIMULUS_BILL_DELAY . '" style="width:300px;max-width:100%;" />';
+	print '<input type="hidden" name="action" value="set_GRAPEFRUIT_REMINDER_BILL_DELAY">';
+	print '<input type="text" name="GRAPEFRUIT_REMINDER_BILL_DELAY" value="' . $conf->global->GRAPEFRUIT_REMINDER_BILL_DELAY . '" style="width:300px;max-width:100%;" />';
+	print '<input type="submit" class="button" value="' . $langs->trans("Modify") . '">';
+	print '</form>';
+	print '</td></tr>';
+	
+	$var = ! $var;
+	print '<tr ' . $bc[$var] . '>';
+	print '<td>' . $langs->trans("set_GRAPEFRUIT_EVENT_DESCRIPTION") . '</td>';
+	print '<td colspan="2"  align="right">';
+	print '<form method="POST" action="' . $_SERVER['PHP_SELF'] . '">';
+	print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
+	print '<input type="hidden" name="action" value="set_GRAPEFRUIT_EVENT_DESCRIPTION">';
+	print '<textarea cols="80" rows="5" name="GRAPEFRUIT_EVENT_DESCRIPTION">' . $conf->global->GRAPEFRUIT_EVENT_DESCRIPTION . '</textarea>';
 	print '<input type="submit" class="button" value="' . $langs->trans("Modify") . '">';
 	print '</form>';
 	print '</td></tr>';

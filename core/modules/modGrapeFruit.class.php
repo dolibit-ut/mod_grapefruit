@@ -254,7 +254,7 @@ class modGrapeFruit extends DolibarrModules
 
 		define('INC_FROM_DOLIBARR',true);
 		$ext = new ExtraFields($db);
-		$ext->addExtraField('grapefruitStimulusBill', 'Stimulus Bill', 'boolean', 100, 1, 'facture');
+		$ext->addExtraField('grapefruitReminderBill', 'Reminder Bill', 'boolean', 100, 1, 'facture');
 		dol_include_once('/grapefruit/config.php');
 		dol_include_once('/grapefruit/script/create-maj-base.php');
 		
