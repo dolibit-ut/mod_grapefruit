@@ -214,9 +214,16 @@ class InterfaceGrapeFruittrigger
 				if((!empty($conf->global->GRAPEFRUIT_STIMULUS_BILL_DELAY) )){
 					$actioncomm = new ActionComm($db);//evenement agenda
 					$actioncomm->type_code = 'AC_STI_BILL';//code pour la relance facture
-					$actioncomm->label='Facture de relance : '.$object->ref;
+					if(strstr($object->ref,'PROV')){
+						$actioncomm->label='Facture de relance : '.$object->newref;						
+					}else {
+						$actioncomm->label='Facture de relance : '.$object->ref;	
+					}
 					$actioncomm->datep = $object->date_lim_reglement+(3600 * 24) * $conf->global->GRAPEFRUIT_STIMULUS_BILL_DELAY+(3600*10);
-					$actioncomm->punctual =1;
+					$actioncomm->punctual = 1;
+					if(!empty($conf->global->GRAPEFRUIT_EVENT_DESCRIPTION)){
+						$actioncomm->note = $conf->global->GRAPEFRUIT_EVENT_DESCRIPTION;
+					}
 					$actioncomm->transparency = 1;
 					$actioncomm->fulldayevent=0;
 					$bill_rep = $object->getIdcontact('internal', 'SALESREPFOLL');
