@@ -384,6 +384,14 @@ print '<td align="right" width="300">';
 echo ajax_constantonoff('GRAPEFRUIT_SET_ORDER_BILLED_IF_SAME_MONTANT');
 print '</td></tr>';
 
+$var = ! $var;
+print '<tr ' . $bc[$var] . '>';
+print '<td>' . $langs->trans("set_GRAPEFRUIT_SET_RIGHT_ORDER_STATUS_ON_SHIPPING_DELETE") . '</td>';
+print '<td align="center" width="20">&nbsp;</td>';
+print '<td align="right" width="300">';
+echo ajax_constantonoff('GRAPEFRUIT_SET_RIGHT_ORDER_STATUS_ON_SHIPPING_DELETE');
+print '</td></tr>';
+
 print '<tr class="liste_titre">';
 print '<td>' . $langs->trans("Sending") . '</td>' . "\n";
 print '<td align="center" width="20">&nbsp;</td>';

@@ -530,6 +530,31 @@ class TGrappeFruit
 
 	}
 
+	function updateOrderStatusOnShippingDelete(&$expedition) {
+		
+		global $db, $user;
+		
+		require_once DOL_DOCUMENT_ROOT . '/commande/class/commande.class.php';
+		// On charge la commande d'origine pour vérifier s'il y a d'autres expéditions
+		$c = new Commande($db);
+		$c->fetch($expedition->origin_id);
+		$c->fetchObjectLinked($c->id, 'commande', $expedition->id, 'shipping');
+		
+		// S'il n'y a pas d'autre exped, on repasse au status validée, Sinon au statut en cours
+		if(empty($c->linkedObjects['shipping'])) {
+			// Je fais pas de set_reopen parce qu'il enlève aussi le statut facturé
+			$db->query('UPDATE '.MAIN_DB_PREFIX.'commande SET fk_statut = 1 WHERE rowid = '.$c->id);
+			$status = 'Validée';
+		}
+		else {
+			$db->query('UPDATE '.MAIN_DB_PREFIX.'commande SET fk_statut = 2 WHERE rowid = '.$c->id);
+			$status = 'En cours';
+		}
+
+		setEventMessage('Commande '.$c->getNomUrl().' passée au statut "'.$status.'"');
+
+	}
+
 	/**
 	 * @param $object : object facture
 	 */
