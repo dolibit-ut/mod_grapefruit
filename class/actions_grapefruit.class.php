@@ -576,62 +576,82 @@ class ActionsGrapeFruit
 	{
 		global $conf,$langs;
 		
+		$TContext = explode(':', $parameters['context']);
 		$object->fetchObjectLinked();
-		if (!empty($conf->global->GRAPEFRUIT_CONFIRM_ON_CREATE_INVOICE_FROM_ORDER) && !empty($object->linkedObjects['facture']))
+		
+		if ( (in_array('ordercard', $TContext) && !empty($conf->global->GRAPEFRUIT_CONFIRM_ON_CREATE_INVOICE_FROM_ORDER) && !empty($object->linkedObjects['facture'])) 
+			|| (in_array('ordersuppliercard', $TContext) && !empty($conf->global->GRAPEFRUIT_CONFIRM_ON_CREATE_INVOICE_FROM_SUPPLIER_ORDER) && !empty($object->linkedObjects['invoice_supplier']))
+		)
 		{
-			$amount = 0;
-			foreach ($object->linkedObjects['facture'] as $fk_facture => $facture)
-			{
-				$amount += $facture->total_ttc;
-			}
+			$langs->load('grapefruit@grapefruit');
 			
-			if ($amount >= $object->total_ttc)
+			if (in_array('ordercard', $TContext))
 			{
-				$langs->load('grapefruit@grapefruit');
+				$amount = 0;
+				foreach ($object->linkedObjects['facture'] as $fk_facture => $facture)
+				{
+					$amount += $facture->total_ttc;
+				}
 				
-				$formconfirm.= '<div id="grapefruit_confirm" title="'.dol_escape_htmltag($langs->transnoentities('grapefruite_dialog_confirm_create_invoice_title')).'" style="display: none;">';
-				$formconfirm.= '<div class="confirmmessage">'.img_help('','').' '.$langs->transnoentities('grapefruite_dialog_confirm_create_invoice_content', price($amount, 0, $langs, 1, -1, -1, $conf->currency)) . '</div>';
+				if ($amount < $object->total_ttc) return 0;
+				
+				$content = $langs->transnoentities('grapefruite_dialog_confirm_create_invoice_content', price($amount, 0, $langs, 1, -1, -1, $conf->currency));
+				$formconfirm = '<div id="grapefruit_confirm" title="'.dol_escape_htmltag($langs->transnoentities('grapefruite_dialog_confirm_create_invoice_title')).'" style="display: none;">';
+				$formconfirm.= '<div class="confirmmessage">'.img_help('','').' '.$content. '</div>';
 				$formconfirm.= '</div>'."\n";
 				
-				?>
-				<script type="text/javascript">
-					$(function() {
-						$('.tabsAction > div.divButAction > a.butAction[href*="/compta/facture.php?action=create"]').bind('click', function(event) {
-							var self = this;
-							event.preventDefault();
-
-							<?php if (!empty($conf->use_javascript_ajax)) { ?>
-								var grapefruit_confirm_dialog = <?php echo json_encode($formconfirm); ?>;
-								$(grapefruit_confirm_dialog).dialog({
-									open: function() {
-										$(this).parent().find("button.ui-button:eq(2)").focus();
-									}
-									,resizable: false
-									,height: 200
-									,width: 500
-									,modal: true
-									,buttons: {
-										"<?php echo dol_escape_js($langs->transnoentities("Yes")); ?>" : function() {
-											$(this).dialog("close");
-											window.location = $(self).attr('href');
-										}
-										,"<?php echo dol_escape_js($langs->transnoentities("No")); ?>": function() {
-											$(this).dialog("close");
-										}
-									}
-								});
-							<?php } else { ?>
-								if (confirm("<?php echo strip_tags($langs->transnoentities('grapefruite_dialog_confirm_create_invoice_content', price($amount, 0, $langs, 1, -1, -1, $conf->currency))); ?>"))
-								{
-									window.location = $(self).attr('href');
-								}
-							<?php } ?>
-						});
-					});
-				</script>
-				<?php
+				$selector = '.tabsAction a.butAction[href*="/compta/facture.php?action=create"]';
 			}
+			else
+			{
+				$content = $langs->transnoentities('grapefruite_dialog_confirm_create_supplier_invoice_content');
+				$formconfirm = '<div id="grapefruit_confirm" title="'.dol_escape_htmltag($langs->transnoentities('grapefruite_dialog_confirm_create_invoice_title')).'" style="display: none;">';
+				$formconfirm.= '<div class="confirmmessage">'.img_help('','').' '.$content. '</div>';
+				$formconfirm.= '</div>'."\n";
+				
+				$selector = '.tabsAction a.butAction[href*="/fourn/facture/card.php?action=create"]';
+			}
+			
+			?>
+			<script type="text/javascript">
+				$(function() {
+					$('<?php echo $selector; ?>').bind('click', function(event) {
+						var self = this;
+						event.preventDefault();
+
+						<?php if (!empty($conf->use_javascript_ajax)) { ?>
+							var grapefruit_confirm_dialog = <?php echo json_encode($formconfirm); ?>;
+							$(grapefruit_confirm_dialog).dialog({
+								open: function() {
+									$(this).parent().find("button.ui-button:eq(2)").focus();
+								}
+								,resizable: false
+								,height: 200
+								,width: 500
+								,modal: true
+								,buttons: {
+									"<?php echo dol_escape_js($langs->transnoentities("Yes")); ?>" : function() {
+										$(this).dialog("close");
+										window.location = $(self).attr('href');
+									}
+									,"<?php echo dol_escape_js($langs->transnoentities("No")); ?>": function() {
+										$(this).dialog("close");
+									}
+								}
+							});
+						<?php } else { ?>
+							if (confirm("<?php echo strip_tags($content); ?>"))
+							{
+								window.location = $(self).attr('href');
+							}
+						<?php } ?>
+					});
+				});
+			</script>
+			<?php
 		}
+		
+		return 0;
 	}
 	
 }
