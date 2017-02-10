@@ -76,3 +76,13 @@ grapefruit_success_tva_updateline=Mise à jour des TVA effectuée
 grapefruit_nb_progress_updated=Mise à jour de %d lignes
 grapefruit_nb_progress_not_updated=Attention : progression non mise à jour pour %d lignes (progression précédente inférieur au nouveau taux)
 set_GRAPEFRUIT_SITUATION_INVOICE_DEFAULT_PROGRESS=Ajouter un champ sur les facture de situation pour mettre à jour rapidement le pourcentage de progression
+
+
+
+set_GRAPEFRUIT_CONFIRM_ON_CREATE_INVOICE_FROM_ORDER=Activer une confirmation JS sur la création d'une facture depuis la commande si le montant facturé est >= au montant de la commande
+set_GRAPEFRUIT_CONFIRM_ON_CREATE_INVOICE_FROM_SUPPLIER_ORDER=Activer une confirmation JS sur la création d'une facture depuis la commande fournisseur s'il existe au moins 1 facture associée
+
+
+
+grapefruite_dialog_confirm_create_invoice_title=Créer facture
+grapefruite_dialog_confirm_create_invoice_content=Êtes-vous sur de vouloir créer une facture à partir de cette commande ? <br />Montant déjà facturé : <b>%s</b>

@@ -563,4 +563,76 @@ class ActionsGrapeFruit
 		return 0;
 	}
 	
+	/**
+	 * Overloading the doActions function : replacing the parent's function with the one below
+	 *
+	 * @param   array()         $parameters     Hook metadatas (context, etc...)
+	 * @param   CommonObject    &$object        The object to process (an invoice if you are in invoice module, a propale in propale's module, etc...)
+	 * @param   string          &$action        Current action (if set). Generally create or edit or null
+	 * @param   HookManager     $hookmanager    Hook manager propagated to allow calling another hook
+	 * @return  int                             < 0 on error, 0 on success, 1 to replace standard code
+	 */
+	function formConfirm($parameters, &$object, &$action, $hookmanager)
+	{
+		global $conf,$langs;
+		
+		if (!empty($conf->global->GRAPEFRUIT_CONFIRM_ON_CREATE_INVOICE_FROM_ORDER) && !empty($object->linkedObjects['facture']))
+		{
+			$amount = 0;
+			$object->fetchObjectLinked();
+			
+			foreach ($object->linkedObjects['facture'] as $fk_facture => $facture)
+			{
+				$amount += $facture->total_ttc;
+			}
+			
+			if ($amount >= $object->total_ttc)
+			{
+				$langs->load('grapefruit@grapefruit');
+				
+				$formconfirm.= '<div id="grapefruit_confirm" title="'.dol_escape_htmltag($langs->transnoentities('grapefruite_dialog_confirm_create_invoice_title')).'" style="display: none;">';
+				$formconfirm.= '<div class="confirmmessage">'.img_help('','').' '.$langs->transnoentities('grapefruite_dialog_confirm_create_invoice_content', price($amount, 0, $langs, 1, -1, -1, $conf->currency)) . '</div>';
+				$formconfirm.= '</div>'."\n";
+				
+				?>
+				<script type="text/javascript">
+					$(function() {
+						$('.tabsAction > div.divButAction > a.butAction[href*="/compta/facture.php?action=create"]').bind('click', function(event) {
+							var self = this;
+							event.preventDefault();
+
+							<?php if (!empty($conf->use_javascript_ajax)) { ?>
+								var grapefruit_confirm_dialog = <?php echo json_encode($formconfirm); ?>;
+								$(grapefruit_confirm_dialog).dialog({
+									open: function() {
+										$(this).parent().find("button.ui-button:eq(2)").focus();
+									}
+									,resizable: false
+									,height: 200
+									,width: 500
+									,modal: true
+									,buttons: {
+										"<?php echo dol_escape_js($langs->transnoentities("Yes")); ?>" : function() {
+											$(this).dialog("close");
+											window.location = $(self).attr('href');
+										}
+										,"<?php echo dol_escape_js($langs->transnoentities("No")); ?>": function() {
+											$(this).dialog("close");
+										}
+									}
+								});
+							<?php } else { ?>
+								if (confirm("<?php echo strip_tags($langs->transnoentities('grapefruite_dialog_confirm_create_invoice_content', price($amount, 0, $langs, 1, -1, -1, $conf->currency))); ?>"))
+								{
+									window.location = $(self).attr('href');
+								}
+							<?php } ?>
+						});
+					});
+				</script>
+				<?php
+			}
+		}
+	}
+	
 }
