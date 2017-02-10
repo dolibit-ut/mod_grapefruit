@@ -576,11 +576,10 @@ class ActionsGrapeFruit
 	{
 		global $conf,$langs;
 		
+		$object->fetchObjectLinked();
 		if (!empty($conf->global->GRAPEFRUIT_CONFIRM_ON_CREATE_INVOICE_FROM_ORDER) && !empty($object->linkedObjects['facture']))
 		{
 			$amount = 0;
-			$object->fetchObjectLinked();
-			
 			foreach ($object->linkedObjects['facture'] as $fk_facture => $facture)
 			{
 				$amount += $facture->total_ttc;
