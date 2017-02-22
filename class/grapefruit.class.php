@@ -149,24 +149,24 @@ class TGrappeFruit
 
 	static function billCloneLink(&$object, &$originObject) {
 		global $conf, $db;
-		
+
 		if(!empty($conf->global->GRAPEFRUIT_BILL_COPY_LINKS_ON_CLONE)) {
-		
+
 				$originObject->fetchObjectLinked( $originObject->id, 'facture' ,  $originObject->id, 'facture' );
 			//var_dump($originObject->linkedObjectsIds);exit;
-			
+
 				foreach($originObject->linkedObjectsIds as $typeObject=>$TId) {
-					
+
 					foreach($TId as $id) {
-						
+
 						$object->add_object_linked($typeObject,$id);
-						
+
 					}
-					
+
 				}
-			
+
 		}
-		
+
 	}
 
 	/**
@@ -505,7 +505,7 @@ class TGrappeFruit
 		$TOrderProductQty = array();
 		if(!empty($order->lines)) {
 			foreach($order->lines as $order_line) {
-				if($order_line->product_type == 0) $TOrderProductQty[$order_line->fk_product] += $order_line->qty;
+				if($order_line->product_type == 0 && !empty($order_line->fk_product)) $TOrderProductQty[$order_line->fk_product] += $order_line->qty;
 			}
 		}
 
@@ -514,7 +514,9 @@ class TGrappeFruit
 		foreach($TShipping as $shipping) {
 			if(!empty($shipping->lines)) {
 				foreach($shipping->lines as $shipping_line) {
-					$TShippingProductQty[$shipping_line->fk_product] += $shipping_line->qty;
+					if (!empty($shipping_line->fk_product)) {
+						$TShippingProductQty[$shipping_line->fk_product] += $shipping_line->qty;
+					}
 				}
 			}
 		}
