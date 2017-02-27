@@ -340,6 +340,19 @@ print '<input type="submit" class="button" value="' . $langs->trans("Modify") . 
 print '</form>';
 print '</td></tr>';
 
+$var = ! $var;
+print '<tr ' . $bc[$var] . '>';
+print '<td>' . $langs->trans("set_GRAPEFRUIT_CONFIRM_ON_CREATE_INVOICE_FROM_SUPPLIER_ORDER") . '</td>';
+print '<td align="center" width="20">&nbsp;</td>';
+print '<td align="right" width="300">';
+print '<form method="POST" action="' . $_SERVER['PHP_SELF'] . '">';
+print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
+print '<input type="hidden" name="action" value="set_GRAPEFRUIT_CONFIRM_ON_CREATE_INVOICE_FROM_SUPPLIER_ORDER">';
+echo ajax_constantonoff('GRAPEFRUIT_CONFIRM_ON_CREATE_INVOICE_FROM_SUPPLIER_ORDER');
+print '</form>';
+print '</td></tr>';
+
+
 print '<tr class="liste_titre">';
 print '<td>' . $langs->trans("CustomerOrder") . '</td>' . "\n";
 print '<td align="center" width="20">&nbsp;</td>';
@@ -390,6 +403,18 @@ print '<td>' . $langs->trans("set_GRAPEFRUIT_SET_RIGHT_ORDER_STATUS_ON_SHIPPING_
 print '<td align="center" width="20">&nbsp;</td>';
 print '<td align="right" width="300">';
 echo ajax_constantonoff('GRAPEFRUIT_SET_RIGHT_ORDER_STATUS_ON_SHIPPING_DELETE');
+print '</td></tr>';
+
+$var = ! $var;
+print '<tr ' . $bc[$var] . '>';
+print '<td>' . $langs->trans("set_GRAPEFRUIT_CONFIRM_ON_CREATE_INVOICE_FROM_ORDER") . '</td>';
+print '<td align="center" width="20">&nbsp;</td>';
+print '<td align="right" width="300">';
+print '<form method="POST" action="' . $_SERVER['PHP_SELF'] . '">';
+print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
+print '<input type="hidden" name="action" value="set_GRAPEFRUIT_CONFIRM_ON_CREATE_INVOICE_FROM_ORDER">';
+echo ajax_constantonoff('GRAPEFRUIT_CONFIRM_ON_CREATE_INVOICE_FROM_ORDER');
+print '</form>';
 print '</td></tr>';
 
 print '<tr class="liste_titre">';
