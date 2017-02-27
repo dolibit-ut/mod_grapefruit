@@ -399,6 +399,14 @@ print '</td></tr>';
 
 $var = ! $var;
 print '<tr ' . $bc[$var] . '>';
+print '<td>' . $langs->trans("set_GRAPEFRUIT_SET_RIGHT_ORDER_STATUS_ON_SHIPPING_DELETE") . '</td>';
+print '<td align="center" width="20">&nbsp;</td>';
+print '<td align="right" width="300">';
+echo ajax_constantonoff('GRAPEFRUIT_SET_RIGHT_ORDER_STATUS_ON_SHIPPING_DELETE');
+print '</td></tr>';
+
+$var = ! $var;
+print '<tr ' . $bc[$var] . '>';
 print '<td>' . $langs->trans("set_GRAPEFRUIT_CONFIRM_ON_CREATE_INVOICE_FROM_ORDER") . '</td>';
 print '<td align="center" width="20">&nbsp;</td>';
 print '<td align="right" width="300">';
@@ -408,7 +416,6 @@ print '<input type="hidden" name="action" value="set_GRAPEFRUIT_CONFIRM_ON_CREAT
 echo ajax_constantonoff('GRAPEFRUIT_CONFIRM_ON_CREATE_INVOICE_FROM_ORDER');
 print '</form>';
 print '</td></tr>';
-
 
 print '<tr class="liste_titre">';
 print '<td>' . $langs->trans("Sending") . '</td>' . "\n";

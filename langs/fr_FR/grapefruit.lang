@@ -50,6 +50,7 @@ set_GRAPEFRUIT_AUTO_ORDER_ON_SUPPLIERORDER_VALIDATION_WITH_METHOD=Passer automat
 set_GRAPEFRUIT_ALLOW_CREATE_ORDER_AND_BILL_ON_UNSIGNED_PROPAL=Autoriser la création d'une commande ou facture sur un devis au statut "validé" (ce dernier sera classé "signé" automatiquement lors de la validation de la commande de destination)
 set_GRAPEFRUIT_ALLOW_CREATE_BILL_EXPRESS=Autoriser la création express d'une facture depuis la fiche commande (création, validation de la facture, accès direct à l'écran de paiement et classement de la commande au statut "facturée")
 set_GRAPEFRUIT_SET_ORDER_BILLED_IF_SAME_MONTANT=Classer la commande d'origine au statut "Facturée" si son montant est égal à la somme des montants des factures associées (action faite sur validation de facture)
+set_GRAPEFRUIT_SET_RIGHT_ORDER_STATUS_ON_SHIPPING_DELETE=Remettre à jour le statut de la commande d'origine lors de la suppression d'une expédition (en cours si au moins une autre expédition existe, et validée si plus aucune autre expédition) 
 
 set_GRAPEFRUIT_SHOW_SUPPLIER_ORDER_REFS=---> Afficher la référence commande client associée, la référence commande interne associée et la date de commande
 set_GRAPEFRUIT_SUPPLIER_CONTACT_SHIP_ADDRESS_SHOW_DETAILS= ---> Afficher le numéro de téléphone du contact et son email
@@ -76,7 +77,7 @@ grapefruit_success_tva_updateline=Mise à jour des TVA effectuée
 grapefruit_nb_progress_updated=Mise à jour de %d lignes
 grapefruit_nb_progress_not_updated=Attention : progression non mise à jour pour %d lignes (progression précédente inférieur au nouveau taux)
 set_GRAPEFRUIT_SITUATION_INVOICE_DEFAULT_PROGRESS=Ajouter un champ sur les facture de situation pour mettre à jour rapidement le pourcentage de progression
-
+grapefruit_order_status_set_to=Commande %s passée au statut "%s"
 
 
 set_GRAPEFRUIT_CONFIRM_ON_CREATE_INVOICE_FROM_ORDER=Activer une confirmation JS sur la création d'une facture depuis la commande si le montant facturé est >= au montant de la commande
