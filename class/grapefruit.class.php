@@ -532,27 +532,31 @@ class TGrappeFruit
 
 	function updateOrderStatusOnShippingDelete(&$expedition) {
 		
-		global $db, $user;
+		global $db, $user, $langs;
 		
 		require_once DOL_DOCUMENT_ROOT . '/commande/class/commande.class.php';
+		
+		$langs->load('grapefruit@grapefruit');
+		$langs->load('orders');
+		
 		// On charge la commande d'origine pour vérifier s'il y a d'autres expéditions
-		$c = new Commande($db);
-		$c->fetch($expedition->origin_id);
-		$c->fetchObjectLinked($c->id, 'commande', $expedition->id, 'shipping');
+		$commande = new Commande($db);
+		$commande->fetch($expedition->origin_id);
+		$commande->fetchObjectLinked($commande->id, 'commande', $expedition->id, 'shipping');
 		
 		// S'il n'y a pas d'autre exped, on repasse au status validée, Sinon au statut en cours
-		if(empty($c->linkedObjects['shipping'])) {
+		if(empty($commande->linkedObjects['shipping'])) {
 			// Je fais pas de set_reopen parce qu'il enlève aussi le statut facturé
-			$db->query('UPDATE '.MAIN_DB_PREFIX.'commande SET fk_statut = 1 WHERE rowid = '.$c->id);
-			$status = 'Validée';
+			$db->query('UPDATE '.MAIN_DB_PREFIX.'commande SET fk_statut = 1 WHERE rowid = '.$commande->id);
+			$status = $langs->trans('StatusOrderValidatedShort');
 		}
 		else {
-			$db->query('UPDATE '.MAIN_DB_PREFIX.'commande SET fk_statut = 2 WHERE rowid = '.$c->id);
-			$status = 'En cours';
+			$db->query('UPDATE '.MAIN_DB_PREFIX.'commande SET fk_statut = 2 WHERE rowid = '.$commande->id);
+			$status = $langs->trans('StatusOrderSentShort');
 		}
-
-		setEventMessage('Commande '.$c->getNomUrl().' passée au statut "'.$status.'"');
-
+		
+		setEventMessage($langs->trans('grapefruit_order_status_set_to', $commande->getNomUrl(), $status));
+		
 	}
 
 	/**

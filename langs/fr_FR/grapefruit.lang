@@ -77,3 +77,4 @@ grapefruit_success_tva_updateline=Mise à jour des TVA effectuée
 grapefruit_nb_progress_updated=Mise à jour de %d lignes
 grapefruit_nb_progress_not_updated=Attention : progression non mise à jour pour %d lignes (progression précédente inférieur au nouveau taux)
 set_GRAPEFRUIT_SITUATION_INVOICE_DEFAULT_PROGRESS=Ajouter un champ sur les facture de situation pour mettre à jour rapidement le pourcentage de progression
+grapefruit_order_status_set_to=Commande %s passée au statut "%s"
