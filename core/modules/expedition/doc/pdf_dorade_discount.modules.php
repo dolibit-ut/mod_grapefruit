@@ -107,6 +107,7 @@ class pdf_dorade_discount extends ModelePdfExpedition
 		$outputlangs->load("propal");
 		$outputlangs->load("deliveries");
         $outputlangs->load("sendings");
+		$outputlangs->load("grapefruit@grapefruit");
 
 		if ($conf->expedition->dir_output)
 		{

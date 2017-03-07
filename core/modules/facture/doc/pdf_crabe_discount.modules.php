@@ -119,21 +119,21 @@ class pdf_crabe_discount extends ModelePDFFactures
 		$this->posxdesc=$this->marge_gauche+1;
 		if($conf->global->PRODUCT_USE_UNITS)
 		{
-			$this->posxtva=80;
-			$this->posxup=100;
-			$this->posxqty=115;
-			$this->posxunit=133;
+			$this->posxtva=70;
+			$this->posxup=90;
+			$this->posxqty=110;
+			$this->posxunit=125;
 		}
 		else
 		{
 			$this->posxtva=90;
-			$this->posxup=105;
-			$this->posxqty=133;
+			$this->posxup=110;
+			$this->posxqty=125;
 		}
-		$this->posxdiscount=150;
-		$this->postotalht=180;
-		$this->posxprogress=180; // Only displayed for situation invoices
-
+		$this->posxdiscountprice=135;
+		$this->posxdiscount=162;
+		$this->posxprogress=174; // Only displayed for situation invoices
+		$this->postotalht=174;
 		if (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT)) $this->posxtva=$this->posxup;
 		$this->posxpicture=$this->posxtva - (empty($conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH)?20:$conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH);	// width of images
 		if ($this->page_largeur < 210) // To work with US executive format
@@ -142,6 +142,7 @@ class pdf_crabe_discount extends ModelePDFFactures
 			$this->posxtva-=20;
 			$this->posxup-=20;
 			$this->posxqty-=20;
+			$this->posxdiscountprice-=20;
 			$this->posxdiscount-=20;
 			$this->postotalht-=20;
 		}
@@ -179,7 +180,6 @@ class pdf_crabe_discount extends ModelePDFFactures
 		$outputlangs->load("companies");
 		$outputlangs->load("bills");
 		$outputlangs->load("products");
-		$outputlangs->load("grapefruit@grapefruit");
 
 		$nblignes = count($object->lines);
 
@@ -301,11 +301,13 @@ class pdf_crabe_discount extends ModelePDFFactures
 				}
 				if (empty($this->atleastonediscount) && empty($conf->global->PRODUCT_USE_UNITS))
 				{
-					$this->posxpicture+=($this->postotalht - $this->posxdiscount);
-					$this->posxtva+=($this->postotalht - $this->posxdiscount);
-					$this->posxup+=($this->postotalht - $this->posxdiscount);
-					$this->posxqty+=($this->postotalht - $this->posxdiscount);
-					$this->posxdiscount+=($this->postotalht - $this->posxdiscount);
+					$this->posxpicture+=($this->postotalht -$this->posxdiscountprice-2);
+					$this->posxtva+=($this->postotalht - $this->posxdiscountprice-2);
+					$this->posxup+=($this->postotalht - $this->posxdiscountprice-2);
+					$this->posxqty+=($this->postotalht - $this->posxdiscountprice-2);
+					$this->posxdiscountprice+=($this->postotalht - $this->posxdiscountprice-2);
+					$this->posxdiscount+=($this->postotalht - $this->posxdiscountprice-2);
+					
 					//$this->postotalht;
 				}
 
@@ -317,6 +319,7 @@ class pdf_crabe_discount extends ModelePDFFactures
 					$this->posxtva -= $progress_width;
 					$this->posxup -= $progress_width;
 					$this->posxqty -= $progress_width;
+					$this->posxdiscountprice-=$progress_width;
 					$this->posxdiscount -= $progress_width;
 					$this->posxprogress -= $progress_width;
 				}
@@ -515,7 +518,7 @@ class pdf_crabe_discount extends ModelePDFFactures
 					}
 					else
 					{
-						$pdf->MultiCell($this->posxdiscount-$this->posxqty-0.8, 4, $qty, 0, 'R');
+						$pdf->MultiCell($this->posxdiscountprice-$this->posxqty-0.8, 4, $qty, 0, 'R');
 					}
 
 					// Unit
@@ -523,17 +526,19 @@ class pdf_crabe_discount extends ModelePDFFactures
 					{
 						$unit = pdf_getlineunit($object, $i, $outputlangs, $hidedetails, $hookmanager);
 						$pdf->SetXY($this->posxunit, $curY);
-						$pdf->MultiCell($this->posxdiscount-$this->posxunit-0.8, 4, $unit, 0, 'L');
+						$pdf->MultiCell($this->posxdiscountprice-$this->posxunit-0.8, 4, $unit, 0, 'L');
 					}
 
 					// Discount on line
 					if ($object->lines[$i]->remise_percent)
 					{
-                    
-						$pdf->SetXY($this->posxdiscount-2, $curY);
-						$remise_percent = pdf_getlineremisepercent($object, $i, $outputlangs, $hidedetails);
+						$pdf->SetXY($this->posxdiscountprice, $curY);
 						$discountprice = $object->lines[$i]->subprice*((100-$object->lines[$i]->remise_percent)/100);
-						$pdf->MultiCell($this->postotalht-$this->posxdiscount+2, 3,price2num($discountprice,2) , 0, 'R');
+						$pdf->MultiCell($this->posxdiscount-$this->posxdiscountprice, 3, price2num($discountprice,2), 0, 'R');
+						
+                        $pdf->SetXY($this->posxdiscount-2, $curY);
+					    $remise_percent = pdf_getlineremisepercent($object, $i, $outputlangs, $hidedetails);
+						$pdf->MultiCell($this->posxprogress-$this->posxdiscount+2, 3, $remise_percent, 0, 'R');
 					}
 
 					if ($this->situationinvoice)
@@ -1378,7 +1383,7 @@ class pdf_crabe_discount extends ModelePDFFactures
 			}
 			else
 			{
-				$pdf->MultiCell($this->posxdiscount-$this->posxqty-1,2, $outputlangs->transnoentities("Qty"),'','C');
+				$pdf->MultiCell($this->posxdiscountprice-$this->posxqty-1,2, $outputlangs->transnoentities("Qty"),'','C');
 			}
 		}
 
@@ -1386,8 +1391,18 @@ class pdf_crabe_discount extends ModelePDFFactures
 			$pdf->line($this->posxunit - 1, $tab_top, $this->posxunit - 1, $tab_top + $tab_height);
 			if (empty($hidetop)) {
 				$pdf->SetXY($this->posxunit - 1, $tab_top + 1);
-				$pdf->MultiCell($this->posxdiscount - $this->posxunit - 1, 2, $outputlangs->transnoentities("Unit"), '',
+				$pdf->MultiCell($this->posxdiscountprice - $this->posxunit - 1, 2, $outputlangs->transnoentities("Unit"), '',
 					'C');
+			}
+		}
+		
+		$pdf->line($this->posxdiscountprice-1, $tab_top, $this->posxdiscountprice-1, $tab_top + $tab_height);
+		if (empty($hidetop))
+		{
+			if ($this->atleastonediscount)
+			{
+				$pdf->SetXY($this->posxdiscountprice-1, $tab_top+1);
+				$pdf->MultiCell($this->posxdiscount-$this->posxdiscountprice+1,2, $outputlangs->transnoentities("DiscountUHT"),'','C');
 			}
 		}
 
@@ -1397,7 +1412,7 @@ class pdf_crabe_discount extends ModelePDFFactures
 			if ($this->atleastonediscount)
 			{
 				$pdf->SetXY($this->posxdiscount-1, $tab_top+1);
-				$pdf->MultiCell($this->postotalht-$this->posxdiscount+1,2, $outputlangs->transnoentities("DiscountUHT"),'','C');
+				$pdf->MultiCell($this->postotalht-$this->posxdiscount+1,2, $outputlangs->transnoentities("ReductionShort"),'','C');
 			}
 		}
 		if ($this->atleastonediscount)
