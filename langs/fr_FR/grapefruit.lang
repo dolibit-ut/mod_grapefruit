@@ -61,7 +61,10 @@ set_GRAPEFRUIT_REMINDER_BILL_DELAY= Délai après date de limite de reglement po
 set_GRAPEFRUIT_EVENT_DESCRIPTION= Description de l'évènement de relance créé
 # Models
 DocumentModelDorade=Modèle d'expédition chiffré
-
+DocumentModelDoradeDiscount=Modèle d'expédition chiffré avec prix unitaire remisé
+DocModelAzurDescriptionDiscount=Modèle de proposition commerciale complet (logo…) avec prix unitaire remisé
+PDFCrabeDescriptionDiscount=Modèle de facture PDF complet (modèle recommandé par défaut) avec prix unitaire remisé
+PDFEinsteinDiscountDescription=Modèle de commande complet (logo…) avec prix unitaire remisé
 # Global
 set_GRAPEFRUIT_BYPASS_CONFIRM_ACTIONS=Ne pas demander de confirmation sur les actions
 set_GRAPEFRUIT_MANAGE_DOWNLOAD_OWN_DOC_USERS=Ajoute une permissions pour permettre aux utilisateurs de télécharger les documents dans l'onglet "Fichier joint" de leurs fiches utilisateurs (si il n'ont pas la permission de voir tout les utilisateurs)
@@ -83,7 +86,7 @@ grapefruit_order_status_set_to=Commande %s passée au statut "%s"
 set_GRAPEFRUIT_CONFIRM_ON_CREATE_INVOICE_FROM_ORDER=Activer une confirmation JS sur la création d'une facture depuis la commande si le montant facturé est >= au montant de la commande
 set_GRAPEFRUIT_CONFIRM_ON_CREATE_INVOICE_FROM_SUPPLIER_ORDER=Activer une confirmation JS sur la création d'une facture depuis la commande fournisseur s'il existe au moins 1 facture associée
 
-
+DiscountUHT=P.U H.T Remisé
 
 grapefruite_dialog_confirm_create_invoice_title=Créer facture
 grapefruite_dialog_confirm_create_invoice_content=Êtes-vous sur de vouloir créer une facture à partir de cette commande ? <br />Montant déjà facturé : <b>%s</b>
