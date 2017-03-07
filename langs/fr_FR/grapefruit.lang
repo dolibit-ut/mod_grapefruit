@@ -51,10 +51,11 @@ set_GRAPEFRUIT_ALLOW_CREATE_ORDER_AND_BILL_ON_UNSIGNED_PROPAL=Autoriser la créa
 set_GRAPEFRUIT_ALLOW_CREATE_BILL_EXPRESS=Autoriser la création express d'une facture depuis la fiche commande (création, validation de la facture, accès direct à l'écran de paiement et classement de la commande au statut "facturée")
 set_GRAPEFRUIT_SET_ORDER_BILLED_IF_SAME_MONTANT=Classer la commande d'origine au statut "Facturée" si son montant est égal à la somme des montants des factures associées (action faite sur validation de facture)
 set_GRAPEFRUIT_SET_RIGHT_ORDER_STATUS_ON_SHIPPING_DELETE=Remettre à jour le statut de la commande d'origine lors de la suppression d'une expédition (en cours si au moins une autre expédition existe, et validée si plus aucune autre expédition) 
-
+set_GRAPEFRUIT_ORDER_ADD_DISCOUNT_COLUMN=Ajouter la colonne prix unitaire remisé sur la fiche
+set_GRAPEFRUIT_PROPAL_ADD_DISCOUNT_COLUMN=Ajouter la colonne prix unitaire remisé sur la fiche
 set_GRAPEFRUIT_SHOW_SUPPLIER_ORDER_REFS=---> Afficher la référence commande client associée, la référence commande interne associée et la date de commande
 set_GRAPEFRUIT_SUPPLIER_CONTACT_SHIP_ADDRESS_SHOW_DETAILS= ---> Afficher le numéro de téléphone du contact et son email
-
+set_GRAPEFRUIT_BILL_ADD_DISCOUNT_COLUMN=Ajouter la colonne prix unitaire remisé sur la fiche
 set_GRAPEFRUIT_BILL_COPY_LINKS_ON_CLONE=Copier les liens de la facture au clone de cette dernière
 set_GRAPEFRUIT_DEFAULT_TVA_ON_DOCUMENT_CLIENT_ENABLED=Ajouter un champ sur proposition commmerciale, commande et facture client pour mettre à jour rapidement la TVA des lignes
 set_GRAPEFRUIT_REMINDER_BILL_DELAY= Délai après date de limite de reglement pour créer un evenement facture de relance sur l'agenda (en jours)
