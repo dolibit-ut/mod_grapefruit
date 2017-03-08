@@ -70,6 +70,7 @@ class ActionsGrapeFruit
 		$actionATM = GETPOST('actionATM');
 		if ($parameters['currentcontext'] == 'ordercard' && $object->statut >= 1 && !empty($conf->global->GRAPEFRUIT_ALLOW_CREATE_BILL_EXPRESS))
 		{
+			
 			if($actionATM === 'create_bill_express'
 				&& !empty($conf->global->GRAPEFRUIT_ALLOW_CREATE_BILL_EXPRESS)
 				&& $object->statut > Commande::STATUS_DRAFT
@@ -112,6 +113,8 @@ class ActionsGrapeFruit
 			if ($object->type == Facture::TYPE_SITUATION) $object->setValueFrom('ishidden', 0, 'extrafields', '"grapefruit_default_situation_progress_line"', '', 'name');
 			else $object->setValueFrom('ishidden', 1, 'extrafields', '"grapefruit_default_situation_progress_line"', '', 'name');
 		}
+
+
 
 		return 0;
 	}
@@ -189,9 +192,75 @@ class ActionsGrapeFruit
 				<?php
 
 			}
-
+			if($conf->global->GRAPEFRUIT_PROPAL_ADD_DISCOUNT_COLUMN){
+						?>
+					<script type="text/javascript">
+						$(document).ready(function(){
+							console.log('formObjectOptions::columnsAndLines');
+							
+							$('#tablelines tr').each(function(iLigne) {
+									if(!$(this).attr('numeroLigne')) {
+											$(this).attr('numeroLigne', iLigne);	
+									}
+	
+									var iColonne=0;
+	
+									$(this).find('>td').each(function() {
+	
+										if(!$(this).attr('numeroColonne')) {
+											$(this).attr('numeroColonne', iColonne);	
+										}
+	
+										if(!$(this).attr('colspan')) {
+											iColonne++;	
+										}
+										else {
+											iColonne+=parseInt($(this).attr('colspan'));
+										}
+	
+									});
+	
+					
+									if($('tr[numeroLigne='+iLigne+'] td[numeroColonne=4]').length) {
+										$('tr[numeroLigne='+iLigne+'] td[numeroColonne=4]').after('<td align="right" numeroColonne="4b" width=80></td>');	
+									}
+									else {
+										$('tr[numeroLigne='+iLigne+'] td[numeroColonne=0]').after('<td align="right" numeroColonne="4c" width=80></td>');
+									}
+	
+							});
+	
+							// Ajout des libellé de colonne
+			         		$('#tablelines .liste_titre > td[numeroColonne=4b]').first().html('P.U H.T Remisé');
+	
+	
+			         		// Ajout des prix devisé sur les lignes
+		         			<?php
+		         			
+		         			
+		         			if(!empty($object->lines)) {
+		         				
+			         			foreach($object->lines as $line){
+									
+									if($line->rowid)
+										$line->id = $line->rowid;
+									
+									
+									echo "$('#row-".$line->id." td[numeroColonne=4b]').html('".price($line->subprice*(1-$line->remise_percent/100),0,'',1,$conf->global->MAIN_MAX_DECIMALS_TOT,$conf->global->MAIN_MAX_DECIMALS_TOT)."');";
+									
+									
+									if($line->error != '') echo "alert('".$line->error."');";
+			         			}
+								
+		         			}
+		         			
+							?>
+						});
+				    </script>	
+			    	<?php
+	
+			}
 		}
-
 		elseif ($parameters['currentcontext'] == 'thirdpartycard')
 		{
 			if (!empty($conf->global->GRAPEFRUIT_DISABLE_PROSPECTCUSTOMER_CHOICE) && ($action == 'create' || $action == 'edit'))
@@ -204,10 +273,10 @@ class ActionsGrapeFruit
 				</script>
 				<?php
 			}
+			
 		}
 
 		if ($parameters['currentcontext'] == 'ordercard') {
-
 			if(!empty($conf->global->GRAPEFRUIT_ALLOW_CREATE_BILL_EXPRESS)
 				&& $object->statut > Commande::STATUS_DRAFT
 				&& !$object->billed
@@ -239,8 +308,77 @@ class ActionsGrapeFruit
 				<?php
 
 			}
+				if($conf->global->GRAPEFRUIT_ORDER_ADD_DISCOUNT_COLUMN){
+						?>
+					<script type="text/javascript">
+						$(document).ready(function(){
+							console.log('formObjectOptions::columnsAndLines');
+							
+							$('#tablelines tr').each(function(iLigne) {
+									if(!$(this).attr('numeroLigne')) {
+											$(this).attr('numeroLigne', iLigne);	
+									}
+	
+									var iColonne=0;
+	
+									$(this).find('>td').each(function() {
+	
+										if(!$(this).attr('numeroColonne')) {
+											$(this).attr('numeroColonne', iColonne);	
+										}
+	
+										if(!$(this).attr('colspan')) {
+											iColonne++;	
+										}
+										else {
+											iColonne+=parseInt($(this).attr('colspan'));
+										}
+	
+									});
+	
+									
+									if($('tr[numeroLigne='+iLigne+'] td[numeroColonne=4]').length) {
+										$('tr[numeroLigne='+iLigne+'] td[numeroColonne=4]').after('<td align="right" numeroColonne="4b" width=80></td>');	
+									}
+									else {
+										$('tr[numeroLigne='+iLigne+'] td[numeroColonne=0]').after('<td align="right" numeroColonne="4c" width=80></td>');
+									}
+	
+							});
+	
+							// Ajout des libellé de colonne
+			         		$('#tablelines .liste_titre > td[numeroColonne=4b]').first().html('P.U H.T Remisé');
+	
+	
+			         		// Ajout des prix devisé sur les lignes
+		         			<?php
+		         			
+		         			
+		         			if(!empty($object->lines)) {
+		         				
+			         			foreach($object->lines as $line){
+									
+									if($line->rowid)
+										$line->id = $line->rowid;
+									
+									
+									echo "$('#row-".$line->id." td[numeroColonne=4b]').html('".price($line->subprice*(1-$line->remise_percent/100),0,'',1,$conf->global->MAIN_MAX_DECIMALS_TOT,$conf->global->MAIN_MAX_DECIMALS_TOT)."');";
+									
+									
+									if($line->error != '') echo "alert('".$line->error."');";
+			         			}
+								
+		         			}
+		         			
+							?>
+						});
+				    </script>	
+			    	<?php
+	
+			}
 
 		}
+
 
 		/*else if ($parameters['currentcontext'] === 'invoicecard' && $action === 'confirm_valid') {
 
@@ -269,6 +407,79 @@ class ActionsGrapeFruit
 				</script>
 				<?php
 		}*/
+		if ($parameters['currentcontext'] === 'invoicecard')
+		{
+			if($conf->global->GRAPEFRUIT_BILL_ADD_DISCOUNT_COLUMN){
+						?>
+					<script type="text/javascript">
+						$(document).ready(function(){
+							console.log('formObjectOptions::columnsAndLines');
+							
+							$('#tablelines tr').each(function(iLigne) {
+									if(!$(this).attr('numeroLigne')) {
+											$(this).attr('numeroLigne', iLigne);	
+									}
+	
+									var iColonne=0;
+	
+									$(this).find('>td').each(function() {
+	
+										if(!$(this).attr('numeroColonne')) {
+											$(this).attr('numeroColonne', iColonne);	
+										}
+	
+										if(!$(this).attr('colspan')) {
+											iColonne++;	
+										}
+										else {
+											iColonne+=parseInt($(this).attr('colspan'));
+										}
+	
+									});
+	
+					
+									if($('tr[numeroLigne='+iLigne+'] td[numeroColonne=4]').length) {
+										$('tr[numeroLigne='+iLigne+'] td[numeroColonne=4]').after('<td align="right" numeroColonne="4b" width=80></td>');	
+									}
+									else {
+										$('tr[numeroLigne='+iLigne+'] td[numeroColonne=0]').after('<td align="right" numeroColonne="4c" width=80></td>');
+									}
+	
+							});
+	
+							// Ajout des libellé de colonne
+			         		$('#tablelines .liste_titre > td[numeroColonne=4b]').first().html('P.U H.T Remisé');
+			         		
+	
+	
+			         		// Ajout des prix devisé sur les lignes
+		         			<?php
+		         			
+		         			
+		         			if(!empty($object->lines)) {
+		         				
+			         			foreach($object->lines as $line){
+									
+									if($line->rowid)
+										$line->id = $line->rowid;
+									
+									
+									echo "$('#row-".$line->id." td[numeroColonne=4b]').html('".price($line->subprice*(1-$line->remise_percent/100),0,'',1,$conf->global->MAIN_MAX_DECIMALS_TOT,$conf->global->MAIN_MAX_DECIMALS_TOT)."');";
+									
+									
+									if($line->error != '') echo "alert('".$line->error."');";
+			         			}
+								
+		         			}
+		         			
+							?>
+						});
+				    </script>	
+			    	<?php
+	
+			}
+		}
+		
 	}
 
 	function createFrom($parameters, &$object, &$action, $hookmanager) {
