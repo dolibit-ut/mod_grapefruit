@@ -126,7 +126,7 @@ class ActionsGrapeFruit
 		global $conf, $langs, $user;
 		//var_dump($action, $parameters);exit;
 		//Context : frm creation propal
-
+		dol_include_once('/grapefruit/lib/grapefruit.lib.php');
 		$langs->load('bills');
 		$langs->load('grapefruit@grapefruit');
 
@@ -193,26 +193,7 @@ class ActionsGrapeFruit
 
 			}
 			if($conf->global->GRAPEFRUIT_PROPAL_ADD_DISCOUNT_COLUMN){
-						?>
-					<script type="text/javascript">
-						$(document).ready(function(){
-							$('#tablelines tr td:nth-child(5)').after('<td align="right" class="pu_ht_remise" width=80></td>');
-					// Ajout des libellé de colonne
-			         		$('#tablelines .liste_titre > td.pu_ht_remise').first().html('<?php echo $langs->trans('DiscountUHT'); ?>');
-	        		// Ajout des prix devisé sur les lignes
-		         			<?php		       			
-		         			if(!empty($object->lines)) {
-			         			foreach($object->lines as $line){
-									if($line->rowid)
-										$line->id = $line->rowid;
-									echo "$('#row-".$line->id." td.pu_ht_remise').html('".price($line->subprice*(1-$line->remise_percent/100),0,'',1,$conf->global->MAIN_MAX_DECIMALS_TOT,$conf->global->MAIN_MAX_DECIMALS_TOT)."');";
-									if($line->error != '') echo "alert('".$line->error."');";
-			         			}
-		         			}
-							?>
-						});
-				    </script>	
-			    	<?php
+					addPuHtRemise(5,$object);
 			}
 		}
 		elseif (in_array('thirdpartycard',explode(':',$parameters['context'])))
@@ -263,26 +244,7 @@ class ActionsGrapeFruit
 
 			}
 				if($conf->global->GRAPEFRUIT_ORDER_ADD_DISCOUNT_COLUMN){
-						?>
-					<script type="text/javascript">
-						$(document).ready(function(){
-							$('#tablelines tr td:nth-child(5)').after('<td align="right" class="pu_ht_remise" width=80></td>');
-					// Ajout des libellé de colonne
-			         		$('#tablelines .liste_titre > td.pu_ht_remise').first().html('<?php echo $langs->trans('DiscountUHT'); ?>');
-	        		// Ajout des prix devisé sur les lignes
-		         			<?php		       			
-		         			if(!empty($object->lines)) {
-			         			foreach($object->lines as $line){
-									if($line->rowid)
-										$line->id = $line->rowid;
-									echo "$('#row-".$line->id." td.pu_ht_remise').html('".price($line->subprice*(1-$line->remise_percent/100),0,'',1,$conf->global->MAIN_MAX_DECIMALS_TOT,$conf->global->MAIN_MAX_DECIMALS_TOT)."');";
-									if($line->error != '') echo "alert('".$line->error."');";
-			         			}
-		         			}
-							?>
-						});
-				    </script>	
-			    	<?php
+					addPuHtRemise(5,$object);
 	
 			}
 
@@ -319,31 +281,14 @@ class ActionsGrapeFruit
 		if (in_array('invoicecard',explode(':',$parameters['context'])))
 		{
 			if($conf->global->GRAPEFRUIT_BILL_ADD_DISCOUNT_COLUMN){
-						?>
-						<script type="text/javascript">
-						$(document).ready(function(){
-							$('#tablelines tr td:nth-child(5)').after('<td align="right" class="pu_ht_remise" width=80></td>');
-					// Ajout des libellé de colonne
-			         		$('#tablelines .liste_titre > td.pu_ht_remise').first().html('<?php echo $langs->trans('DiscountUHT'); ?>');
-	        		// Ajout des prix devisé sur les lignes
-		         			<?php		       			
-		         			if(!empty($object->lines)) {
-			         			foreach($object->lines as $line){
-									if($line->rowid)
-										$line->id = $line->rowid;
-									echo "$('#row-".$line->id." td.pu_ht_remise').html('".price($line->subprice*(1-$line->remise_percent/100),0,'',1,$conf->global->MAIN_MAX_DECIMALS_TOT,$conf->global->MAIN_MAX_DECIMALS_TOT)."');";
-									if($line->error != '') echo "alert('".$line->error."');";
-			         			}
-		         			}
-							?>
-						});
-				    </script>	
-			    	<?php
-	
+						
+				addPuHtRemise(5,$object);
 			}
 		}
 		
 	}
+
+	
 
 	function createFrom($parameters, &$object, &$action, $hookmanager) {
 
