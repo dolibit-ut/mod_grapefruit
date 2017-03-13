@@ -131,7 +131,7 @@ class ActionsGrapeFruit
 		$langs->load('grapefruit@grapefruit');
 
 		// Script pour gérer les champs obligatoires sur une fiche contact
-		if($parameters['currentcontext'] === 'contactcard' && !empty($conf->global->GRAPEFRUIT_CONTACT_FORCE_FIELDS) && ($action == 'edit' || $action == 'create')) {
+		if(in_array('contactcard',explode(':',$parameters['context'])) && !empty($conf->global->GRAPEFRUIT_CONTACT_FORCE_FIELDS) && ($action == 'edit' || $action == 'create')) {
 			$TChamps = explode(',',$conf->global->GRAPEFRUIT_CONTACT_FORCE_FIELDS);
 			$first = true;
 			$match1 = '';
@@ -155,7 +155,7 @@ class ActionsGrapeFruit
 			<?php
 		}
 
-		if ($parameters['currentcontext'] === 'propalcard')
+		if (in_array('propalcard',explode(':',$parameters['context'])))
 		{
 			if($action === 'create') {
 
@@ -196,42 +196,12 @@ class ActionsGrapeFruit
 						?>
 					<script type="text/javascript">
 						$(document).ready(function(){
-							console.log('formObjectOptions::columnsAndLines');
 							
-							$('#tablelines tr').each(function(iLigne) {
-									if(!$(this).attr('numeroLigne')) {
-											$(this).attr('numeroLigne', iLigne);	
-									}
-	
-									var iColonne=0;
-	
-									$(this).find('>td').each(function() {
-	
-										if(!$(this).attr('numeroColonne')) {
-											$(this).attr('numeroColonne', iColonne);	
-										}
-	
-										if(!$(this).attr('colspan')) {
-											iColonne++;	
-										}
-										else {
-											iColonne+=parseInt($(this).attr('colspan'));
-										}
-	
-									});
-	
-					
-									if($('tr[numeroLigne='+iLigne+'] td[numeroColonne=4]').length) {
-										$('tr[numeroLigne='+iLigne+'] td[numeroColonne=4]').after('<td align="right" numeroColonne="4b" width=80></td>');	
-									}
-									else {
-										$('tr[numeroLigne='+iLigne+'] td[numeroColonne=0]').after('<td align="right" numeroColonne="4c" width=80></td>');
-									}
-	
-							});
+							
+							$('#tablelines tr td:nth-child(5)').after('<td align="right" class="pu_ht_remise" width=80></td>');
 	
 							// Ajout des libellé de colonne
-			         		$('#tablelines .liste_titre > td[numeroColonne=4b]').first().html('<?php echo $langs->trans('DiscountUHT'); ?>');
+			         		$('#tablelines .liste_titre > td.pu_ht_remise').first().html('<?php echo $langs->trans('DiscountUHT'); ?>');
 	
 	
 			         		// Ajout des prix devisé sur les lignes
@@ -239,16 +209,10 @@ class ActionsGrapeFruit
 		         			
 		         			
 		         			if(!empty($object->lines)) {
-		         				
 			         			foreach($object->lines as $line){
-									
 									if($line->rowid)
 										$line->id = $line->rowid;
-									
-									
-									echo "$('#row-".$line->id." td[numeroColonne=4b]').html('".price($line->subprice*(1-$line->remise_percent/100),0,'',1,$conf->global->MAIN_MAX_DECIMALS_TOT,$conf->global->MAIN_MAX_DECIMALS_TOT)."');";
-									
-									
+									echo "$('#row-".$line->id." td.pu_ht_remise').html('".price($line->subprice*(1-$line->remise_percent/100),0,'',1,$conf->global->MAIN_MAX_DECIMALS_TOT,$conf->global->MAIN_MAX_DECIMALS_TOT)."');";
 									if($line->error != '') echo "alert('".$line->error."');";
 			         			}
 								
@@ -261,7 +225,7 @@ class ActionsGrapeFruit
 	
 			}
 		}
-		elseif ($parameters['currentcontext'] == 'thirdpartycard')
+		elseif (in_array('thirdpartycard',explode(':',$parameters['context'])))
 		{
 			if (!empty($conf->global->GRAPEFRUIT_DISABLE_PROSPECTCUSTOMER_CHOICE) && ($action == 'create' || $action == 'edit'))
 			{
@@ -276,7 +240,7 @@ class ActionsGrapeFruit
 			
 		}
 
-		if ($parameters['currentcontext'] == 'ordercard') {
+		if (in_array('ordercard',explode(':',$parameters['context']))) {
 			if(!empty($conf->global->GRAPEFRUIT_ALLOW_CREATE_BILL_EXPRESS)
 				&& $object->statut > Commande::STATUS_DRAFT
 				&& !$object->billed
@@ -310,44 +274,14 @@ class ActionsGrapeFruit
 			}
 				if($conf->global->GRAPEFRUIT_ORDER_ADD_DISCOUNT_COLUMN){
 						?>
-					<script type="text/javascript">
+						<script type="text/javascript">
 						$(document).ready(function(){
-							console.log('formObjectOptions::columnsAndLines');
 							
-							$('#tablelines tr').each(function(iLigne) {
-									if(!$(this).attr('numeroLigne')) {
-											$(this).attr('numeroLigne', iLigne);	
-									}
-	
-									var iColonne=0;
-	
-									$(this).find('>td').each(function() {
-	
-										if(!$(this).attr('numeroColonne')) {
-											$(this).attr('numeroColonne', iColonne);	
-										}
-	
-										if(!$(this).attr('colspan')) {
-											iColonne++;	
-										}
-										else {
-											iColonne+=parseInt($(this).attr('colspan'));
-										}
-	
-									});
-	
-									
-									if($('tr[numeroLigne='+iLigne+'] td[numeroColonne=4]').length) {
-										$('tr[numeroLigne='+iLigne+'] td[numeroColonne=4]').after('<td align="right" numeroColonne="4b" width=80></td>');	
-									}
-									else {
-										$('tr[numeroLigne='+iLigne+'] td[numeroColonne=0]').after('<td align="right" numeroColonne="4c" width=80></td>');
-									}
-	
-							});
+							
+							$('#tablelines tr td:nth-child(5)').after('<td align="right" class="pu_ht_remise" width=80></td>');
 	
 							// Ajout des libellé de colonne
-			         		$('#tablelines .liste_titre > td[numeroColonne=4b]').first().html('<?php echo $langs->trans('DiscountUHT'); ?>');
+			         		$('#tablelines .liste_titre > td.pu_ht_remise').first().html('<?php echo $langs->trans('DiscountUHT'); ?>');
 	
 	
 			         		// Ajout des prix devisé sur les lignes
@@ -355,16 +289,10 @@ class ActionsGrapeFruit
 		         			
 		         			
 		         			if(!empty($object->lines)) {
-		         				
 			         			foreach($object->lines as $line){
-									
 									if($line->rowid)
 										$line->id = $line->rowid;
-									
-									
-									echo "$('#row-".$line->id." td[numeroColonne=4b]').html('".price($line->subprice*(1-$line->remise_percent/100),0,'',1,$conf->global->MAIN_MAX_DECIMALS_TOT,$conf->global->MAIN_MAX_DECIMALS_TOT)."');";
-									
-									
+									echo "$('#row-".$line->id." td.pu_ht_remise').html('".price($line->subprice*(1-$line->remise_percent/100),0,'',1,$conf->global->MAIN_MAX_DECIMALS_TOT,$conf->global->MAIN_MAX_DECIMALS_TOT)."');";
 									if($line->error != '') echo "alert('".$line->error."');";
 			         			}
 								
@@ -372,7 +300,7 @@ class ActionsGrapeFruit
 		         			
 							?>
 						});
-				    </script>	
+				    </script>		
 			    	<?php
 	
 			}
@@ -407,49 +335,18 @@ class ActionsGrapeFruit
 				</script>
 				<?php
 		}*/
-		if ($parameters['currentcontext'] === 'invoicecard')
+		if (in_array('invoicecard',explode(':',$parameters['context'])))
 		{
 			if($conf->global->GRAPEFRUIT_BILL_ADD_DISCOUNT_COLUMN){
 						?>
-					<script type="text/javascript">
+						<script type="text/javascript">
 						$(document).ready(function(){
-							console.log('formObjectOptions::columnsAndLines');
 							
-							$('#tablelines tr').each(function(iLigne) {
-									if(!$(this).attr('numeroLigne')) {
-											$(this).attr('numeroLigne', iLigne);	
-									}
-	
-									var iColonne=0;
-	
-									$(this).find('>td').each(function() {
-	
-										if(!$(this).attr('numeroColonne')) {
-											$(this).attr('numeroColonne', iColonne);	
-										}
-	
-										if(!$(this).attr('colspan')) {
-											iColonne++;	
-										}
-										else {
-											iColonne+=parseInt($(this).attr('colspan'));
-										}
-	
-									});
-	
-					
-									if($('tr[numeroLigne='+iLigne+'] td[numeroColonne=4]').length) {
-										$('tr[numeroLigne='+iLigne+'] td[numeroColonne=4]').after('<td align="right" numeroColonne="4b" width=80></td>');	
-									}
-									else {
-										$('tr[numeroLigne='+iLigne+'] td[numeroColonne=0]').after('<td align="right" numeroColonne="4c" width=80></td>');
-									}
-	
-							});
+							
+							$('#tablelines tr td:nth-child(5)').after('<td align="right" class="pu_ht_remise" width=80></td>');
 	
 							// Ajout des libellé de colonne
-			         		$('#tablelines .liste_titre > td[numeroColonne=4b]').first().html('<?php echo $langs->trans('DiscountUHT'); ?>');
-			         		
+			         		$('#tablelines .liste_titre > td.pu_ht_remise').first().html('<?php echo $langs->trans('DiscountUHT'); ?>');
 	
 	
 			         		// Ajout des prix devisé sur les lignes
@@ -457,16 +354,10 @@ class ActionsGrapeFruit
 		         			
 		         			
 		         			if(!empty($object->lines)) {
-		         				
 			         			foreach($object->lines as $line){
-									
 									if($line->rowid)
 										$line->id = $line->rowid;
-									
-									
-									echo "$('#row-".$line->id." td[numeroColonne=4b]').html('".price($line->subprice*(1-$line->remise_percent/100),0,'',1,$conf->global->MAIN_MAX_DECIMALS_TOT,$conf->global->MAIN_MAX_DECIMALS_TOT)."');";
-									
-									
+									echo "$('#row-".$line->id." td.pu_ht_remise').html('".price($line->subprice*(1-$line->remise_percent/100),0,'',1,$conf->global->MAIN_MAX_DECIMALS_TOT,$conf->global->MAIN_MAX_DECIMALS_TOT)."');";
 									if($line->error != '') echo "alert('".$line->error."');";
 			         			}
 								
@@ -486,7 +377,7 @@ class ActionsGrapeFruit
 
 		global $conf,$user,$langs;
 
-		if ($parameters['currentcontext'] === 'invoicecard')
+		if (in_array('invoicecard',explode(':',$parameters['context'])))
 		{
 			dol_include_once('/grapefruit/class/grapefruit.class.php');
 			$langs->load('grapefruit@grapefruit');
@@ -503,7 +394,7 @@ class ActionsGrapeFruit
 
 		$context = explode(':', $parameters['context']);
 
-		if ($parameters['currentcontext'] === 'suppliercard' && !empty($conf->global->GRAPEFRUIT_SUPPLIER_FORCE_BT_ORDER_TO_INVOICE))
+		if (in_array('suppliercard',explode(':',$parameters['context'])) && !empty($conf->global->GRAPEFRUIT_SUPPLIER_FORCE_BT_ORDER_TO_INVOICE))
 		{
 			if ($user->rights->fournisseur->facture->creer)
 			{
