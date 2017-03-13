@@ -108,15 +108,15 @@ class pdf_einstein_discount extends ModelePDFCommandes
 		$this->posxdesc=$this->marge_gauche+1;
 		if($conf->global->PRODUCT_USE_UNITS)
 		{
-			$this->posxtva=70;
-			$this->posxup=90;
+			$this->posxtva=65;
+			$this->posxup=85;
 			$this->posxqty=110;
 			$this->posxunit=125;
 		}
 		else
 		{
-			$this->posxtva=90;
-			$this->posxup=110;
+			$this->posxtva=85;
+			$this->posxup=105;
 			$this->posxqty=125;
 		}
 		$this->posxdiscountprice=135;
@@ -443,7 +443,7 @@ class pdf_einstein_discount extends ModelePDFCommandes
 					{
 						$pdf->SetXY($this->posxdiscountprice, $curY);
 						$discountprice = $object->lines[$i]->subprice*((100-$object->lines[$i]->remise_percent)/100);
-						$pdf->MultiCell($this->posxdiscount-$this->posxdiscountprice, 3, price2num($discountprice,2), 0, 'R');
+						$pdf->MultiCell($this->posxdiscount-$this->posxdiscountprice, 3,  price($discountprice,0,'',1,$conf->global->MAIN_MAX_DECIMALS_TOT,$conf->global->MAIN_MAX_DECIMALS_TOT), 0, 'R');
 						
 						$pdf->SetXY($this->posxdiscount-2, $curY);
 						$remise_percent = pdf_getlineremisepercent($object, $i, $outputlangs, $hidedetails);

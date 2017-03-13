@@ -70,6 +70,7 @@ class ActionsGrapeFruit
 		$actionATM = GETPOST('actionATM');
 		if ($parameters['currentcontext'] == 'ordercard' && $object->statut >= 1 && !empty($conf->global->GRAPEFRUIT_ALLOW_CREATE_BILL_EXPRESS))
 		{
+			
 			if($actionATM === 'create_bill_express'
 				&& !empty($conf->global->GRAPEFRUIT_ALLOW_CREATE_BILL_EXPRESS)
 				&& $object->statut > Commande::STATUS_DRAFT
@@ -113,6 +114,8 @@ class ActionsGrapeFruit
 			else $object->setValueFrom('ishidden', 1, 'extrafields', '"grapefruit_default_situation_progress_line"', '', 'name');
 		}
 
+
+
 		return 0;
 	}
 
@@ -123,12 +126,12 @@ class ActionsGrapeFruit
 		global $conf, $langs, $user;
 		//var_dump($action, $parameters);exit;
 		//Context : frm creation propal
-
+		dol_include_once('/grapefruit/lib/grapefruit.lib.php');
 		$langs->load('bills');
 		$langs->load('grapefruit@grapefruit');
 
 		// Script pour gérer les champs obligatoires sur une fiche contact
-		if($parameters['currentcontext'] === 'contactcard' && !empty($conf->global->GRAPEFRUIT_CONTACT_FORCE_FIELDS) && ($action == 'edit' || $action == 'create')) {
+		if(in_array('contactcard',explode(':',$parameters['context'])) && !empty($conf->global->GRAPEFRUIT_CONTACT_FORCE_FIELDS) && ($action == 'edit' || $action == 'create')) {
 			$TChamps = explode(',',$conf->global->GRAPEFRUIT_CONTACT_FORCE_FIELDS);
 			$first = true;
 			$match1 = '';
@@ -152,7 +155,7 @@ class ActionsGrapeFruit
 			<?php
 		}
 
-		if ($parameters['currentcontext'] === 'propalcard')
+		if (in_array('propalcard',explode(':',$parameters['context'])))
 		{
 			if($action === 'create') {
 
@@ -189,10 +192,11 @@ class ActionsGrapeFruit
 				<?php
 
 			}
-
+			if($conf->global->GRAPEFRUIT_PROPAL_ADD_DISCOUNT_COLUMN){
+					addPuHtRemise(5,$object);
+			}
 		}
-
-		elseif ($parameters['currentcontext'] == 'thirdpartycard')
+		elseif (in_array('thirdpartycard',explode(':',$parameters['context'])))
 		{
 			if (!empty($conf->global->GRAPEFRUIT_DISABLE_PROSPECTCUSTOMER_CHOICE) && ($action == 'create' || $action == 'edit'))
 			{
@@ -204,10 +208,10 @@ class ActionsGrapeFruit
 				</script>
 				<?php
 			}
+			
 		}
 
-		if ($parameters['currentcontext'] == 'ordercard') {
-
+		if (in_array('ordercard',explode(':',$parameters['context']))) {
 			if(!empty($conf->global->GRAPEFRUIT_ALLOW_CREATE_BILL_EXPRESS)
 				&& $object->statut > Commande::STATUS_DRAFT
 				&& !$object->billed
@@ -239,8 +243,13 @@ class ActionsGrapeFruit
 				<?php
 
 			}
+				if($conf->global->GRAPEFRUIT_ORDER_ADD_DISCOUNT_COLUMN){
+					addPuHtRemise(5,$object);
+	
+			}
 
 		}
+
 
 		/*else if ($parameters['currentcontext'] === 'invoicecard' && $action === 'confirm_valid') {
 
@@ -269,13 +278,23 @@ class ActionsGrapeFruit
 				</script>
 				<?php
 		}*/
+		if (in_array('invoicecard',explode(':',$parameters['context'])))
+		{
+			if($conf->global->GRAPEFRUIT_BILL_ADD_DISCOUNT_COLUMN){
+						
+				addPuHtRemise(5,$object);
+			}
+		}
+		
 	}
+
+	
 
 	function createFrom($parameters, &$object, &$action, $hookmanager) {
 
 		global $conf,$user,$langs;
 
-		if ($parameters['currentcontext'] === 'invoicecard')
+		if (in_array('invoicecard',explode(':',$parameters['context'])))
 		{
 			dol_include_once('/grapefruit/class/grapefruit.class.php');
 			$langs->load('grapefruit@grapefruit');
@@ -292,7 +311,7 @@ class ActionsGrapeFruit
 
 		$context = explode(':', $parameters['context']);
 
-		if ($parameters['currentcontext'] === 'suppliercard' && !empty($conf->global->GRAPEFRUIT_SUPPLIER_FORCE_BT_ORDER_TO_INVOICE))
+		if (in_array('suppliercard',explode(':',$parameters['context'])) && !empty($conf->global->GRAPEFRUIT_SUPPLIER_FORCE_BT_ORDER_TO_INVOICE))
 		{
 			if ($user->rights->fournisseur->facture->creer)
 			{
