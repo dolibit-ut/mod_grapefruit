@@ -231,7 +231,7 @@ class ActionsGrapeFruit
 							});
 	
 							// Ajout des libellé de colonne
-			         		$('#tablelines .liste_titre > td[numeroColonne=4b]').first().html('P.U H.T Remisé');
+			         		$('#tablelines .liste_titre > td[numeroColonne=4b]').first().html('<?php echo $langs->trans('DiscountUHT'); ?>');
 	
 	
 			         		// Ajout des prix devisé sur les lignes
@@ -347,7 +347,7 @@ class ActionsGrapeFruit
 							});
 	
 							// Ajout des libellé de colonne
-			         		$('#tablelines .liste_titre > td[numeroColonne=4b]').first().html('P.U H.T Remisé');
+			         		$('#tablelines .liste_titre > td[numeroColonne=4b]').first().html('<?php echo $langs->trans('DiscountUHT'); ?>');
 	
 	
 			         		// Ajout des prix devisé sur les lignes
@@ -448,7 +448,7 @@ class ActionsGrapeFruit
 							});
 	
 							// Ajout des libellé de colonne
-			         		$('#tablelines .liste_titre > td[numeroColonne=4b]').first().html('P.U H.T Remisé');
+			         		$('#tablelines .liste_titre > td[numeroColonne=4b]').first().html('<?php echo $langs->trans('DiscountUHT'); ?>');
 			         		
 	
 	

@@ -529,7 +529,7 @@ class pdf_azur_discount extends ModelePDFPropales
 						$pdf->SetXY($this->posxdiscount-2, $curY);
 						$remise_percent = pdf_getlineremisepercent($object, $i, $outputlangs, $hidedetails);
 						$discountprice = $object->lines[$i]->subprice*((100-$object->lines[$i]->remise_percent)/100);
-						$pdf->MultiCell($this->postotalht-$this->posxdiscount+2, 3,price2num($discountprice,2) , 0, 'R');
+						$pdf->MultiCell($this->postotalht-$this->posxdiscount+2, 3, price($discountprice,0,'',1,$conf->global->MAIN_MAX_DECIMALS_TOT,$conf->global->MAIN_MAX_DECIMALS_TOT) , 0, 'R');
 					}
 
 					// Total HT line
