@@ -107,7 +107,7 @@ class InterfaceGrapeFruittrigger
 	 * @return int <0 if KO, 0 if no triggered ran, >0 if OK
 	 */
 	public function run_trigger($action, &$object, &$user, &$langs, &$conf) {
-		global $user, $db;
+		$db = $this->db;
 		dol_include_once('/grapefruit/class/grapefruit.class.php');
 		$langs->load('grapefruit@grapefruit');
 
@@ -159,7 +159,7 @@ class InterfaceGrapeFruittrigger
 
 			dol_syslog("Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id);
 
-			TGrappeFruit::createShippingFromOrderOnBillPayed($object);
+			TGrappeFruit::createShippingFromOrderOnBillPayed($object,$user);
 
 			if (! empty ( $conf->global->GRAPEFRUIT_SEND_BILL_BY_MAIL_ON_BILLED )) {
 				if (empty($conf->global->GRAPEFRUIT_SEND_BILL_BY_MAIL_ON_VALIDATE_ORDER)) {

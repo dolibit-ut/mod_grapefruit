@@ -59,8 +59,8 @@ class TGrappeFruit
 	 *
 	 * @param unknown $object
 	 */
-	static function createShippingFromOrderOnBillPayed(&$object) {
-		global $conf, $langs, $db, $user;
+	static function createShippingFromOrderOnBillPayed(&$object,$user) {
+		global $conf, $langs, $db;
 		if (empty($conf->global->GRAPEFRUIT_SHIPPING_CREATE_FROM_ORDER_WHERE_BILL_PAID) || $object->element != 'facture')
 			return true;
 
