@@ -212,6 +212,7 @@ class InterfaceGrapeFruittrigger
 			//Création de l'évènement de la facture de relance
 			if(!empty($object->array_options['options_grapefruitReminderBill']) ){//verification facture de relance
 				if((!empty($conf->global->GRAPEFRUIT_REMINDER_BILL_DELAY) )){
+					require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 					$actioncomm = new ActionComm($db);//evenement agenda
 					$actioncomm->type_code = 'AC_STI_BILL';//code pour la relance facture
 					if(strstr($object->ref,'PROV')){
