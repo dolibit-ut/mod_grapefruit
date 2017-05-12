@@ -566,6 +566,10 @@ class TGrappeFruit
 	 */
 	static function setOrderBilledIfSameMontant(&$object) {
 
+		global $user, $langs;
+		
+		$langs->load('orders');
+		
 		// Récupération de la commande d'origine
 		$object->fetchObjectLinked();
 		$TOriginOrder = array_values($object->linkedObjects['commande']);
@@ -584,7 +588,11 @@ class TGrappeFruit
 		// On compare les montants
 		if($total_ttc == $order->total_ttc) {
 			// On classe facturée la commande uniquement si elle ne l'est pas déjà (peut avoir été fait avant)
-			if(empty($order->billed) && $order->classifyBilled() > 0) setEventMessage('Commande '.$order->getNomUrl().' passée au statut "facturée"');
+			if(empty($order->billed)) {
+				if((float)DOL_VERSION >= 4.0) $res_classifybill = $order->classifyBilled($user);
+				else $res_classifybill = $order->classifyBilled();
+				if($res_classifybill > 0) setEventMessage($langs->trans('grapefruit_order_status_set_to', $order->getNomUrl(), $langs->transnoentities('StatusOrderBilled')));
+			}
 		}
 
 	}
@@ -733,8 +741,9 @@ class TGrappeFruit
 
 		if(empty($error)) {
 			if($f->validate($user) > 0) {
-
-				$object->classifyBilled();
+				
+				if((float)DOL_VERSION >= 4.0) $object->classifyBilled($user);
+				else $object->classifyBilled();
 
 				// Redirection vers écrand de paiement
 				setEventMessage($langs->trans('BillCreated'));
