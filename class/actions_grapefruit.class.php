@@ -119,7 +119,35 @@ class ActionsGrapeFruit
 		return 0;
 	}
 
-
+	function formEditProductOptions($parameters, &$object, &$action, $hookmanager)
+	{
+		global $conf;
+		
+		$TContext = explode(':', $parameters['context']);
+		
+		if (!empty($conf->global->GRAPEFRUIT_FAST_UPDATE_ON_HREF) && count(array_intersect(array('invoicecard','propalcard','invoicesuppliercard','ordercard','ordersuppliercard'), $TContext)) > 0)
+		{
+			?>
+			<script type="text/javascript">
+				$(function() {
+					console.log($('#addproduct '));
+					if ($('#addproduct > input[name=action]').val() === 'updateline' || $('#addproduct > input[name=action]').val() === 'updateligne')
+					{
+						console.log('HGHEHY', $('#tablelines a'));
+						// Sur clic d'un lien du tableau, on déclanche la sauvegarde
+						$('#tablelines a').click(function(event) {
+							var link = $(this).attr('href');
+							$.post($('#addproduct').attr('action'), $('#addproduct').serialize()+'&save=fromGrapfruit', function() { window.location.href = link; } );
+							
+							return false;
+						});
+					}
+				});
+			</script>
+			<?php
+		}
+		
+	}
 
 	function formObjectOptions($parameters, &$object, &$action, $hookmanager)
 	{

@@ -69,6 +69,7 @@ PDFEinsteinDiscountDescription=Modèle de commande complet (logo…) avec prix u
 # Global
 set_GRAPEFRUIT_BYPASS_CONFIRM_ACTIONS=Ne pas demander de confirmation sur les actions
 set_GRAPEFRUIT_MANAGE_DOWNLOAD_OWN_DOC_USERS=Ajoute une permissions pour permettre aux utilisateurs de télécharger les documents dans l'onglet "Fichier joint" de leurs fiches utilisateurs (si il n'ont pas la permission de voir tout les utilisateurs)
+set_GRAPEFRUIT_FAST_UPDATE_ON_HREF=Sauvegarde de l'édition d'une ligne sur le clic d'un autre lien du document (propal, commande, facture, commande fournisseur, facture fournisseur)
 
 # Facture expres
 GrapefruitCreateBillExpress=Créer Facture Express
