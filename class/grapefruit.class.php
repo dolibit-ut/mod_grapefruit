@@ -614,7 +614,7 @@ class TGrappeFruit
 		$propal = $TOriginPropal[0];
 
 		if(empty($propal)) return 0;
-
+		if(empty($propal->statut)) $propal->valid($user); // On commence par la valider si c'est pas déjà fait
 		if($propal->statut < 2) {
 			if($propal->cloture($user, 2, '') > 0) setEventMessage('Proposition '.$propal->getNomUrl().' clôturée au statut "Signée" automatiquement');
 		}
