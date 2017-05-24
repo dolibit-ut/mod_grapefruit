@@ -507,6 +507,8 @@ class pdf_dorade extends ModelePdfExpedition
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 		$langs->load("orders");
 
+		if(!isset($object->client) && isset($object->thirdparty)) $object->client = $object->thirdparty;
+
 		pdf_pagehead($pdf,$outputlangs,$this->page_hauteur);
 
 		//Affiche le filigrane brouillon - Print Draft Watermark
