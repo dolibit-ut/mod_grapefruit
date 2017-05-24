@@ -507,6 +507,8 @@ class pdf_dorade extends ModelePdfExpedition
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 		$langs->load("orders");
 
+		if(!isset($object->client) && isset($object->thirdparty)) $object->client = $object->thirdparty;
+
 		pdf_pagehead($pdf,$outputlangs,$this->page_hauteur);
 
 		//Affiche le filigrane brouillon - Print Draft Watermark
@@ -596,12 +598,12 @@ class pdf_dorade extends ModelePdfExpedition
 		$pdf->SetTextColor(0,0,60);
 		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("DateDeliveryPlanned")." : ".dol_print_date($object->date_delivery,"daytext",false,$outputlangs,true), '', 'R');
 
-		if (! empty($object->client->code_client) || !empty($object->thirdparty->code_client))
+		if (! empty($object->client->code_client))
 		{
 			$posy+=4;
 			$pdf->SetXY($posx,$posy);
 			$pdf->SetTextColor(0,0,60);
-			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("CustomerCode")." : " . $outputlangs->transnoentities(empty($object->client->code_client) ? $object->thirdparty->code_client : $object->client->code_client), '', 'R');
+			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("CustomerCode")." : " . $outputlangs->transnoentities($object->client->code_client), '', 'R');
 		}
 
 
@@ -650,7 +652,7 @@ class pdf_dorade extends ModelePdfExpedition
 		 		$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Name").": ".$outputlangs->convToOutputCharset($object->user->getFullName($outputlangs))."\n";
 		 	}
 
-		 	$carac_emetteur .= pdf_build_address($outputlangs, $this->emetteur, empty($object->client) ? $object->thirdparty : $object->client);
+		 	$carac_emetteur .= pdf_build_address($outputlangs, $this->emetteur, $object->client);
 
 			// Show sender
 			$posx=$this->marge_gauche;
@@ -699,7 +701,7 @@ class pdf_dorade extends ModelePdfExpedition
 
 			$carac_client_name= pdfBuildThirdpartyName($thirdparty, $outputlangs);
 
-			$carac_client=pdf_build_address($outputlangs,$this->emetteur,empty($object->client) ? $object->thirdparty : $object->client,(!empty($object->contact)?$object->contact:null),$usecontact,'targetwithdetails');
+			$carac_client=pdf_build_address($outputlangs,$this->emetteur,$object->client,(!empty($object->contact)?$object->contact:null),$usecontact,'targetwithdetails');
 
 			// Show recipient
 			$widthrecbox=100;
