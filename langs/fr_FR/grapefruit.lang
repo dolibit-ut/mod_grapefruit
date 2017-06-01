@@ -93,3 +93,5 @@ DiscountUHT=P.U H.T Remisé
 grapefruite_dialog_confirm_create_invoice_title=Créer facture
 grapefruite_dialog_confirm_create_invoice_content=Êtes-vous sur de vouloir créer une facture à partir de cette commande ? <br />Montant déjà facturé : <b>%s</b>
 grapefruite_dialog_confirm_create_supplier_invoice_content=Êtes-vous sur de vouloir créer une facture à partir de cette commande ? <br />Une ou plusieurs factures sont déjà associées
+
+set_GRAPEFRUIT_SHOW_THIRDPARTY_INTO_LINKED_ELEMENT=Rajouter la société dans le bloc d'éléments liés

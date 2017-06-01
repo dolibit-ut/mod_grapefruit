@@ -95,6 +95,13 @@ class ActionsGrapeFruit
 		// Bypass des confirmation
 		if (in_array('globalcard', $TContext))
 		{
+			
+			if(empty(!$conf->global->GRAPEFRUIT_SHOW_THIRDPARTY_INTO_LINKED_ELEMENT)) {
+				
+				$conf->modules_parts['tpl']=array_merge($conf->modules_parts['tpl'],array('/grapefruit/core/tpl'));
+				
+			}
+			
 			$actionList = explode(',', $conf->global->GRAPEFRUIT_BYPASS_CONFIRM_ACTIONS);
 			if (!empty($action) && !empty($conf->global->GRAPEFRUIT_BYPASS_CONFIRM_ACTIONS) && in_array($action, $actionList))
 			{
