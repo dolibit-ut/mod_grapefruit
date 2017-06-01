@@ -111,10 +111,6 @@ class InterfaceGrapeFruittrigger
 		dol_include_once('/grapefruit/class/grapefruit.class.php');
 		$langs->load('grapefruit@grapefruit');
 
-		// Put here code you want to execute when a Dolibarr business events occurs.
-		// Data and type of action are stored into $object and $action
-		// Users
-
 		if ($action == 'ACTION_CREATE') {
 			dol_syslog("Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id);
 
@@ -415,7 +411,26 @@ class InterfaceGrapeFruittrigger
 			if($conf->global->GRAPEFRUIT_AUTO_ORDER_ON_SUPPLIERORDER_VALIDATION_WITH_METHOD > 0) TGrappeFruit::orderSupplierOrder($object, $conf->global->GRAPEFRUIT_AUTO_ORDER_ON_SUPPLIERORDER_VALIDATION_WITH_METHOD);
 
 		}
-
+		elseif ($action === 'PRODUCT_CREATE') {
+			
+			if(!empty($conf->global->GRAPEFRUIT_COPY_CAT_ON_CLONE)) {
+				
+				if(GETPOST('action') === 'confirm_clone') {
+					$origin_id = GETPOST('id');
+					
+					$categorie = new Categorie($db);
+					$categoriesid = $categorie->containing($origin_id, Categorie::TYPE_PRODUCT,'id');
+					
+					$object->setCategories($categoriesid);
+					
+				}
+				
+			}
+			
+			dol_syslog(
+					"Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
+			);
+		}
 		//Passage d'une opportunité au statut gagné dès son affectation à un devis ou une commande
 
 		if($action === 'PROPAL_CREATE' || $action === 'ORDER_CREATE'){
