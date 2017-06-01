@@ -741,6 +741,20 @@ echo ajax_constantonoff('GRAPEFRUIT_FAST_UPDATE_ON_HREF');
 print '</form>';
 print '</td></tr>';
 
+$var = ! $var;
+print '<tr ' . $bc[$var] . '>';
+print '<td>' . $langs->trans("set_GRAPEFRUIT_SHOW_THIRDPARTY_INTO_LINKED_ELEMENT") . '</td>';
+print '<td align="center" width="20">&nbsp;</td>';
+print '<td align="right" width="300">';
+print '<form method="POST" action="' . $_SERVER['PHP_SELF'] . '">';
+print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
+print '<input type="hidden" name="action" value="set_GRAPEFRUIT_SHOW_THIRDPARTY_INTO_LINKED_ELEMENT">';
+echo ajax_constantonoff('GRAPEFRUIT_SHOW_THIRDPARTY_INTO_LINKED_ELEMENT');
+print '</form>';
+print '</td></tr>';
+
+
+
 print '<tr class="liste_titre">';
 print '<td>' . $langs->trans("User") . '</td>' . "\n";
 print '<td align="center" width="20">&nbsp;</td>';
