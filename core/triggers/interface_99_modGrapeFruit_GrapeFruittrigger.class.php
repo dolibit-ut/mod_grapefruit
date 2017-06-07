@@ -418,11 +418,14 @@ class InterfaceGrapeFruittrigger
 				if(GETPOST('action') === 'confirm_clone') {
 					$origin_id = GETPOST('id');
 					
-					$categorie = new Categorie($db);
-					$categoriesid = $categorie->containing($origin_id, Categorie::TYPE_PRODUCT,'id');
+					$categorie_static = new Categorie($db);
+					$categoriesid = $categorie_static->containing($origin_id, 0,'id');
 					
-					$object->setCategories($categoriesid);
-					
+					//$object->setCategories($categoriesid);
+					foreach($categoriesid as &$cat) {
+						$cat->add_type($object,'product');
+					}
+
 				}
 				
 			}
