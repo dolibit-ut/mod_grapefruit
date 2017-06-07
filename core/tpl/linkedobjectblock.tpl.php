@@ -36,6 +36,20 @@ $var=true;
 
 $objectLabel = implode('', array_map('ucfirst', explode('_', $objecttype)));
 
+if((float)DOL_VERSION<=3.7) {
+?>
+<table class="noborder allwidth">
+<tr class="liste_titre">
+        <td><?php echo $langs->trans("Type"); ?></td>
+        <td><?php echo $langs->trans("Ref"); ?></td>
+        <td align="center"><?php echo $langs->trans("Label"); ?></td>
+        <td align="center"><?php echo $langs->trans("Date"); ?></td>
+        <td align="right"><?php echo $langs->trans("AmountHTShort"); ?></td>
+        <td align="right"><?php echo $langs->trans("Status"); ?></td>
+</tr>
+<?php
+
+}
 
 foreach($linkedObjectBlock as $key => $objectlink)
 {
@@ -72,7 +86,7 @@ foreach($linkedObjectBlock as $key => $objectlink)
     	<td align="right">
     		<?php
     		// For now, shipments must stay linked to order, so link is not deletable
-    		if($object->element != 'shipping') {
+    		if($object->element != 'shipping' && (float)DOL_VERSION>3.7 ) {
     			?>
     			<a href="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dellink&dellinkid='.$key; ?>"><?php echo img_delete($langs->transnoentitiesnoconv("RemoveLink")); ?></a>
     			<?php
@@ -96,6 +110,10 @@ if (count($linkedObjectBlock) > 1)
     </tr>
     <?php  
 }
+if((float)DOL_VERSION<=3.7) {
+	echo '</table>';
+}
+
 ?>
 
 <!-- END PHP TEMPLATE -->
