@@ -115,7 +115,7 @@ class ActionsGrapeFruit
 			}
 		}
 
-		if (in_array('invoicecard', $TContext))
+		if (in_array('invoicecard', $TContext) && defined('Facture::TYPE_SITUATION'))
 		{
 			if ($object->type == Facture::TYPE_SITUATION) $object->setValueFrom('ishidden', 0, 'extrafields', '"grapefruit_default_situation_progress_line"', '', 'name');
 			else $object->setValueFrom('ishidden', 1, 'extrafields', '"grapefruit_default_situation_progress_line"', '', 'name');
