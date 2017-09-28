@@ -122,7 +122,11 @@ class InterfaceGrapeFruittrigger
 					$r = $object->add_object_linked('task', $fk_task);
 				}
 			}
-		} elseif ($action === 'LINECONTRACT_INSERT') {
+		} 
+		else if($action === 'SUPPLIER_PROPOSAL_CLOSE_SIGNED') {
+			TGrappeFruit::createSupplierPriceFromProposal($object);
+		}
+		elseif ($action === 'LINECONTRACT_INSERT') {
 			TGrappeFruit::checkContractFourn($object);
 		} elseif ($action === 'ORDER_VALIDATE') {
 			TGrappeFruit::createBillOnOrderValidate($object);

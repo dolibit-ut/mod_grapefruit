@@ -262,6 +262,25 @@ echo ajax_constantonoff('GRAPEFRUIT_PROPAL_ADD_DISCOUNT_COLUMN');
 print '</form>';
 print '</td></tr>';
 
+
+print '<tr class="liste_titre">';
+print '<td>' . $langs->trans("SupplierProposal") . '</td>' . "\n";
+print '<td align="center" width="20">&nbsp;</td>';
+print '<td align="center" width="100">' . $langs->trans("Value") . '</td>' . "\n";
+
+$var = ! $var;
+print '<tr ' . $bc[$var] . '>';
+print '<td>' . $langs->trans("set_GRAPEFRUIT_SUPPLIER_PROPAL_CREATE_PRICE_ON_ACCEP") . '</td>';
+print '<td align="center" width="20">&nbsp;</td>';
+print '<td align="right" width="300">';
+print '<form method="POST" action="' . $_SERVER['PHP_SELF'] . '">';
+print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
+print '<input type="hidden" name="action" value="set_GRAPEFRUIT_SUPPLIER_PROPAL_CREATE_PRICE_ON_ACCEP">';
+echo ajax_constantonoff('GRAPEFRUIT_SUPPLIER_PROPAL_CREATE_PRICE_ON_ACCEP');
+print '</form>';
+print '</td></tr>';
+
+
 print '<tr class="liste_titre">';
 print '<td>' . $langs->trans("SupplierOrder") . '</td>' . "\n";
 print '<td align="center" width="20">&nbsp;</td>';
