@@ -874,4 +874,22 @@ class TGrappeFruit
 		}
 	}
 
+	/**
+	 * Passe une facture au statut "Validé" après création depuis une origine
+	 * 
+	 * @param	Facture				$object
+	 * @param	Propal|Commande		$originObject
+	 */
+	public static function autoValidateIfFrom(&$object, &$originObject)
+	{
+		global $conf,$user;
+		
+		if (!empty($conf->global->GRAPEFRUIT_BILL_AUTO_VALIDATE_IF_ORIGIN) && !empty($originObject))
+		{
+			if (method_exists($object, 'fetch_lines')) $object->fetch_lines();
+			else $object->fetch($object->id);
+			
+			if (!empty($object->lines)) $object->validate($user);
+		}
+	}
 }

@@ -61,7 +61,7 @@ class ActionsGrapeFruit
 	 */
 	function doActions($parameters, &$object, &$action, $hookmanager)
 	{
-		global $conf, $user;
+		global $conf, $db, $user;
 
 		dol_include_once('/grapefruit/class/grapefruit.class.php');
 
@@ -120,8 +120,32 @@ class ActionsGrapeFruit
 			if ($object->type == Facture::TYPE_SITUATION) $object->setValueFrom('ishidden', 0, 'extrafields', '"grapefruit_default_situation_progress_line"', '', 'name');
 			else $object->setValueFrom('ishidden', 1, 'extrafields', '"grapefruit_default_situation_progress_line"', '', 'name');
 		}
+		
+		if (in_array('ordercard', $TContext))
+		{
+			if (!empty($conf->global->GRAPEFRUIT_ORDER_EXPRESS_FROM_PROPAL) && GETPOST('origin') === 'propal' && GETPOST('originid') > 0)
+			{
+				require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 
-
+				$propal = new Propal($db);
+				if ($propal->fetch(GETPOST('originid')) > 0)
+				{
+					if ($object->createFromProposal($propal) > 0)
+					{
+						header('Location: '.dol_buildpath('/commande/card.php', 1).'?id='.$object->id);
+						exit;
+					}
+					else
+					{
+						dol_print_error($db);
+					}
+				}
+				else
+				{
+					dol_print_error($db);
+				}
+			}
+		}
 
 		return 0;
 	}
@@ -336,7 +360,8 @@ class ActionsGrapeFruit
 
 			TGrappeFruit::billCloneLink($object,$parameters['objFrom']);
 
-
+			
+			TGrappeFruit::autoValidateIfFrom($object,$parameters['objFrom']);
 		}
 	}
 
