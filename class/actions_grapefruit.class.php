@@ -123,26 +123,31 @@ class ActionsGrapeFruit
 		
 		if (in_array('ordercard', $TContext))
 		{
-			if (!empty($conf->global->GRAPEFRUIT_ORDER_EXPRESS_FROM_PROPAL) && GETPOST('origin') === 'propal' && GETPOST('originid') > 0)
+			
+			if (!empty($conf->global->GRAPEFRUIT_ORDER_EXPRESS_FROM_PROPAL) && GETPOST('origin') === 'propal' && GETPOST('originid') > 0 && $action == 'add')
 			{
-				require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
-
-				$propal = new Propal($db);
-				if ($propal->fetch(GETPOST('originid')) > 0)
+				$datecommande = dol_mktime(12, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear'));
+				if (!empty($datecommande) && GETPOST('socid', 'int') > 0)
 				{
-					if ($object->createFromProposal($propal) > 0)
+					require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
+
+					$propal = new Propal($db);
+					if ($propal->fetch(GETPOST('originid')) > 0)
 					{
-						header('Location: '.dol_buildpath('/commande/card.php', 1).'?id='.$object->id);
-						exit;
+						if ($object->createFromProposal($propal) > 0)
+						{
+							header('Location: '.dol_buildpath('/commande/card.php', 1).'?id='.$object->id);
+							exit;
+						}
+						else
+						{
+							dol_print_error($db);
+						}
 					}
 					else
 					{
 						dol_print_error($db);
 					}
-				}
-				else
-				{
-					dol_print_error($db);
 				}
 			}
 		}
