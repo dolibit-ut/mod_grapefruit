@@ -68,7 +68,7 @@ if (preg_match('/set_(.*)/', $action, $reg)) {
 				setEventMessage($object->error,'errors');
 			}
 		}
-		
+
 		setEventMessage("ValuesUpdated");
 
 		header("Location: " . $_SERVER["PHP_SELF"]);
@@ -383,6 +383,21 @@ echo ajax_constantonoff('GRAPEFRUIT_CONFIRM_ON_CREATE_INVOICE_FROM_SUPPLIER_ORDE
 print '</form>';
 print '</td></tr>';
 
+print '<tr class="liste_titre">';
+print '<td>' . $langs->trans("SupplierInvoice") . '</td>' . "\n";
+print '<td align="center" width="20">&nbsp;</td>';
+print '<td align="center" width="100">' . $langs->trans("Value") . '</td>' . "\n";
+$var = ! $var;
+print '<tr ' . $bc[$var] . '>';
+print '<td>' . $langs->trans("set_GRAPEFRUIT_VALIDATE_SUPPLIERINVOICE_ON_RECEIPT_SUPPLIERORDER") . '</td>';
+print '<td align="center" width="20">&nbsp;</td>';
+print '<td align="right" width="300">';
+print '<form method="POST" action="' . $_SERVER['PHP_SELF'] . '">';
+print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
+print '<input type="hidden" name="action" value="set_GRAPEFRUIT_VALIDATE_SUPPLIERINVOICE_ON_RECEIPT_SUPPLIERORDER">';
+echo ajax_constantonoff('GRAPEFRUIT_VALIDATE_SUPPLIERINVOICE_ON_RECEIPT_SUPPLIERORDER');
+print '</form>';
+print '</td></tr>';
 
 print '<tr class="liste_titre">';
 print '<td>' . $langs->trans("CustomerOrder") . '</td>' . "\n";
@@ -594,7 +609,7 @@ if ($conf->facture->enabled) {
 	print '<input type="submit" class="button" value="' . $langs->trans("Modify") . '">';
 	print '</form>';
 	print '</td></tr>';
-	
+
 	$var = ! $var;
 	print '<tr ' . $bc[$var] . '>';
 	print '<td>' . $langs->trans("set_GRAPEFRUIT_BILL_COPY_LINKS_ON_CLONE") . '</td>';
@@ -606,7 +621,7 @@ if ($conf->facture->enabled) {
 	echo ajax_constantonoff('GRAPEFRUIT_BILL_COPY_LINKS_ON_CLONE');
 	print '</form>';
 	print '</td></tr>';
-	
+
 	$var = ! $var;
 	print '<tr ' . $bc[$var] . '>';
 	print '<td>' . $langs->trans("set_GRAPEFRUIT_SITUATION_INVOICE_DEFAULT_PROGRESS") . '</td>';
@@ -614,7 +629,7 @@ if ($conf->facture->enabled) {
 	print '<td align="right" width="300">';
 	echo ajax_constantonoff('GRAPEFRUIT_SITUATION_INVOICE_DEFAULT_PROGRESS');
 	print '</td></tr>';
-	
+
 	$var = ! $var;
 	print '<tr ' . $bc[$var] . '>';
 	print '<td>' . $langs->trans("set_GRAPEFRUIT_REMINDER_BILL_DELAY") . '</td>';
@@ -627,7 +642,7 @@ if ($conf->facture->enabled) {
 	print '<input type="submit" class="button" value="' . $langs->trans("Modify") . '">';
 	print '</form>';
 	print '</td></tr>';
-	
+
 	$var = ! $var;
 	print '<tr ' . $bc[$var] . '>';
 	print '<td>' . $langs->trans("set_GRAPEFRUIT_EVENT_DESCRIPTION") . '</td>';
@@ -639,7 +654,7 @@ if ($conf->facture->enabled) {
 	print '<input type="submit" class="button" value="' . $langs->trans("Modify") . '">';
 	print '</form>';
 	print '</td></tr>';
-	
+
 	$var = ! $var;
 	print '<tr ' . $bc[$var] . '>';
 	print '<td>' . $langs->trans("set_GRAPEFRUIT_BILL_ADD_DISCOUNT_COLUMN") . '</td>';
