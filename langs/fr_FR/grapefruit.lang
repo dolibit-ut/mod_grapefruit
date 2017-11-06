@@ -101,3 +101,5 @@ set_GRAPEFRUIT_COPY_CAT_ON_CLONE=Copier les catégories au clone
 
 SupplierProposal=Proposition fournisseur/Demande de prix
 set_GRAPEFRUIT_SUPPLIER_PROPAL_CREATE_PRICE_ON_ACCEP=Créer le prix fournisseur sur l'acceptation de la proposition
+
+set_GRAPEFRUIT_VALIDATE_SUPPLIERINVOICE_ON_RECEIPT_SUPPLIERORDER = Valider la facture fournisseur (si elle existe) sur la reception compléte d'une commande fournisseur 
