@@ -462,9 +462,7 @@ class InterfaceGrapeFruittrigger
 					}
 
 				}
-
 			}
-
 		}
 
 		if($action === 'PROPAL_CREATE' || $action === 'ORDER_CREATE'){
