@@ -654,27 +654,28 @@ class ActionsGrapeFruit
 
 		if ($parameters['currentcontext'] == 'index' && !empty($conf->global->GRAPEFRUIT_FILTER_HOMEPAGE_BY_USER) && !empty($user->rights->societe->client->voir))
 		{
+			$langs->load('grapefruit@grapefruit');
 			dol_include_once('/core/class/html.form.class.php');
 			$form = new Form($db);
 
 			$mode = GETPOST('homepagemode');
 
-			if ($mode == '2')
+			if ($mode == 'filtered')
 			{
 				unset($user->rights->societe->client->voir);
 
 				print '<p id="homepagemode" align="right">';
-				print '<a href="'.$_SERVER["PHP_SELF"].'?homepagemode=1">Tableau de bord commun</a>';
+				print '<a href="'.$_SERVER["PHP_SELF"].'?homepagemode=notfiltered">'.$langs->trans('WorkingBoardNotFiltered').'</a>';
 				print '  /  ';
-				print '<strong>Tableau de bord privé</strong>';
+				print '<strong>'.$langs->trans('WorkingBoardFilterByUser').'</strong>';
 				print '</p>';
 			}
 			else
 			{
 				print '<p id="homepagemode" align="right">';
-				print '<strong>Tableau de bord commun</strong>';
+				print '<strong>'.$langs->trans('WorkingBoardNotFiltered').'</strong>';
 				print '  /  ';
-				print '<a href="'.$_SERVER["PHP_SELF"].'?homepagemode=2">Tableau de bord privé</a>';
+				print '<a href="'.$_SERVER["PHP_SELF"].'?homepagemode=filtered">'.$langs->trans('WorkingBoardFilterByUser').'</a>';
 
 				print '</p>';
 			}
