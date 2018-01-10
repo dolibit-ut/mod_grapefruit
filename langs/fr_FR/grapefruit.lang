@@ -103,3 +103,4 @@ SupplierProposal=Proposition fournisseur/Demande de prix
 set_GRAPEFRUIT_SUPPLIER_PROPAL_CREATE_PRICE_ON_ACCEP=Créer le prix fournisseur sur l'acceptation de la proposition
 
 set_GRAPEFRUIT_VALIDATE_SUPPLIERINVOICE_ON_RECEIPT_SUPPLIERORDER = Valider la facture fournisseur (si elle existe) sur la reception compléte d'une commande fournisseur 
+set_GRAPEFRUIT_FILTER_HOMEPAGE_BY_USER= Permettre le filtrage du tableau de bord (sur la page d'accueil) pour l'utilisateur connecté

@@ -648,6 +648,28 @@ class ActionsGrapeFruit
 		}
 		return 0;
 	}
+	function addStatisticLine($parameters, &$object, &$action, $hookmanager)
+	{
+		global $user,$conf,$db,$langs;
+		if($parameters['currentcontext']=='index' && !empty($conf->global->GRAPEFRUIT_FILTER_HOMEPAGE_BY_USER)){
+			dol_include_once('/core/class/html.form.class.php');
+			$form = new Form($db);
+			$action = GETPOST('action');
+			$mode = GETPOST('personnalhomepage');
+			if ($action == 'homepagefilter')
+			{
+				if ($mode == '2')
+				{
+					unset($user->rights->societe->client->voir);
+				}
+			}
+			print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+			print '<input type="hidden" name="action" value="homepagefilter">';
+			print $form->selectarray('personnalhomepage', array(1 => 'Non filtré', 2 => 'Filtré'), $mode);
+			print '<input type="submit" class="button" name="add" value="'.$langs->trans("Save").'">';
+			print '</form>';
+		}
+	}
 
 	/**
 	 * Overloading the doActions function : replacing the parent's function with the one below
