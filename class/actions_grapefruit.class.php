@@ -650,24 +650,44 @@ class ActionsGrapeFruit
 	}
 	function addStatisticLine($parameters, &$object, &$action, $hookmanager)
 	{
-		global $user,$conf,$db,$langs;
-		if($parameters['currentcontext']=='index' && !empty($conf->global->GRAPEFRUIT_FILTER_HOMEPAGE_BY_USER)){
+		global $user, $conf, $db, $langs;
+
+		if ($parameters['currentcontext'] == 'index' && !empty($conf->global->GRAPEFRUIT_FILTER_HOMEPAGE_BY_USER) && !empty($user->rights->societe->client->voir))
+		{
 			dol_include_once('/core/class/html.form.class.php');
 			$form = new Form($db);
-			$action = GETPOST('action');
-			$mode = GETPOST('personnalhomepage');
-			if ($action == 'homepagefilter')
+
+			$mode = GETPOST('homepagemode');
+
+			if ($mode == '2')
 			{
-				if ($mode == '2')
-				{
-					unset($user->rights->societe->client->voir);
-				}
+				unset($user->rights->societe->client->voir);
+
+				print '<p id="homepagemode" align="right">';
+				print '<a href="'.$_SERVER["PHP_SELF"].'?homepagemode=1">Tableau de bord commun</a>';
+				print '  /  ';
+				print '<strong>Tableau de bord privé</strong>';
+				print '</p>';
 			}
-			print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-			print '<input type="hidden" name="action" value="homepagefilter">';
-			print $form->selectarray('personnalhomepage', array(1 => 'Non filtré', 2 => 'Filtré'), $mode);
-			print '<input type="submit" class="button" name="add" value="'.$langs->trans("Save").'">';
-			print '</form>';
+			else
+			{
+				print '<p id="homepagemode" align="right">';
+				print '<strong>Tableau de bord commun</strong>';
+				print '  /  ';
+				print '<a href="'.$_SERVER["PHP_SELF"].'?homepagemode=2">Tableau de bord privé</a>';
+
+				print '</p>';
+			}
+
+			?>
+				<script type="text/javascript">
+					$(document).ready(function(){
+						$("#homepagemode").appendTo(".fichetwothirdright");
+					});
+				
+				</script>
+				
+			<?php
 		}
 	}
 
