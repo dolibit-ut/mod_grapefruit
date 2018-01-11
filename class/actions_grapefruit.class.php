@@ -61,7 +61,7 @@ class ActionsGrapeFruit
 	 */
 	function doActions($parameters, &$object, &$action, $hookmanager)
 	{
-		global $conf, $user;
+		global $conf, $db, $user;
 
 		dol_include_once('/grapefruit/class/grapefruit.class.php');
 
@@ -115,13 +115,37 @@ class ActionsGrapeFruit
 			}
 		}
 
-		if (in_array('invoicecard', $TContext))
+		if (in_array('invoicecard', $TContext) && defined('Facture::TYPE_SITUATION'))
 		{
 			if ($object->type == Facture::TYPE_SITUATION) $object->setValueFrom('ishidden', 0, 'extrafields', '"grapefruit_default_situation_progress_line"', '', 'name');
 			else $object->setValueFrom('ishidden', 1, 'extrafields', '"grapefruit_default_situation_progress_line"', '', 'name');
 		}
+		
+		if (in_array('ordercard', $TContext))
+		{
+			if (!empty($conf->global->GRAPEFRUIT_ORDER_EXPRESS_FROM_PROPAL) && GETPOST('origin') === 'propal' && GETPOST('originid') > 0 && $action == 'create' && GETPOST('socid', 'int') > 0)
+			{
+				require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 
-
+				$propal = new Propal($db);
+				if ($propal->fetch(GETPOST('originid')) > 0)
+				{
+					if ($object->createFromProposal($propal) > 0)
+					{
+						header('Location: '.dol_buildpath('/commande/card.php', 1).'?id='.$object->id);
+						exit;
+					}
+					else
+					{
+						dol_print_error($db);
+					}
+				}
+				else
+				{
+					dol_print_error($db);
+				}
+			}
+		}
 
 		return 0;
 	}
@@ -336,7 +360,8 @@ class ActionsGrapeFruit
 
 			TGrappeFruit::billCloneLink($object,$parameters['objFrom']);
 
-
+			
+			TGrappeFruit::autoValidateIfFrom($object,$parameters['objFrom']);
 		}
 	}
 
@@ -622,6 +647,49 @@ class ActionsGrapeFruit
 			return 1;
 		}
 		return 0;
+	}
+	function addStatisticLine($parameters, &$object, &$action, $hookmanager)
+	{
+		global $user, $conf, $db, $langs;
+
+		if ($parameters['currentcontext'] == 'index' && !empty($conf->global->GRAPEFRUIT_FILTER_HOMEPAGE_BY_USER) && !empty($user->rights->societe->client->voir))
+		{
+			$langs->load('grapefruit@grapefruit');
+			dol_include_once('/core/class/html.form.class.php');
+			$form = new Form($db);
+
+			$mode = GETPOST('homepagemode');
+
+			if ($mode == 'filtered')
+			{
+				unset($user->rights->societe->client->voir);
+
+				print '<p id="homepagemode" align="right">';
+				print '<a href="'.$_SERVER["PHP_SELF"].'?homepagemode=notfiltered">'.$langs->trans('WorkingBoardNotFiltered').'</a>';
+				print '  /  ';
+				print '<strong>'.$langs->trans('WorkingBoardFilterByUser').'</strong>';
+				print '</p>';
+			}
+			else
+			{
+				print '<p id="homepagemode" align="right">';
+				print '<strong>'.$langs->trans('WorkingBoardNotFiltered').'</strong>';
+				print '  /  ';
+				print '<a href="'.$_SERVER["PHP_SELF"].'?homepagemode=filtered">'.$langs->trans('WorkingBoardFilterByUser').'</a>';
+
+				print '</p>';
+			}
+
+			?>
+				<script type="text/javascript">
+					$(document).ready(function(){
+						$("#homepagemode").appendTo(".fichetwothirdright");
+					});
+				
+				</script>
+				
+			<?php
+		}
 	}
 
 	/**
