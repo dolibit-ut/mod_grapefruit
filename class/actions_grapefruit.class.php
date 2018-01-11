@@ -648,6 +648,49 @@ class ActionsGrapeFruit
 		}
 		return 0;
 	}
+	function addStatisticLine($parameters, &$object, &$action, $hookmanager)
+	{
+		global $user, $conf, $db, $langs;
+
+		if ($parameters['currentcontext'] == 'index' && !empty($conf->global->GRAPEFRUIT_FILTER_HOMEPAGE_BY_USER) && !empty($user->rights->societe->client->voir))
+		{
+			$langs->load('grapefruit@grapefruit');
+			dol_include_once('/core/class/html.form.class.php');
+			$form = new Form($db);
+
+			$mode = GETPOST('homepagemode');
+
+			if ($mode == 'filtered')
+			{
+				unset($user->rights->societe->client->voir);
+
+				print '<p id="homepagemode" align="right">';
+				print '<a href="'.$_SERVER["PHP_SELF"].'?homepagemode=notfiltered">'.$langs->trans('WorkingBoardNotFiltered').'</a>';
+				print '  /  ';
+				print '<strong>'.$langs->trans('WorkingBoardFilterByUser').'</strong>';
+				print '</p>';
+			}
+			else
+			{
+				print '<p id="homepagemode" align="right">';
+				print '<strong>'.$langs->trans('WorkingBoardNotFiltered').'</strong>';
+				print '  /  ';
+				print '<a href="'.$_SERVER["PHP_SELF"].'?homepagemode=filtered">'.$langs->trans('WorkingBoardFilterByUser').'</a>';
+
+				print '</p>';
+			}
+
+			?>
+				<script type="text/javascript">
+					$(document).ready(function(){
+						$("#homepagemode").appendTo(".fichetwothirdright");
+					});
+				
+				</script>
+				
+			<?php
+		}
+	}
 
 	/**
 	 * Overloading the doActions function : replacing the parent's function with the one below
