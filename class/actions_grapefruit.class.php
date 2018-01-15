@@ -186,9 +186,12 @@ class ActionsGrapeFruit
 		//var_dump($action, $parameters);exit;
 		//Context : frm creation propal
 		dol_include_once('/grapefruit/lib/grapefruit.lib.php');
+		require_once DOL_DOCUMENT_ROOT . '/core/class/html.form.class.php';
 		$langs->load('bills');
 		$langs->load('grapefruit@grapefruit');
 
+		$form = new Form($db);
+		
 		// Script pour gérer les champs obligatoires sur une fiche contact
 		if(in_array('contactcard',explode(':',$parameters['context'])) && !empty($conf->global->GRAPEFRUIT_CONTACT_FORCE_FIELDS) && ($action == 'edit' || $action == 'create')) {
 			$TChamps = explode(',',$conf->global->GRAPEFRUIT_CONTACT_FORCE_FIELDS);
@@ -343,6 +346,20 @@ class ActionsGrapeFruit
 
 				addPuHtRemise(5,$object);
 			}
+		}
+		
+		if(in_array('invoicesuppliercard',explode(':',$parameters['context'])) && !empty($conf->global->GRAPEFRUIT_ALWAYS_ALLOW_UPDATE_SUPPLIER_INVOICE_DATE) && $object->statut == 2 && $action !== 'editdatef') {
+			
+			?>
+			
+			<script type="text/javascript">
+				$(document).ready(function () {
+					$('[href*="action=editlabel"]').closest('table').closest('tr').next('tr').html('<td><?php echo $form->editfieldkey((float)DOL_VERSION >= 5 ? 'DateInvoice' : 'Date','datef',$object->datep,$object,1,'datepicker'); ?></td><td colspan="3"><?php echo $form->editfieldval("Date",'datef',$object->datep,$object,1,'datepicker'); ?></td>');
+				});
+			</script>
+			
+			<?php
+			
 		}
 
 	}

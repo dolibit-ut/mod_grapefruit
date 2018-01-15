@@ -392,11 +392,12 @@ print '<tr ' . $bc[$var] . '>';
 print '<td>' . $langs->trans("set_GRAPEFRUIT_VALIDATE_SUPPLIERINVOICE_ON_RECEIPT_SUPPLIERORDER") . '</td>';
 print '<td align="center" width="20">&nbsp;</td>';
 print '<td align="right" width="300">';
-print '<form method="POST" action="' . $_SERVER['PHP_SELF'] . '">';
-print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
-print '<input type="hidden" name="action" value="set_GRAPEFRUIT_VALIDATE_SUPPLIERINVOICE_ON_RECEIPT_SUPPLIERORDER">';
 echo ajax_constantonoff('GRAPEFRUIT_VALIDATE_SUPPLIERINVOICE_ON_RECEIPT_SUPPLIERORDER');
-print '</form>';
+print '</td></tr><tr ' . $bc[$var] . '>';
+print '<td>' . $langs->trans("set_GRAPEFRUIT_ALWAYS_ALLOW_UPDATE_SUPPLIER_INVOICE_DATE") . '</td>';
+print '<td align="center" width="20">&nbsp;</td>';
+print '<td align="right" width="300">';
+echo ajax_constantonoff('GRAPEFRUIT_ALWAYS_ALLOW_UPDATE_SUPPLIER_INVOICE_DATE');
 print '</td></tr>';
 
 print '<tr class="liste_titre">';
