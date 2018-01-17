@@ -966,7 +966,10 @@ class TGrappeFruit
 	
 	static function getDataFormRestockProduct(&$object) {
 		
-		global $db;
+		global $db, $langs;
+		
+		$langs->load('grapefruit@grapefruit');
+		$langs->load('stocks');
 		
 		require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 		require_once DOL_DOCUMENT_ROOT . '/product/class/html.formproduct.class.php';
@@ -978,13 +981,13 @@ class TGrappeFruit
 		foreach($formproduct->cache_warehouses as $id_wh=>$tab_wh) $TWarehouses[$id_wh] = $tab_wh['label'];
 		//var_dump($formproduct->cache_warehouses);exit;
 		
-		$tab=array(array('type'=>'select', 'name'=>'fk_entrepot', 'label'=>'Entrepôt pour le stockage', 'values'=>$TWarehouses, 'default'=>key($TWarehouses), 'size'=>'2'));
+		$tab=array(array('type'=>'select', 'name'=>'fk_entrepot', 'label'=>$langs->trans('WarehouseTarget'), 'values'=>$TWarehouses, 'default'=>key($TWarehouses), 'size'=>'2'));
 		
 		foreach($object->lines as &$line) {
 			if(empty($line->product_type) && !empty($line->fk_product)) {
 				$prod = new Product($db);
 				$prod->fetch($line->fk_product);
-				$tab[] = array('type'=>'text', 'name'=>'restock_prod_'.$line->fk_product, 'label'=>'Qté à restocker pour le produit '.$prod->getNomUrl(1), 'value'=>0, 'size'=>'2');
+				$tab[] = array('type'=>'text', 'name'=>'restock_line_'.$line->id, 'label'=>$langs->trans('QtyToRestockForProduct', $prod->getNomUrl(1), $line->qty), 'value'=>0, 'size'=>'2');
 			}
 		}
 		

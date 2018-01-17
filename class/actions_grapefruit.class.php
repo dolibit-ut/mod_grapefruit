@@ -155,23 +155,29 @@ class ActionsGrapeFruit
 			elseif($action === 'confirm_valid') {
 				$fk_entrepot = GETPOST('fk_entrepot');
 				if(!empty($fk_entrepot)) {
+					$nb_restock=0;
 					foreach($_REQUEST as $k=>$qty) {
-						if(strpos($k, 'restock_prod_') !== false && (float)$qty> 0) {
-							$fk_product = strtr($k, array('restock_prod_'=>''));
+						if(strpos($k, 'restock_line_') !== false && (float)$qty> 0) {
+							$id_line = strtr($k, array('restock_line_'=>''));
+							$line = new FactureLigne($db);
+							$line->fetch($id_line);
+							$fk_product = $line->fk_product;
 							$prod = new Product($db);
 							$prod->fetch($fk_product);
 							// Restock
-							$result=$prod->correct_stock(
+							$result+=$prod->correct_stock(
 									$user,
 									$fk_entrepot,
 									$qty,
 									0, // Ajout
 									$langs->trans('Restockage via l\'avoir '.$object->getNomUrl()),
-									$priceunit,
+									$line->pa_ht,
 									'');
+							if(!empty($result)) $nb_restock+=$qty;
 						}
 					}
-					header('Location: '.$_SERVER['PHP_SELF'].'?facid='.$object->id); // Pour éviter un autre stockage si F5 (paramètres passés en GET)
+					setEventMessages($langs->trans('NbRestockedElements', $nb_restock));
+					header('Location: '.$_SERVER['PHP_SELF'].'?facid='.$object->id.'&action=confirm_valid&confirm=yes'); // Pour éviter un autre stockage si F5 (paramètres passés en GET)
 					exit;
 				}
 			}

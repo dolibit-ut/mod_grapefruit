@@ -667,7 +667,7 @@ if ($conf->facture->enabled) {
 	echo ajax_constantonoff('GRAPEFRUIT_BILL_ADD_DISCOUNT_COLUMN');
 	print '</form>';
 	print '</td></tr>';
-
+	
 	$var = ! $var;
 	print '<tr ' . $bc[$var] . '>';
 	print '<td>' . $langs->trans("set_GRAPEFRUIT_BILL_AUTO_VALIDATE_IF_ORIGIN") . '</td>';
@@ -679,6 +679,15 @@ if ($conf->facture->enabled) {
 	echo ajax_constantonoff('GRAPEFRUIT_BILL_AUTO_VALIDATE_IF_ORIGIN');
 	print '</form>';
 	print '</td></tr>';
+	
+	$var = ! $var;
+	print '<tr ' . $bc[$var] . '>';
+	print '<td>' . $langs->trans("set_GRAPEFRUIT_ALLOW_RESTOCK_ON_CREDIT_NOTES") . '</td>';
+	print '<td align="center" width="20">&nbsp;</td>';
+	print '<td align="right" width="300">';
+	echo ajax_constantonoff('GRAPEFRUIT_ALLOW_RESTOCK_ON_CREDIT_NOTES');
+	print '</td></tr>';
+	
 }
 
 if ($conf->agefodd->enabled) {
