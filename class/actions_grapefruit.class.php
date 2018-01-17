@@ -347,14 +347,19 @@ class ActionsGrapeFruit
 				addPuHtRemise(5,$object);
 			}
 		}
-		
-		if(in_array('invoicesuppliercard',explode(':',$parameters['context'])) && !empty($conf->global->GRAPEFRUIT_ALWAYS_ALLOW_UPDATE_SUPPLIER_INVOICE_DATE) && $object->statut == 2 && $action !== 'editdatef') {
-			
+
+		if(in_array('invoicesuppliercard',explode(':',$parameters['context'])) && !empty($conf->global->GRAPEFRUIT_ALLOW_UPDATE_SUPPLIER_INVOICE_DATE) && empty($object->paye) && $action !== 'editdatef'
+			&& (empty($conf->exportcompta->enabled) || (!empty($conf->exportcompta->enabled) && empty($object->array_options['options_date_compta'])))) {
+
 			?>
 			
 			<script type="text/javascript">
 				$(document).ready(function () {
-					$('[href*="action=editlabel"]').closest('table').closest('tr').next('tr').html('<td><?php echo $form->editfieldkey((float)DOL_VERSION >= 5 ? 'DateInvoice' : 'Date','datef',$object->datep,$object,1,'datepicker'); ?></td><td colspan="3"><?php echo $form->editfieldval("Date",'datef',$object->datep,$object,1,'datepicker'); ?></td>');
+					var link_edit_datef = $('[href*="action=editdatef"]').attr('href');
+					// On ajoute le lien dans les cas où il n'y est pas
+					if(typeof link_edit_datef === 'undefined') {
+						$('[href*="action=editlabel"]').closest('table').closest('tr').next('tr').html('<td><?php echo $form->editfieldkey((float)DOL_VERSION >= 5 ? 'DateInvoice' : 'Date','datef',$object->datep,$object,1,'datepicker'); ?></td><td colspan="3"><?php echo $form->editfieldval("Date",'datef',$object->datep,$object,1,'datepicker'); ?></td>');
+					}
 				});
 			</script>
 			
