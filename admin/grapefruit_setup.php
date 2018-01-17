@@ -394,10 +394,10 @@ print '<td align="center" width="20">&nbsp;</td>';
 print '<td align="right" width="300">';
 echo ajax_constantonoff('GRAPEFRUIT_VALIDATE_SUPPLIERINVOICE_ON_RECEIPT_SUPPLIERORDER');
 print '</td></tr><tr ' . $bc[$var] . '>';
-print '<td>' . $langs->trans("set_GRAPEFRUIT_ALWAYS_ALLOW_UPDATE_SUPPLIER_INVOICE_DATE") . '</td>';
+print '<td>' . $langs->trans("set_GRAPEFRUIT_ALLOW_UPDATE_SUPPLIER_INVOICE_DATE") . '</td>';
 print '<td align="center" width="20">&nbsp;</td>';
 print '<td align="right" width="300">';
-echo ajax_constantonoff('GRAPEFRUIT_ALWAYS_ALLOW_UPDATE_SUPPLIER_INVOICE_DATE');
+echo ajax_constantonoff('GRAPEFRUIT_ALLOW_UPDATE_SUPPLIER_INVOICE_DATE');
 print '</td></tr>';
 
 print '<tr class="liste_titre">';
