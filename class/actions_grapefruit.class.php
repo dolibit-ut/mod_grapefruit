@@ -61,10 +61,12 @@ class ActionsGrapeFruit
 	 */
 	function doActions($parameters, &$object, &$action, $hookmanager)
 	{
-		global $conf, $db, $user;
+		global $conf, $db, $user, $langs;
 
 		dol_include_once('/grapefruit/class/grapefruit.class.php');
-
+		require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
+		require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
+		
 		$TContext = explode(':', $parameters['context']);
 
 		$actionATM = GETPOST('actionATM');
@@ -146,7 +148,35 @@ class ActionsGrapeFruit
 				}
 			}
 		}
-
+		
+		if(!empty($conf->global->GRAPEFRUIT_ALLOW_RESTOCK_ON_CREDIT_NOTES) && get_class($object) === 'Facture' && $object->type == Facture::TYPE_CREDIT_NOTE) {
+			// Pour empêcher de remplir le form confirm de manière à exécuter le notre
+			if($action === 'valid') $action = 'validATM';
+			elseif($action === 'confirm_valid') {
+				$fk_entrepot = GETPOST('fk_entrepot');
+				if(!empty($fk_entrepot)) {
+					foreach($_REQUEST as $k=>$qty) {
+						if(strpos($k, 'restock_prod_') !== false && (float)$qty> 0) {
+							$fk_product = strtr($k, array('restock_prod_'=>''));
+							$prod = new Product($db);
+							$prod->fetch($fk_product);
+							// Restock
+							$result=$prod->correct_stock(
+									$user,
+									$fk_entrepot,
+									$qty,
+									0, // Ajout
+									$langs->trans('Restockage via l\'avoir '.$object->getNomUrl()),
+									$priceunit,
+									'');
+						}
+					}
+					header('Location: '.$_SERVER['PHP_SELF'].'?facid='.$object->id); // Pour éviter un autre stockage si F5 (paramètres passés en GET)
+					exit;
+				}
+			}
+		}
+		
 		return 0;
 	}
 
@@ -725,6 +755,8 @@ class ActionsGrapeFruit
 		$TContext = explode(':', $parameters['context']);
 		$object->fetchObjectLinked();
 
+		require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
+		
 		if ( (in_array('ordercard', $TContext) && !empty($conf->global->GRAPEFRUIT_CONFIRM_ON_CREATE_INVOICE_FROM_ORDER) && !empty($object->linkedObjects['facture']))
 			|| (in_array('ordersuppliercard', $TContext) && !empty($conf->global->GRAPEFRUIT_CONFIRM_ON_CREATE_INVOICE_FROM_SUPPLIER_ORDER) && !empty($object->linkedObjects['invoice_supplier']))
 		)
@@ -797,6 +829,12 @@ class ActionsGrapeFruit
 			<?php
 		}
 
+		if(!empty($conf->global->GRAPEFRUIT_ALLOW_RESTOCK_ON_CREDIT_NOTES) && get_class($object) === 'Facture' && $object->type == Facture::TYPE_CREDIT_NOTE) {
+			if($action === 'validATM') {
+				print TGrappeFruit::getFormConfirmValidFacture($object);
+			}
+		}
+		
 		return 0;
 	}
 
