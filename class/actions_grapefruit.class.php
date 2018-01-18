@@ -61,10 +61,12 @@ class ActionsGrapeFruit
 	 */
 	function doActions($parameters, &$object, &$action, $hookmanager)
 	{
-		global $conf, $db, $user;
+		global $conf, $db, $user, $langs;
 
 		dol_include_once('/grapefruit/class/grapefruit.class.php');
-
+		require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
+		require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
+		
 		$TContext = explode(':', $parameters['context']);
 
 		$actionATM = GETPOST('actionATM');
@@ -146,7 +148,12 @@ class ActionsGrapeFruit
 				}
 			}
 		}
-
+		
+		if(!empty($conf->global->GRAPEFRUIT_ALLOW_RESTOCK_ON_CREDIT_NOTES) && $object->element === 'facture' && $object->type == Facture::TYPE_CREDIT_NOTE) {
+			// Pour empêcher de remplir le form confirm de manière à exécuter le notre
+			if($action === 'valid') $action = 'validATM';
+		}
+		
 		return 0;
 	}
 
@@ -730,6 +737,8 @@ class ActionsGrapeFruit
 		$TContext = explode(':', $parameters['context']);
 		$object->fetchObjectLinked();
 
+		require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
+		
 		if ( (in_array('ordercard', $TContext) && !empty($conf->global->GRAPEFRUIT_CONFIRM_ON_CREATE_INVOICE_FROM_ORDER) && !empty($object->linkedObjects['facture']))
 			|| (in_array('ordersuppliercard', $TContext) && !empty($conf->global->GRAPEFRUIT_CONFIRM_ON_CREATE_INVOICE_FROM_SUPPLIER_ORDER) && !empty($object->linkedObjects['invoice_supplier']))
 		)
@@ -802,6 +811,13 @@ class ActionsGrapeFruit
 			<?php
 		}
 
+		if(!empty($conf->global->GRAPEFRUIT_ALLOW_RESTOCK_ON_CREDIT_NOTES) && $object->element === 'facture' && $object->type == Facture::TYPE_CREDIT_NOTE) {
+			if($action === 'validATM') {
+				print TGrappeFruit::getFormConfirmValidFacture($object);
+				TGrappeFruit::printJSFillQtyToRestock();
+			}
+		}
+		
 		return 0;
 	}
 

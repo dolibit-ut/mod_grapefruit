@@ -107,7 +107,7 @@ class InterfaceGrapeFruittrigger
 	 * @return int <0 if KO, 0 if no triggered ran, >0 if OK
 	 */
 	public function run_trigger($action, &$object, &$user, &$langs, &$conf) {
-		$db = $this->db;
+		$db = &$this->db;
 		dol_include_once('/grapefruit/class/grapefruit.class.php');
 		$langs->load('grapefruit@grapefruit');
 
@@ -297,6 +297,44 @@ class InterfaceGrapeFruittrigger
 
 			}
 
+			if(!empty($conf->global->GRAPEFRUIT_ALLOW_RESTOCK_ON_CREDIT_NOTES) && $object->element === 'facture' && $object->type == Facture::TYPE_CREDIT_NOTE) {
+				require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
+				require_once DOL_DOCUMENT_ROOT .'/product/stock/class/mouvementstock.class.php';
+				$fk_entrepot = GETPOST('fk_entrepot');
+				if(!empty($fk_entrepot)) {
+					$nb_restock=0;
+					
+					foreach($_REQUEST as $k=>$qty) {
+						if(strpos($k, 'restock_line_') !== false && (float)$qty> 0) {
+							$id_line = strtr($k, array('restock_line_'=>''));
+							$line = new FactureLigne($db);
+							$line->fetch($id_line);
+							$fk_product = $line->fk_product;
+							$prod = new Product($db);
+							$prod->fetch($fk_product);
+							
+							// Restock entièrement créé à la main car la fonction correct_stock ne permet pas d'ajouter un avoir comme élément d'origine
+							$prod->origin = $object;
+							$prod->origin->id = $object->id;
+							$movementstock=new MouvementStock($db);
+							$movementstock->origin = $object;
+							$movementstock->origin->id = $object->id;
+							$result=$movementstock->_create($user,$prod->id,$fk_entrepot,'+'.$qty,0,$line->pa_ht,$langs->trans('Restockage via avoir'),'');
+							
+							if(!empty($result)) $nb_restock+=$qty;
+									
+						}
+					}
+					
+					// Nécessité de faire un commit() car on coupe la fonction validate() avec le header en dessous
+					$db->commit();
+					
+					setEventMessage($langs->trans('NbRestockedElements', $nb_restock));
+					header('Location: '.$_SERVER['PHP_SELF'].'?facid='.$object->id); // Pour éviter un autre stockage si F5 (paramètres passés en GET)
+					exit;
+				}
+			}
+			
 		} elseif ($action === 'PROJECT_CREATE') {
 			if (! TGrappeFruit::checkNoDuplicateRef($object))
 				return - 1;

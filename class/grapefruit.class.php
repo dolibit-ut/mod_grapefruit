@@ -238,8 +238,10 @@ class TGrappeFruit
 			// Find Order to put it into ref
 		if (empty($object->linked_objects))
 			$object->fetchObjectLinked(null, null, $object->id, 'facture');
-		foreach ( $object->linkedObjects['commande'] as $commande ) {
-			$orderref .= $commande->ref;
+		if(!empty($object->linkedObjects['commande'])) {
+			foreach ( $object->linkedObjects['commande'] as $commande ) {
+				$orderref .= $commande->ref;
+			}
 		}
 
 		// Make substitution
@@ -900,4 +902,132 @@ class TGrappeFruit
 			if (!empty($object->lines)) $object->validate($user);
 		}
 	}
+
+	static function getFormConfirmValidFacture(&$object) {
+
+		global $conf, $langs, $form, $db;
+
+		// on verifie si l'objet est en numerotation provisoire
+		$objectref = substr($object->ref, 1, 4);
+		if ($objectref == 'PROV') {
+			$savdate = $object->date;
+			if (! empty($conf->global->FAC_FORCE_DATE_VALIDATION)) {
+				$object->date = dol_now();
+				$object->date_lim_reglement = $object->calculate_date_lim_reglement();
+			}
+			$numref = $object->getNextNumRef($soc);
+			// $object->date=$savdate;
+		} else {
+			$numref = $object->ref;
+		}
+
+		$text = $langs->trans('ConfirmValidateBill', $numref);
+		if (! empty($conf->notification->enabled)) {
+			require_once DOL_DOCUMENT_ROOT . '/core/class/notify.class.php';
+			$notify = new Notify($db);
+			$text .= '<br>';
+			$text .= $notify->confirmMessage('BILL_VALIDATE', $object->socid, $object);
+		}
+		$formquestion = array();
+
+		$qualified_for_stock_change = 0;
+		if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
+			$qualified_for_stock_change = $object->hasProductsOrServices(2);
+		} else {
+			$qualified_for_stock_change = $object->hasProductsOrServices(1);
+		}
+
+		if ($object->type != Facture::TYPE_DEPOSIT && ! empty($conf->global->STOCK_CALCULATE_ON_BILL) && $qualified_for_stock_change)
+		{
+			$langs->load("stocks");
+			require_once DOL_DOCUMENT_ROOT . '/product/class/html.formproduct.class.php';
+			require_once DOL_DOCUMENT_ROOT . '/product/stock/class/entrepot.class.php';
+			$formproduct = new FormProduct($db);
+			$warehouse = new Entrepot($db);
+			$warehouse_array = $warehouse->list_array();
+			if (count($warehouse_array) == 1) {
+				$label = $object->type == Facture::TYPE_CREDIT_NOTE ? $langs->trans("WarehouseForStockIncrease", current($warehouse_array)) : $langs->trans("WarehouseForStockDecrease", current($warehouse_array));
+				$value = '<input type="hidden" id="idwarehouse" name="idwarehouse" value="' . key($warehouse_array) . '">';
+			} else {
+				$label = $object->type == Facture::TYPE_CREDIT_NOTE ? $langs->trans("SelectWarehouseForStockIncrease") : $langs->trans("SelectWarehouseForStockDecrease");
+				$value = $formproduct->selectWarehouses(GETPOST('idwarehouse')?GETPOST('idwarehouse'):'ifone', 'idwarehouse', '', 1);
+			}
+			$formquestion = array(
+					// 'text' => $langs->trans("ConfirmClone"),
+					// array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneMainAttributes"), 'value' =>
+					// 1),
+					// array('type' => 'checkbox', 'name' => 'update_prices', 'label' => $langs->trans("PuttingPricesUpToDate"), 'value'
+					// => 1),
+					array('type' => 'other','name' => 'idwarehouse','label' => $label,'value' => $value));
+		}
+
+		// Ajout des données de stock dans le formulaire
+		$formquestion = array_merge($formquestion, self::getDataFormRestockProduct($object));
+
+		if ($object->type != Facture::TYPE_CREDIT_NOTE && $object->total_ttc < 0) 		// Can happen only if $conf->global->FACTURE_ENABLE_NEGATIVE is on
+		{
+			$text .= '<br>' . img_warning() . ' ' . $langs->trans("ErrorInvoiceOfThisTypeMustBePositive");
+		}
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?facid=' . $object->id, $langs->trans('ValidateBill'), $text, 'confirm_valid', $formquestion, 'yes', 2, 220 + (31 * count($object->lines)), '700');
+
+		return $formconfirm;
+
+	}
+
+	static function getDataFormRestockProduct(&$object) {
+
+		global $db, $langs;
+
+		$langs->load('grapefruit@grapefruit');
+		$langs->load('main');
+		$langs->load('stocks');
+
+		require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
+		require_once DOL_DOCUMENT_ROOT . '/product/class/html.formproduct.class.php';
+
+		$formproduct=new FormProduct($db);
+		$TWarehouses = array();
+
+		$formproduct->loadWarehouses($fk_product, '', $filterstatus, true, $exclude);
+		foreach($formproduct->cache_warehouses as $id_wh=>$tab_wh) $TWarehouses[$id_wh] = $tab_wh['label'];
+		//var_dump($formproduct->cache_warehouses);exit;
+
+		$tab=array(
+				array('type'=>'select', 'name'=>'fk_entrepot', 'label'=>$langs->trans('WarehouseTarget'), 'values'=>$TWarehouses, 'default'=>key($TWarehouses), 'size'=>'2')
+				,array('type'=>'other', 'name'=>'link_remplir', 'label'=>' ', 'value'=>'<a href="#" onclick="return false;" id="fillQty">'.$langs->trans('Fill').'</a>')
+		);
+
+		foreach($object->lines as &$line) {
+			if(empty($line->product_type) && !empty($line->fk_product)) {
+				$prod = new Product($db);
+				$prod->fetch($line->fk_product);
+				$tab[] = array('type'=>'text', 'name'=>'restock_line_'.$line->id, 'label'=>$langs->trans('QtyToRestockForProduct', $prod->getNomUrl(1), $line->qty), 'value'=>0, 'size'=>'2');
+				$tab[] = array('type'=>'hidden', 'name'=>'qty_line_'.$line->id, 'value'=>$line->qty);
+			}
+		}
+
+		return $tab;
+
+	}
+	
+	static function printJSFillQtyToRestock() {
+		
+		?>
+				
+		<script type="text/javascript">
+			$(document).ready(function() {
+				$('#fillQty').click(function() {
+					$('input[name*="restock_line_"]').each(function() {
+						id_line = $(this).attr('name').replace('restock_line_', '');
+						input_qty = $('#qty_line_'+id_line);
+						$(this).val(input_qty.val());
+					});
+				});
+			});
+		</script>
+		
+		<?php
+		
+	}
+
 }
