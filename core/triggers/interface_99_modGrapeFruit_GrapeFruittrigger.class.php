@@ -297,7 +297,7 @@ class InterfaceGrapeFruittrigger
 
 			}
 
-			if(!empty($conf->global->GRAPEFRUIT_ALLOW_RESTOCK_ON_CREDIT_NOTES) && $object->element === 'facture' && $object->type == Facture::TYPE_CREDIT_NOTE) {
+			if(!empty($conf->global->GRAPEFRUIT_ALLOW_RESTOCK_ON_CREDIT_NOTES) && empty($conf->global->STOCK_CALCULATE_ON_BILL) && $object->element === 'facture' && $object->type == Facture::TYPE_CREDIT_NOTE) {
 				require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
 				require_once DOL_DOCUMENT_ROOT .'/product/stock/class/mouvementstock.class.php';
 				$fk_entrepot = GETPOST('fk_entrepot');
