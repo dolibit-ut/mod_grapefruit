@@ -599,20 +599,28 @@ class TGrappeFruit
 
 		$langs->load('orders');
 
+		$order=array();
 		// Récupération de la commande d'origine
 		$object->fetchObjectLinked();
-		$TOriginOrder = array_values($object->linkedObjects['commande']);
-		$order = $TOriginOrder[0];
+
+		if (is_array($object->linkedObjects) && array_key_exists('commande', $object->linkedObjects) && count($object->linkedObjects['commande'])>0 ) {
+			$TOriginOrder = array_values($object->linkedObjects['commande']);
+			$order = $TOriginOrder[0];
+		}
 		if(empty($order)) return 0;
 
+		$TFact=array();
 		// On refait la fonction dans l'autre sens car la commande peut avoir été facturée en plusieurs fois
 		$order->fetchObjectLinked();
-		$TFact = array_values($order->linkedObjects['facture']);
+		if (is_array($object->linkedObjects) && array_key_exists('facture', $object->linkedObjects) && count($object->linkedObjects['facture'])>0 ) {
+			$TFact = array_values($order->linkedObjects['facture']);
+		}
 
 		$total_ttc = 0;
 		foreach($TFact as $f) {
 			if($f->statut > 0) $total_ttc+=$f->total_ttc;
 		}
+		if(empty($TFact)) return 0;
 
 		// On compare les montants
 		if($total_ttc == $order->total_ttc) {
