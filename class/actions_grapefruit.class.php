@@ -149,7 +149,7 @@ class ActionsGrapeFruit
 			}
 		}
 		
-		if(!empty($conf->global->GRAPEFRUIT_ALLOW_RESTOCK_ON_CREDIT_NOTES) && $object->element === 'facture' && $object->type == Facture::TYPE_CREDIT_NOTE) {
+		if(!empty($conf->global->GRAPEFRUIT_ALLOW_RESTOCK_ON_CREDIT_NOTES) && empty($conf->global->STOCK_CALCULATE_ON_BILL) && $object->element === 'facture' && $object->type == Facture::TYPE_CREDIT_NOTE) {
 			// Pour empêcher de remplir le form confirm de manière à exécuter le notre
 			if($action === 'valid') $action = 'validATM';
 		}
@@ -811,7 +811,7 @@ class ActionsGrapeFruit
 			<?php
 		}
 
-		if(!empty($conf->global->GRAPEFRUIT_ALLOW_RESTOCK_ON_CREDIT_NOTES) && $object->element === 'facture' && $object->type == Facture::TYPE_CREDIT_NOTE) {
+		if(!empty($conf->global->GRAPEFRUIT_ALLOW_RESTOCK_ON_CREDIT_NOTES) && empty($conf->global->STOCK_CALCULATE_ON_BILL) && $object->element === 'facture' && $object->type == Facture::TYPE_CREDIT_NOTE) {
 			if($action === 'validATM') {
 				print TGrappeFruit::getFormConfirmValidFacture($object);
 				TGrappeFruit::printJSFillQtyToRestock();
