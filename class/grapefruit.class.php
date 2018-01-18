@@ -238,8 +238,10 @@ class TGrappeFruit
 			// Find Order to put it into ref
 		if (empty($object->linked_objects))
 			$object->fetchObjectLinked(null, null, $object->id, 'facture');
-		foreach ( $object->linkedObjects['commande'] as $commande ) {
-			$orderref .= $commande->ref;
+		if(!empty($object->linkedObjects['commande'])) {
+			foreach ( $object->linkedObjects['commande'] as $commande ) {
+				$orderref .= $commande->ref;
+			}
 		}
 
 		// Make substitution

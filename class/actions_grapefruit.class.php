@@ -149,38 +149,9 @@ class ActionsGrapeFruit
 			}
 		}
 		
-		if(!empty($conf->global->GRAPEFRUIT_ALLOW_RESTOCK_ON_CREDIT_NOTES) && get_class($object) === 'Facture' && $object->type == Facture::TYPE_CREDIT_NOTE) {
+		if(!empty($conf->global->GRAPEFRUIT_ALLOW_RESTOCK_ON_CREDIT_NOTES) && $object->element === 'facture' && $object->type == Facture::TYPE_CREDIT_NOTE) {
 			// Pour empêcher de remplir le form confirm de manière à exécuter le notre
 			if($action === 'valid') $action = 'validATM';
-			elseif($action === 'confirm_valid') {
-				$fk_entrepot = GETPOST('fk_entrepot');
-				if(!empty($fk_entrepot)) {
-					$nb_restock=0;
-					foreach($_REQUEST as $k=>$qty) {
-						if(strpos($k, 'restock_line_') !== false && (float)$qty> 0) {
-							$id_line = strtr($k, array('restock_line_'=>''));
-							$line = new FactureLigne($db);
-							$line->fetch($id_line);
-							$fk_product = $line->fk_product;
-							$prod = new Product($db);
-							$prod->fetch($fk_product);
-							// Restock
-							$result+=$prod->correct_stock(
-									$user,
-									$fk_entrepot,
-									$qty,
-									0, // Ajout
-									$langs->trans('Restockage via l\'avoir '.$object->getNomUrl()),
-									$line->pa_ht,
-									'');
-							if(!empty($result)) $nb_restock+=$qty;
-						}
-					}
-					setEventMessages($langs->trans('NbRestockedElements', $nb_restock));
-					header('Location: '.$_SERVER['PHP_SELF'].'?facid='.$object->id.'&action=confirm_valid&confirm=yes'); // Pour éviter un autre stockage si F5 (paramètres passés en GET)
-					exit;
-				}
-			}
 		}
 		
 		return 0;
@@ -840,7 +811,7 @@ class ActionsGrapeFruit
 			<?php
 		}
 
-		if(!empty($conf->global->GRAPEFRUIT_ALLOW_RESTOCK_ON_CREDIT_NOTES) && get_class($object) === 'Facture' && $object->type == Facture::TYPE_CREDIT_NOTE) {
+		if(!empty($conf->global->GRAPEFRUIT_ALLOW_RESTOCK_ON_CREDIT_NOTES) && $object->element === 'facture' && $object->type == Facture::TYPE_CREDIT_NOTE) {
 			if($action === 'validATM') {
 				print TGrappeFruit::getFormConfirmValidFacture($object);
 				TGrappeFruit::printJSFillQtyToRestock();
