@@ -958,7 +958,7 @@ class TGrappeFruit
 		{
 			$text .= '<br>' . img_warning() . ' ' . $langs->trans("ErrorInvoiceOfThisTypeMustBePositive");
 		}
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?facid=' . $object->id, $langs->trans('ValidateBill'), $text, 'confirm_valid', $formquestion, 'yes', 2, 220 + (15 * count($object->lines)));
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?facid=' . $object->id, $langs->trans('ValidateBill'), $text, 'confirm_valid', $formquestion, 'yes', 2, 220 + (31 * count($object->lines)), '700');
 
 		return $formconfirm;
 
@@ -969,6 +969,7 @@ class TGrappeFruit
 		global $db, $langs;
 
 		$langs->load('grapefruit@grapefruit');
+		$langs->load('main');
 		$langs->load('stocks');
 
 		require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
@@ -981,18 +982,42 @@ class TGrappeFruit
 		foreach($formproduct->cache_warehouses as $id_wh=>$tab_wh) $TWarehouses[$id_wh] = $tab_wh['label'];
 		//var_dump($formproduct->cache_warehouses);exit;
 
-		$tab=array(array('type'=>'select', 'name'=>'fk_entrepot', 'label'=>$langs->trans('WarehouseTarget'), 'values'=>$TWarehouses, 'default'=>key($TWarehouses), 'size'=>'2'));
+		$tab=array(
+				array('type'=>'select', 'name'=>'fk_entrepot', 'label'=>$langs->trans('WarehouseTarget'), 'values'=>$TWarehouses, 'default'=>key($TWarehouses), 'size'=>'2')
+				,array('type'=>'other', 'name'=>'link_remplir', 'label'=>' ', 'value'=>'<a href="#" onclick="return false;" id="fillQty">'.$langs->trans('Fill').'</a>')
+		);
 
 		foreach($object->lines as &$line) {
 			if(empty($line->product_type) && !empty($line->fk_product)) {
 				$prod = new Product($db);
 				$prod->fetch($line->fk_product);
 				$tab[] = array('type'=>'text', 'name'=>'restock_line_'.$line->id, 'label'=>$langs->trans('QtyToRestockForProduct', $prod->getNomUrl(1), $line->qty), 'value'=>0, 'size'=>'2');
+				$tab[] = array('type'=>'hidden', 'name'=>'qty_line_'.$line->id, 'value'=>$line->qty);
 			}
 		}
 
 		return $tab;
 
+	}
+	
+	static function printJSFillQtyToRestock() {
+		
+		?>
+				
+		<script type="text/javascript">
+			$(document).ready(function() {
+				$('#fillQty').click(function() {
+					$('input[name*="restock_line_"]').each(function() {
+						id_line = $(this).attr('name').replace('restock_line_', '');
+						input_qty = $('#qty_line_'+id_line);
+						$(this).val(input_qty.val());
+					});
+				});
+			});
+		</script>
+		
+		<?php
+		
 	}
 
 }

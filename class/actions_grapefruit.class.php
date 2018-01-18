@@ -838,6 +838,7 @@ class ActionsGrapeFruit
 		if(!empty($conf->global->GRAPEFRUIT_ALLOW_RESTOCK_ON_CREDIT_NOTES) && get_class($object) === 'Facture' && $object->type == Facture::TYPE_CREDIT_NOTE) {
 			if($action === 'validATM') {
 				print TGrappeFruit::getFormConfirmValidFacture($object);
+				TGrappeFruit::printJSFillQtyToRestock();
 			}
 		}
 		
