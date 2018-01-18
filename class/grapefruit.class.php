@@ -4,34 +4,34 @@ class TGrappeFruit
 	public $error;
 
 	static function createSupplierPriceFromProposal(&$object) {
-		
+
 		global $conf, $langs, $db, $user;
-		
+
 		if (empty($conf->global->GRAPEFRUIT_SUPPLIER_PROPAL_CREATE_PRICE_ON_ACCEP))
 			return true;
-			
-			
+
+
 		foreach($object->lines as &$line) {
-			
+
 			if(!empty($line->ref_fourn) && $line->subprice>0) {
-				
+
 				$product = new ProductFournisseur($db);
 				$product->fetch($line->fk_product);
-				
+
 				$fourn = new Fournisseur($db);
 				$fourn->id = $object->socid;
 				$product->product_fourn_id = $fourn->id;
-				
+
 				// La methode update_buyprice() renvoie -1 ou -2 en cas d'erreur ou l'id de l'objet modifié ou créé en cas de réussite
 				$ret=$product->update_buyprice( $line->qty, $line->subprice, $user, 'HT', $fourn, 1, $line->ref_fourn, $line->tva_tx, 0, $line->remise_percent);
-			
+
 			}
-			
+
 		}
-			
-		
+
+
 	}
-	
+
 	static function checkNoDuplicateRef(&$object) {
 		global $conf, $langs, $db;
 
@@ -562,19 +562,19 @@ class TGrappeFruit
 	}
 
 	function updateOrderStatusOnShippingDelete(&$expedition) {
-		
+
 		global $db, $user, $langs;
-		
+
 		require_once DOL_DOCUMENT_ROOT . '/commande/class/commande.class.php';
-		
+
 		$langs->load('grapefruit@grapefruit');
 		$langs->load('orders');
-		
+
 		// On charge la commande d'origine pour vérifier s'il y a d'autres expéditions
 		$commande = new Commande($db);
 		$commande->fetch($expedition->origin_id);
 		$commande->fetchObjectLinked($commande->id, 'commande', $expedition->id, 'shipping');
-		
+
 		// S'il n'y a pas d'autre exped, on repasse au status validée, Sinon au statut en cours
 		if(empty($commande->linkedObjects['shipping'])) {
 			// Je fais pas de set_reopen parce qu'il enlève aussi le statut facturé
@@ -585,9 +585,9 @@ class TGrappeFruit
 			$db->query('UPDATE '.MAIN_DB_PREFIX.'commande SET fk_statut = 2 WHERE rowid = '.$commande->id);
 			$status = $langs->trans('StatusOrderSentShort');
 		}
-		
+
 		setEventMessage($langs->trans('grapefruit_order_status_set_to', $commande->getNomUrl(), $status));
-		
+
 	}
 
 	/**
@@ -596,9 +596,9 @@ class TGrappeFruit
 	static function setOrderBilledIfSameMontant(&$object) {
 
 		global $user, $langs;
-		
+
 		$langs->load('orders');
-		
+
 		// Récupération de la commande d'origine
 		$object->fetchObjectLinked();
 		$TOriginOrder = array_values($object->linkedObjects['commande']);
@@ -770,7 +770,7 @@ class TGrappeFruit
 
 		if(empty($error)) {
 			if($f->validate($user) > 0) {
-				
+
 				if((float)DOL_VERSION >= 4.0) $object->classifyBilled($user);
 				else $object->classifyBilled();
 
@@ -876,27 +876,27 @@ class TGrappeFruit
 
 	/**
 	 * Passe une facture au statut "Validé" après création depuis une origine
-	 * 
+	 *
 	 * @param	Facture				$object
 	 * @param	Propal|Commande		$originObject
 	 */
 	public static function autoValidateIfFrom(&$object, &$originObject)
 	{
 		global $conf,$user;
-		
+
 		if (!empty($conf->global->GRAPEFRUIT_BILL_AUTO_VALIDATE_IF_ORIGIN) && !empty($originObject))
 		{
 			if (method_exists($object, 'fetch_lines')) $object->fetch_lines();
 			else $object->fetch($object->id);
-			
+
 			if (!empty($object->lines)) $object->validate($user);
 		}
 	}
-	
+
 	static function getFormConfirmValidFacture(&$object) {
-		
-		global $conf, $langs, $form;
-		
+
+		global $conf, $langs, $form, $db;
+
 		// on verifie si l'objet est en numerotation provisoire
 		$objectref = substr($object->ref, 1, 4);
 		if ($objectref == 'PROV') {
@@ -910,7 +910,7 @@ class TGrappeFruit
 		} else {
 			$numref = $object->ref;
 		}
-		
+
 		$text = $langs->trans('ConfirmValidateBill', $numref);
 		if (! empty($conf->notification->enabled)) {
 			require_once DOL_DOCUMENT_ROOT . '/core/class/notify.class.php';
@@ -919,14 +919,14 @@ class TGrappeFruit
 			$text .= $notify->confirmMessage('BILL_VALIDATE', $object->socid, $object);
 		}
 		$formquestion = array();
-		
+
 		$qualified_for_stock_change = 0;
 		if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
 			$qualified_for_stock_change = $object->hasProductsOrServices(2);
 		} else {
 			$qualified_for_stock_change = $object->hasProductsOrServices(1);
 		}
-		
+
 		if ($object->type != Facture::TYPE_DEPOSIT && ! empty($conf->global->STOCK_CALCULATE_ON_BILL) && $qualified_for_stock_change)
 		{
 			$langs->load("stocks");
@@ -950,39 +950,39 @@ class TGrappeFruit
 					// => 1),
 					array('type' => 'other','name' => 'idwarehouse','label' => $label,'value' => $value));
 		}
-		
+
 		// Ajout des données de stock dans le formulaire
 		$formquestion = array_merge($formquestion, self::getDataFormRestockProduct($object));
-		
+
 		if ($object->type != Facture::TYPE_CREDIT_NOTE && $object->total_ttc < 0) 		// Can happen only if $conf->global->FACTURE_ENABLE_NEGATIVE is on
 		{
 			$text .= '<br>' . img_warning() . ' ' . $langs->trans("ErrorInvoiceOfThisTypeMustBePositive");
 		}
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?facid=' . $object->id, $langs->trans('ValidateBill'), $text, 'confirm_valid', $formquestion, 'yes', 2, 220 + (15 * count($object->lines)));
-		
+
 		return $formconfirm;
-		
+
 	}
-	
+
 	static function getDataFormRestockProduct(&$object) {
-		
+
 		global $db, $langs;
-		
+
 		$langs->load('grapefruit@grapefruit');
 		$langs->load('stocks');
-		
+
 		require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 		require_once DOL_DOCUMENT_ROOT . '/product/class/html.formproduct.class.php';
-		
+
 		$formproduct=new FormProduct($db);
 		$TWarehouses = array();
-		
+
 		$formproduct->loadWarehouses($fk_product, '', $filterstatus, true, $exclude);
 		foreach($formproduct->cache_warehouses as $id_wh=>$tab_wh) $TWarehouses[$id_wh] = $tab_wh['label'];
 		//var_dump($formproduct->cache_warehouses);exit;
-		
+
 		$tab=array(array('type'=>'select', 'name'=>'fk_entrepot', 'label'=>$langs->trans('WarehouseTarget'), 'values'=>$TWarehouses, 'default'=>key($TWarehouses), 'size'=>'2'));
-		
+
 		foreach($object->lines as &$line) {
 			if(empty($line->product_type) && !empty($line->fk_product)) {
 				$prod = new Product($db);
@@ -990,9 +990,9 @@ class TGrappeFruit
 				$tab[] = array('type'=>'text', 'name'=>'restock_line_'.$line->id, 'label'=>$langs->trans('QtyToRestockForProduct', $prod->getNomUrl(1), $line->qty), 'value'=>0, 'size'=>'2');
 			}
 		}
-		
+
 		return $tab;
-		
+
 	}
-	
+
 }
