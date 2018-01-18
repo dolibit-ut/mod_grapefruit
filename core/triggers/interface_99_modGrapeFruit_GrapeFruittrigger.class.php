@@ -299,6 +299,7 @@ class InterfaceGrapeFruittrigger
 
 			if(!empty($conf->global->GRAPEFRUIT_ALLOW_RESTOCK_ON_CREDIT_NOTES) && $object->element === 'facture' && $object->type == Facture::TYPE_CREDIT_NOTE) {
 				require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
+				require_once DOL_DOCUMENT_ROOT .'/product/stock/class/mouvementstock.class.php';
 				$fk_entrepot = GETPOST('fk_entrepot');
 				if(!empty($fk_entrepot)) {
 					$nb_restock=0;
@@ -311,16 +312,16 @@ class InterfaceGrapeFruittrigger
 							$fk_product = $line->fk_product;
 							$prod = new Product($db);
 							$prod->fetch($fk_product);
-							// Restock
-							$result+=$prod->correct_stock(
-									$user,
-									$fk_entrepot,
-									$qty,
-									0, // Ajout
-									$langs->trans('Restockage via l\'avoir '.$object->getNomUrl()),
-									$line->pa_ht,
-									'');
-									if(!empty($result)) $nb_restock+=$qty;
+							
+							// Restock entièrement créé à la main car la fonction correct_stock ne permet pas d'ajouter un avoir comme élément d'origine
+							$prod->origin = $object;
+							$prod->origin->id = $object->id;
+							$movementstock=new MouvementStock($db);
+							$movementstock->origin = $object;
+							$movementstock->origin->id = $object->id;
+							$result=$movementstock->_create($user,$prod->id,$fk_entrepot,'+'.$qty,0,$line->pa_ht,$langs->trans('Restockage via avoir'),'');
+							
+							if(!empty($result)) $nb_restock+=$qty;
 									
 						}
 					}
