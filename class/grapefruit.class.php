@@ -4,34 +4,34 @@ class TGrappeFruit
 	public $error;
 
 	static function createSupplierPriceFromProposal(&$object) {
-		
+
 		global $conf, $langs, $db, $user;
-		
+
 		if (empty($conf->global->GRAPEFRUIT_SUPPLIER_PROPAL_CREATE_PRICE_ON_ACCEP))
 			return true;
-			
-			
+
+
 		foreach($object->lines as &$line) {
-			
+
 			if(!empty($line->ref_fourn) && $line->subprice>0) {
-				
+
 				$product = new ProductFournisseur($db);
 				$product->fetch($line->fk_product);
-				
+
 				$fourn = new Fournisseur($db);
 				$fourn->id = $object->socid;
 				$product->product_fourn_id = $fourn->id;
-				
+
 				// La methode update_buyprice() renvoie -1 ou -2 en cas d'erreur ou l'id de l'objet modifié ou créé en cas de réussite
 				$ret=$product->update_buyprice( $line->qty, $line->subprice, $user, 'HT', $fourn, 1, $line->ref_fourn, $line->tva_tx, 0, $line->remise_percent);
-			
+
 			}
-			
+
 		}
-			
-		
+
+
 	}
-	
+
 	static function checkNoDuplicateRef(&$object) {
 		global $conf, $langs, $db;
 
@@ -562,19 +562,19 @@ class TGrappeFruit
 	}
 
 	function updateOrderStatusOnShippingDelete(&$expedition) {
-		
+
 		global $db, $user, $langs;
-		
+
 		require_once DOL_DOCUMENT_ROOT . '/commande/class/commande.class.php';
-		
+
 		$langs->load('grapefruit@grapefruit');
 		$langs->load('orders');
-		
+
 		// On charge la commande d'origine pour vérifier s'il y a d'autres expéditions
 		$commande = new Commande($db);
 		$commande->fetch($expedition->origin_id);
 		$commande->fetchObjectLinked($commande->id, 'commande', $expedition->id, 'shipping');
-		
+
 		// S'il n'y a pas d'autre exped, on repasse au status validée, Sinon au statut en cours
 		if(empty($commande->linkedObjects['shipping'])) {
 			// Je fais pas de set_reopen parce qu'il enlève aussi le statut facturé
@@ -585,9 +585,9 @@ class TGrappeFruit
 			$db->query('UPDATE '.MAIN_DB_PREFIX.'commande SET fk_statut = 2 WHERE rowid = '.$commande->id);
 			$status = $langs->trans('StatusOrderSentShort');
 		}
-		
+
 		setEventMessage($langs->trans('grapefruit_order_status_set_to', $commande->getNomUrl(), $status));
-		
+
 	}
 
 	/**
@@ -596,23 +596,31 @@ class TGrappeFruit
 	static function setOrderBilledIfSameMontant(&$object) {
 
 		global $user, $langs;
-		
+
 		$langs->load('orders');
-		
+
+		$order=array();
 		// Récupération de la commande d'origine
 		$object->fetchObjectLinked();
-		$TOriginOrder = array_values($object->linkedObjects['commande']);
-		$order = $TOriginOrder[0];
+
+		if (is_array($object->linkedObjects) && array_key_exists('commande', $object->linkedObjects) && count($object->linkedObjects['commande'])>0 ) {
+			$TOriginOrder = array_values($object->linkedObjects['commande']);
+			$order = $TOriginOrder[0];
+		}
 		if(empty($order)) return 0;
 
+		$TFact=array();
 		// On refait la fonction dans l'autre sens car la commande peut avoir été facturée en plusieurs fois
 		$order->fetchObjectLinked();
-		$TFact = array_values($order->linkedObjects['facture']);
+		if (is_array($object->linkedObjects) && array_key_exists('facture', $object->linkedObjects) && count($object->linkedObjects['facture'])>0 ) {
+			$TFact = array_values($order->linkedObjects['facture']);
+		}
 
 		$total_ttc = 0;
 		foreach($TFact as $f) {
 			if($f->statut > 0) $total_ttc+=$f->total_ttc;
 		}
+		if(empty($TFact)) return 0;
 
 		// On compare les montants
 		if($total_ttc == $order->total_ttc) {
@@ -770,7 +778,7 @@ class TGrappeFruit
 
 		if(empty($error)) {
 			if($f->validate($user) > 0) {
-				
+
 				if((float)DOL_VERSION >= 4.0) $object->classifyBilled($user);
 				else $object->classifyBilled();
 
@@ -876,19 +884,19 @@ class TGrappeFruit
 
 	/**
 	 * Passe une facture au statut "Validé" après création depuis une origine
-	 * 
+	 *
 	 * @param	Facture				$object
 	 * @param	Propal|Commande		$originObject
 	 */
 	public static function autoValidateIfFrom(&$object, &$originObject)
 	{
 		global $conf,$user;
-		
+
 		if (!empty($conf->global->GRAPEFRUIT_BILL_AUTO_VALIDATE_IF_ORIGIN) && !empty($originObject))
 		{
 			if (method_exists($object, 'fetch_lines')) $object->fetch_lines();
 			else $object->fetch($object->id);
-			
+
 			if (!empty($object->lines)) $object->validate($user);
 		}
 	}
