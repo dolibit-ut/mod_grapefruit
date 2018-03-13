@@ -713,6 +713,31 @@ class ActionsGrapeFruit
 				<script type="text/javascript">
 					$(document).ready(function(){
 						$("#homepagemode").appendTo(".fichetwothirdright");
+						
+						<?php if ($mode == 'filtered') { ?>
+						
+                        $("div.boxstatsindicator a, a.boxstatsindicator").attr('href',function(i, href) {
+                        	if(href)
+                        	{
+                        		filtert=1
+                            	var appendUrl = 'search_sale=<?php echo $user->id; ?>';
+
+								if (href.indexOf("comm/action/listactions.php") >= 0){
+									appendUrl = 'filtert=<?php echo $user->id; ?>';
+								}
+                                
+                            	if (href.indexOf("?") >= 0){
+                            		return href + '&' + appendUrl;
+                            	}else{
+                            		return href + '?' + appendUrl;
+                            	}
+                        	}	
+                        });
+
+						<?php  } ?>
+
+						
+						
 					});
 				
 				</script>
