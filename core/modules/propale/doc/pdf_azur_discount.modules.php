@@ -1442,12 +1442,13 @@ class pdf_azur_discount extends ModelePDFPropales
 		$pdf->SetTextColor(0,0,60);
 		$pdf->MultiCell(100, 3, $outputlangs->transnoentities("DateEndPropal")." : " . dol_print_date($object->fin_validite,"day",false,$outputlangs,true), '', 'R');
 
-		if ($object->client->code_client)
+		$code_client = (DOL_VERSION < 4) ? $object->client->code_client : $object->thirdparty->code_client;
+		if ($code_client)
 		{
 			$posy+=4;
 			$pdf->SetXY($posx,$posy);
 			$pdf->SetTextColor(0,0,60);
-			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("CustomerCode")." : " . $outputlangs->transnoentities($object->client->code_client), '', 'R');
+			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("CustomerCode")." : " . $outputlangs->transnoentities($code_client), '', 'R');
 		}
 
 		$posy+=2;
@@ -1467,7 +1468,7 @@ class pdf_azur_discount extends ModelePDFPropales
 		 		$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Name").": ".$outputlangs->convToOutputCharset($object->user->getFullName($outputlangs))."\n";
 		 	}
 
-		 	$carac_emetteur .= pdf_build_address($outputlangs, $this->emetteur, $object->client);
+		 	$carac_emetteur .= pdf_build_address($outputlangs, $this->emetteur, (DOL_VERSION < 4) ? $object->client : $object->thirdparty);
 
 			// Show sender
 			$posy=42;
@@ -1511,12 +1512,12 @@ class pdf_azur_discount extends ModelePDFPropales
 			if ($usecontact && !empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)) {
 				$thirdparty = $object->contact;
 			} else {
-				$thirdparty = $object->client;
+			    $thirdparty = (DOL_VERSION < 4) ? $object->client : $object->thirdparty;
 			}
 
 			$carac_client_name= pdfBuildThirdpartyName($thirdparty, $outputlangs);
 
-			$carac_client=pdf_build_address($outputlangs,$this->emetteur,$object->client,($usecontact?$object->contact:''),$usecontact,'target');
+			$carac_client=pdf_build_address($outputlangs,$this->emetteur,(DOL_VERSION < 4) ? $object->client : $object->thirdparty,($usecontact?$object->contact:''),$usecontact,'target');
 
 			// Show recipient
 			$widthrecbox=100;
