@@ -607,12 +607,13 @@ class pdf_dorade_discount extends ModelePdfExpedition
 		$pdf->SetTextColor(0,0,60);
 		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("DateDeliveryPlanned")." : ".dol_print_date($object->date_delivery,"daytext",false,$outputlangs,true), '', 'R');
 
-		if (! empty($object->client->code_client))
+		$code_client = (DOL_VERSION < 4) ? $object->client->code_client : $object->thirdparty->code_client;
+		if (! empty($code_client))
 		{
 			$posy+=4;
 			$pdf->SetXY($posx,$posy);
 			$pdf->SetTextColor(0,0,60);
-			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("CustomerCode")." : " . $outputlangs->transnoentities($object->client->code_client), '', 'R');
+			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("CustomerCode")." : " . $outputlangs->transnoentities($code_client), '', 'R');
 		}
 
 
@@ -661,7 +662,7 @@ class pdf_dorade_discount extends ModelePdfExpedition
 		 		$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Name").": ".$outputlangs->convToOutputCharset($object->user->getFullName($outputlangs))."\n";
 		 	}
 
-		 	$carac_emetteur .= pdf_build_address($outputlangs, $this->emetteur, $object->client);
+		 	$carac_emetteur .= pdf_build_address($outputlangs, $this->emetteur, (DOL_VERSION < 4) ? $object->client : $object->thirdparty);
 
 			// Show sender
 			$posx=$this->marge_gauche;
@@ -705,12 +706,12 @@ class pdf_dorade_discount extends ModelePdfExpedition
 			if ($usecontact && !empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)) {
 				$thirdparty = $object->contact;
 			} else {
-				$thirdparty = isset($object->client) ? $object->client : $object->thirdparty;
+			    $thirdparty = (DOL_VERSION < 4) ? $object->client : $object->thirdparty;
 			}
 
 			$carac_client_name= pdfBuildThirdpartyName($thirdparty, $outputlangs);
 
-			$carac_client=pdf_build_address($outputlangs,$this->emetteur,$object->client,(!empty($object->contact)?$object->contact:null),$usecontact,'targetwithdetails');
+			$carac_client=pdf_build_address($outputlangs,$this->emetteur,(DOL_VERSION < 4) ? $object->client : $object->thirdparty,(!empty($object->contact)?$object->contact:null),$usecontact,'targetwithdetails');
 
 			// Show recipient
 			$widthrecbox=100;
