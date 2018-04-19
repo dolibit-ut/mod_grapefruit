@@ -507,6 +507,8 @@ class pdf_dorade extends ModelePdfExpedition
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 		$langs->load("orders");
 
+		if(!isset($object->client) && isset($object->thirdparty)) $object->client = $object->thirdparty;
+
 		pdf_pagehead($pdf,$outputlangs,$this->page_hauteur);
 
 		//Affiche le filigrane brouillon - Print Draft Watermark
@@ -694,7 +696,7 @@ class pdf_dorade extends ModelePdfExpedition
 			if ($usecontact && !empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)) {
 				$thirdparty = $object->contact;
 			} else {
-				$thirdparty = $object->client;
+				$thirdparty = isset($object->client) ? $object->client : $object->thirdparty;
 			}
 
 			$carac_client_name= pdfBuildThirdpartyName($thirdparty, $outputlangs);

@@ -17,3 +17,14 @@
  */
 
 
+### Clés de substitutions supplémentaires
+* __CLIENT_TOTAL_REMISE_DISPO__               => remises disponibles (avoirs ou acomptes) du client
+* __CLIENT_TOTAL_AVOIR_DISPO__                => avoirs disponibles
+* __CLIENT_TOTAL_FACTURE_IMPAYEE__            => montant encours
+* __CLIENT_TOTAL_FACTURE_IMPAYEE_ONLY_POS__   => montant encours positif (si le montant est négatif alors affiche 0)
+
+Autres possibilités avec l'objet courant
+* __OBJECT_[ATTRIBUTE_NAME]__                 => il faut remplacer [ATTRIBUTE_NAME] par le nom de l'attribut (en majuscule) de l'objet que l'on souhaite afficher (exemple avec l'attribut ref : __OBJECT_REF__)
+
+### Configuration cachée
+* GRAPEFRUIT_SUBSTITUTION_USE_CURRENCY_SYMBOL => affiche le symbole de la monnaie au lieu de l'écrire en toutes lettres

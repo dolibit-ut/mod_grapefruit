@@ -3,6 +3,35 @@ class TGrappeFruit
 {
 	public $error;
 
+	static function createSupplierPriceFromProposal(&$object) {
+		
+		global $conf, $langs, $db, $user;
+		
+		if (empty($conf->global->GRAPEFRUIT_SUPPLIER_PROPAL_CREATE_PRICE_ON_ACCEP))
+			return true;
+			
+			
+		foreach($object->lines as &$line) {
+			
+			if(!empty($line->ref_fourn) && $line->subprice>0) {
+				
+				$product = new ProductFournisseur($db);
+				$product->fetch($line->fk_product);
+				
+				$fourn = new Fournisseur($db);
+				$fourn->id = $object->socid;
+				$product->product_fourn_id = $fourn->id;
+				
+				// La methode update_buyprice() renvoie -1 ou -2 en cas d'erreur ou l'id de l'objet modifié ou créé en cas de réussite
+				$ret=$product->update_buyprice( $line->qty, $line->total_ht, $user, 'HT', $fourn, 1, $line->ref_fourn, $line->tva_tx, 0, $line->remise_percent);
+			
+			}
+			
+		}
+			
+		
+	}
+	
 	static function checkNoDuplicateRef(&$object) {
 		global $conf, $langs, $db;
 
@@ -616,7 +645,7 @@ class TGrappeFruit
 		$propal = $TOriginPropal[0];
 
 		if(empty($propal)) return 0;
-
+		if(empty($propal->statut)) $propal->valid($user); // On commence par la valider si c'est pas déjà fait
 		if($propal->statut < 2) {
 			if($propal->cloture($user, 2, '') > 0) setEventMessage('Proposition '.$propal->getNomUrl().' clôturée au statut "Signée" automatiquement');
 		}
@@ -847,4 +876,22 @@ class TGrappeFruit
 		}
 	}
 
+	/**
+	 * Passe une facture au statut "Validé" après création depuis une origine
+	 * 
+	 * @param	Facture				$object
+	 * @param	Propal|Commande		$originObject
+	 */
+	public static function autoValidateIfFrom(&$object, &$originObject)
+	{
+		global $conf,$user;
+		
+		if (!empty($conf->global->GRAPEFRUIT_BILL_AUTO_VALIDATE_IF_ORIGIN) && !empty($originObject))
+		{
+			if (method_exists($object, 'fetch_lines')) $object->fetch_lines();
+			else $object->fetch($object->id);
+			
+			if (!empty($object->lines)) $object->validate($user);
+		}
+	}
 }

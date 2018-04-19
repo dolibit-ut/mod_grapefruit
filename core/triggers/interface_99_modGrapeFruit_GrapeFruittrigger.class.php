@@ -111,10 +111,6 @@ class InterfaceGrapeFruittrigger
 		dol_include_once('/grapefruit/class/grapefruit.class.php');
 		$langs->load('grapefruit@grapefruit');
 
-		// Put here code you want to execute when a Dolibarr business events occurs.
-		// Data and type of action are stored into $object and $action
-		// Users
-
 		if ($action == 'ACTION_CREATE') {
 			dol_syslog("Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id);
 
@@ -126,7 +122,20 @@ class InterfaceGrapeFruittrigger
 					$r = $object->add_object_linked('task', $fk_task);
 				}
 			}
-		} elseif ($action === 'LINECONTRACT_INSERT') {
+		}
+		else if ($action === 'LINESUPPLIER_PROPOSAL_INSERT') {
+//var_dump($object);exit;
+			if(!empty($conf->global->GRAPEFRUIT_SUPPLIER_PROPAL_ADDLINE_ZERO)) {
+				$parent = new SupplierProposal($object->db);
+				$parent->fetch($object->fk_supplierproposal);
+				$parent->updateline($object->id, 0, $object->qty, $object->remise_percent, $object->tva_tx, $object->txlocaltax1, $object->txlocaltax2, $object->desc, 'HT'
+					, 0, 0, 0, 0, $object->fk_fournprice, 0, $object->label, $object->product_type, $object->array_options, $object->ref_fourn, $object->fk_unit);
+			}
+		}
+		else if($action === 'SUPPLIER_PROPOSAL_CLOSE_SIGNED') {
+			TGrappeFruit::createSupplierPriceFromProposal($object);
+		}
+		elseif ($action === 'LINECONTRACT_INSERT') {
 			TGrappeFruit::checkContractFourn($object);
 		} elseif ($action === 'ORDER_VALIDATE') {
 			TGrappeFruit::createBillOnOrderValidate($object);
@@ -208,7 +217,7 @@ class InterfaceGrapeFruittrigger
 					}
 				}
 			}
-			
+
 			//Création de l'évènement de la facture de relance
 			if(!empty($object->array_options['options_grapefruitReminderBill']) ){//verification facture de relance
 				if((!empty($conf->global->GRAPEFRUIT_REMINDER_BILL_DELAY) )){
@@ -216,9 +225,9 @@ class InterfaceGrapeFruittrigger
 					$actioncomm = new ActionComm($db);//evenement agenda
 					$actioncomm->type_code = 'AC_STI_BILL';//code pour la relance facture
 					if(strstr($object->ref,'PROV')){
-						$actioncomm->label='Facture de relance : '.$object->newref;						
+						$actioncomm->label='Facture de relance : '.$object->newref;
 					}else {
-						$actioncomm->label='Facture de relance : '.$object->ref;	
+						$actioncomm->label='Facture de relance : '.$object->ref;
 					}
 					$actioncomm->datep = $object->date_lim_reglement+(3600 * 24) * $conf->global->GRAPEFRUIT_REMINDER_BILL_DELAY+(3600*10);
 					$actioncomm->punctual = 1;
@@ -251,7 +260,7 @@ class InterfaceGrapeFruittrigger
 					if(!empty($idcontacts)){
 						$actioncomm->contactid=$idcontacts[0];
 						$actioncomm->contact=$object->contact;
-						
+
 					}
 					if(!empty($object->fk_project)){
 						$actioncomm->fk_project=$object->fk_project;
@@ -261,7 +270,7 @@ class InterfaceGrapeFruittrigger
 					$object->fetchObjectLinked();
 					if(!empty($object->linkedObjectsIds['ActionComm'])){
 						foreach($object->linkedObjectsIds['ActionComm'] as $k => $v){
-						
+
 							$tempActionComm = new ActionComm($db);
 							$tempActionComm->fetch($v);
 							if($tempActionComm->type_code =='AC_STI_BILL' ){
@@ -272,8 +281,8 @@ class InterfaceGrapeFruittrigger
 					}
 					$res = $actioncomm->create($user);
 					$object->add_object_linked(get_class($actioncomm),$actioncomm->id);
-					
-					
+
+
 				}else {
 					setEventMessage($langs->trans('ReminderBillDelayForgotten'),'errors');
 				}
@@ -383,7 +392,7 @@ class InterfaceGrapeFruittrigger
 						//Compare array
 						$diff_array=array_diff_assoc($qtydelivered,$qtywished);
 						$diff_array=array_merge($diff_array, array_diff_assoc($qtywished,$qtydelivered)); // dans les 2 sens parce que la fonction teste pas dans les 2 sens (array_diff_assoc($a, $b) ne donne pas forcement le meme res que array_diff_assoc($b, $a))
-						
+
 						if (count($diff_array)==0) {
 							//No diff => mean everythings is received
 							$ret=$object->setStatus($user,5);
@@ -407,16 +416,63 @@ class InterfaceGrapeFruittrigger
 			if(!empty($conf->global->GRAPEFRUIT_SET_ORDER_SHIPPED_IF_ALL_PRODUCT_SHIPPED)) TGrappeFruit::setOrderShippedIfAllProductShipped($object);
 
 		} elseif ($action === 'SHIPPING_DELETE') {
-			
+
 			if(!empty($conf->global->GRAPEFRUIT_SET_RIGHT_ORDER_STATUS_ON_SHIPPING_DELETE)) TGrappeFruit::updateOrderStatusOnShippingDelete($object);
-			
+
 		} elseif ($action === 'ORDER_SUPPLIER_VALIDATE') {
 
 			if($conf->global->GRAPEFRUIT_AUTO_ORDER_ON_SUPPLIERORDER_VALIDATION_WITH_METHOD > 0) TGrappeFruit::orderSupplierOrder($object, $conf->global->GRAPEFRUIT_AUTO_ORDER_ON_SUPPLIERORDER_VALIDATION_WITH_METHOD);
 
 		}
+		elseif ($action === 'PRODUCT_CREATE') {
 
-		//Passage d'une opportunité au statut gagné dès son affectation à un devis ou une commande
+			if(!empty($conf->global->GRAPEFRUIT_COPY_CAT_ON_CLONE)) {
+
+				if(GETPOST('action') === 'confirm_clone') {
+					$origin_id = GETPOST('id');
+
+					$categorie_static = new Categorie($db);
+					$categoriesid = $categorie_static->containing($origin_id, 0,'id');
+
+					//$object->setCategories($categoriesid);
+					foreach($categoriesid as &$cat) {
+						$cat->add_type($object,'product');
+					}
+
+				}
+
+			}
+
+			dol_syslog(
+					"Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
+			);
+		}
+		elseif ($action === 'ORDER_SUPPLIER_RECEIVE') {
+
+			dol_syslog(
+					"Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
+					);
+
+			if(!empty($conf->global->GRAPEFRUIT_VALIDATE_SUPPLIERINVOICE_ON_RECEIPT_SUPPLIERORDER)) {
+
+				if(GETPOST('type') === 'tot') {
+
+					$object->fetchObjectLinked($object->id,$object->element,'','invoice_supplier');
+
+					if (! empty($object->linkedObjects))
+					{
+
+						foreach($object->linkedObjects['invoice_supplier'] as $element)
+						{
+							if ($element->status==$element::STATUS_DRAFT) {
+								$ret=$element->validate($user);
+							}
+						}
+					}
+
+				}
+			}
+		}
 
 		if($action === 'PROPAL_CREATE' || $action === 'ORDER_CREATE'){
 

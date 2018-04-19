@@ -705,7 +705,7 @@ class pdf_dorade_discount extends ModelePdfExpedition
 			if ($usecontact && !empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)) {
 				$thirdparty = $object->contact;
 			} else {
-				$thirdparty = $object->client;
+				$thirdparty = isset($object->client) ? $object->client : $object->thirdparty;
 			}
 
 			$carac_client_name= pdfBuildThirdpartyName($thirdparty, $outputlangs);

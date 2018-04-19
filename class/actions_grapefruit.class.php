@@ -61,7 +61,7 @@ class ActionsGrapeFruit
 	 */
 	function doActions($parameters, &$object, &$action, $hookmanager)
 	{
-		global $conf, $user;
+		global $conf, $db, $user;
 
 		dol_include_once('/grapefruit/class/grapefruit.class.php');
 
@@ -70,7 +70,7 @@ class ActionsGrapeFruit
 		$actionATM = GETPOST('actionATM');
 		if ($parameters['currentcontext'] == 'ordercard' && $object->statut >= 1 && !empty($conf->global->GRAPEFRUIT_ALLOW_CREATE_BILL_EXPRESS))
 		{
-			
+
 			if($actionATM === 'create_bill_express'
 				&& !empty($conf->global->GRAPEFRUIT_ALLOW_CREATE_BILL_EXPRESS)
 				&& $object->statut > Commande::STATUS_DRAFT
@@ -95,6 +95,13 @@ class ActionsGrapeFruit
 		// Bypass des confirmation
 		if (in_array('globalcard', $TContext))
 		{
+
+			if(!empty($conf->global->GRAPEFRUIT_SHOW_THIRDPARTY_INTO_LINKED_ELEMENT)) {
+
+				$conf->modules_parts['tpl']=array_merge($conf->modules_parts['tpl'],array('/grapefruit/core/tpl'));
+
+			}
+
 			$actionList = explode(',', $conf->global->GRAPEFRUIT_BYPASS_CONFIRM_ACTIONS);
 			if (!empty($action) && !empty($conf->global->GRAPEFRUIT_BYPASS_CONFIRM_ACTIONS) && in_array($action, $actionList))
 			{
@@ -108,13 +115,37 @@ class ActionsGrapeFruit
 			}
 		}
 
-		if (in_array('invoicecard', $TContext))
+		if (in_array('invoicecard', $TContext) && defined('Facture::TYPE_SITUATION'))
 		{
 			if ($object->type == Facture::TYPE_SITUATION) $object->setValueFrom('ishidden', 0, 'extrafields', '"grapefruit_default_situation_progress_line"', '', 'name');
 			else $object->setValueFrom('ishidden', 1, 'extrafields', '"grapefruit_default_situation_progress_line"', '', 'name');
 		}
+		
+		if (in_array('ordercard', $TContext))
+		{
+			if (!empty($conf->global->GRAPEFRUIT_ORDER_EXPRESS_FROM_PROPAL) && GETPOST('origin') === 'propal' && GETPOST('originid') > 0 && $action == 'create' && GETPOST('socid', 'int') > 0)
+			{
+				require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 
-
+				$propal = new Propal($db);
+				if ($propal->fetch(GETPOST('originid')) > 0)
+				{
+					if ($object->createFromProposal($propal) > 0)
+					{
+						header('Location: '.dol_buildpath('/commande/card.php', 1).'?id='.$object->id);
+						exit;
+					}
+					else
+					{
+						dol_print_error($db);
+					}
+				}
+				else
+				{
+					dol_print_error($db);
+				}
+			}
+		}
 
 		return 0;
 	}
@@ -122,9 +153,9 @@ class ActionsGrapeFruit
 	function formEditProductOptions($parameters, &$object, &$action, $hookmanager)
 	{
 		global $conf;
-		
+
 		$TContext = explode(':', $parameters['context']);
-		
+
 		if (!empty($conf->global->GRAPEFRUIT_FAST_UPDATE_ON_HREF) && count(array_intersect(array('invoicecard','propalcard','invoicesuppliercard','ordercard','ordersuppliercard'), $TContext)) > 0)
 		{
 			?>
@@ -138,7 +169,7 @@ class ActionsGrapeFruit
 						$('#tablelines a').click(function(event) {
 							var link = $(this).attr('href');
 							$.post($('#addproduct').attr('action'), $('#addproduct').serialize()+'&save=fromGrapfruit', function() { window.location.href = link; } );
-							
+
 							return false;
 						});
 					}
@@ -146,7 +177,7 @@ class ActionsGrapeFruit
 			</script>
 			<?php
 		}
-		
+
 	}
 
 	function formObjectOptions($parameters, &$object, &$action, $hookmanager)
@@ -236,7 +267,7 @@ class ActionsGrapeFruit
 				</script>
 				<?php
 			}
-			
+
 		}
 
 		if (in_array('ordercard',explode(':',$parameters['context']))) {
@@ -273,7 +304,7 @@ class ActionsGrapeFruit
 			}
 				if($conf->global->GRAPEFRUIT_ORDER_ADD_DISCOUNT_COLUMN){
 					addPuHtRemise(5,$object);
-	
+
 			}
 
 		}
@@ -309,14 +340,14 @@ class ActionsGrapeFruit
 		if (in_array('invoicecard',explode(':',$parameters['context'])))
 		{
 			if($conf->global->GRAPEFRUIT_BILL_ADD_DISCOUNT_COLUMN){
-						
+
 				addPuHtRemise(5,$object);
 			}
 		}
-		
+
 	}
 
-	
+
 
 	function createFrom($parameters, &$object, &$action, $hookmanager) {
 
@@ -329,7 +360,8 @@ class ActionsGrapeFruit
 
 			TGrappeFruit::billCloneLink($object,$parameters['objFrom']);
 
-
+			
+			TGrappeFruit::autoValidateIfFrom($object,$parameters['objFrom']);
 		}
 	}
 
@@ -521,6 +553,9 @@ class ActionsGrapeFruit
 					$ref_client = $base_object->ref_client;
 					$usecommande=$Qwrite=true;
 				}
+				elseif(!empty($conf->global->GRAPEFRUIT_SUPPLIER_CONTACT_SHIP_ADDRESS) && empty($conf->global->GRAPEFRUIT_SHOW_SUPPLIER_ORDER_REFS)){
+					$Qwrite=true;
+				}
 				if($usecontact && $Qwrite)
 				{
 					//Recipient name
@@ -612,6 +647,49 @@ class ActionsGrapeFruit
 			return 1;
 		}
 		return 0;
+	}
+	function addStatisticLine($parameters, &$object, &$action, $hookmanager)
+	{
+		global $user, $conf, $db, $langs;
+
+		if ($parameters['currentcontext'] == 'index' && !empty($conf->global->GRAPEFRUIT_FILTER_HOMEPAGE_BY_USER) && !empty($user->rights->societe->client->voir))
+		{
+			$langs->load('grapefruit@grapefruit');
+			dol_include_once('/core/class/html.form.class.php');
+			$form = new Form($db);
+
+			$mode = GETPOST('homepagemode');
+
+			if ($mode == 'filtered')
+			{
+				unset($user->rights->societe->client->voir);
+
+				print '<p id="homepagemode" align="right">';
+				print '<a href="'.$_SERVER["PHP_SELF"].'?homepagemode=notfiltered">'.$langs->trans('WorkingBoardNotFiltered').'</a>';
+				print '  /  ';
+				print '<strong>'.$langs->trans('WorkingBoardFilterByUser').'</strong>';
+				print '</p>';
+			}
+			else
+			{
+				print '<p id="homepagemode" align="right">';
+				print '<strong>'.$langs->trans('WorkingBoardNotFiltered').'</strong>';
+				print '  /  ';
+				print '<a href="'.$_SERVER["PHP_SELF"].'?homepagemode=filtered">'.$langs->trans('WorkingBoardFilterByUser').'</a>';
+
+				print '</p>';
+			}
+
+			?>
+				<script type="text/javascript">
+					$(document).ready(function(){
+						$("#homepagemode").appendTo(".fichetwothirdright");
+					});
+				
+				</script>
+				
+			<?php
+		}
 	}
 
 	/**
