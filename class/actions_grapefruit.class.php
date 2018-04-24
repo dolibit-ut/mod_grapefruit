@@ -576,15 +576,19 @@ class ActionsGrapeFruit
 						$thecontact->zip = $contactSociete->zip;
 						$thecontact->town = $contactSociete->town;
 					}
+					if((float) DOL_VERSION < 3.8)
+						$objclient = $base_object->client;
+					else
+						$objclient = $base_object->thirdparty;
 
-					$carac_client=pdf_build_address($parameters['outputlangs'],$object->emetteur,$base_object->client,$base_object->contact,$usecontact,'target');
+					$carac_client=pdf_build_address($parameters['outputlangs'],$object->emetteur,$objclient,$base_object->contact,$usecontact,'target');
 
 					/*echo '<pre>';
 					var_dump($base_object->contact,true);exit;*/
 
 					if($conf->global->GRAPEFRUIT_SUPPLIER_CONTACT_SHIP_ADDRESS_SHOW_DETAILS){
 
-						$carac_client .= 'email : '.$base_object->contact->email." \ntel : ".$base_object->contact->phone_pro;
+						$carac_client .= "\n".'email : '.$base_object->contact->email." \ntel : ".$base_object->contact->phone_pro;
 					}
 
 					$newcontent = $parameters['outputlangs']->trans('DeliveryAddress').' :'."\n".'<strong>'.$carac_client_name.'</strong>'."\n".$carac_client;
