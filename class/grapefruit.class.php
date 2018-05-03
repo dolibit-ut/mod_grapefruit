@@ -649,6 +649,8 @@ class TGrappeFruit
 		global $user;
 
 		$object->fetchObjectLinked();
+		if(empty($object->linkedObjects['propal'])) return 0;
+
 		$TOriginPropal = array_values($object->linkedObjects['propal']);
 		$propal = $TOriginPropal[0];
 

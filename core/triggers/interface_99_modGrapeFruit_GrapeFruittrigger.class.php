@@ -123,6 +123,15 @@ class InterfaceGrapeFruittrigger
 				}
 			}
 		}
+		else if ($action === 'LINESUPPLIER_PROPOSAL_INSERT') {
+//var_dump($object);exit;
+			if(!empty($conf->global->GRAPEFRUIT_SUPPLIER_PROPAL_ADDLINE_ZERO)) {
+				$parent = new SupplierProposal($object->db);
+				$parent->fetch($object->fk_supplierproposal);
+				$parent->updateline($object->id, 0, $object->qty, $object->remise_percent, $object->tva_tx, $object->txlocaltax1, $object->txlocaltax2, $object->desc, 'HT'
+					, 0, 0, 0, 0, $object->fk_fournprice, 0, $object->label, $object->product_type, $object->array_options, $object->ref_fourn, $object->fk_unit);
+			}
+		}
 		else if($action === 'SUPPLIER_PROPOSAL_CLOSE_SIGNED') {
 			TGrappeFruit::createSupplierPriceFromProposal($object);
 		}
