@@ -23,7 +23,7 @@ class TGrappeFruit
 				$product->product_fourn_id = $fourn->id;
 
 				// La methode update_buyprice() renvoie -1 ou -2 en cas d'erreur ou l'id de l'objet modifié ou créé en cas de réussite
-				$ret=$product->update_buyprice( $line->qty, $line->subprice, $user, 'HT', $fourn, 1, $line->ref_fourn, $line->tva_tx, 0, $line->remise_percent);
+				$ret=$product->update_buyprice( $line->qty, $line->total_ht, $user, 'HT', $fourn, 1, $line->ref_fourn, $line->tva_tx, 0, $line->remise_percent);
 
 			}
 
