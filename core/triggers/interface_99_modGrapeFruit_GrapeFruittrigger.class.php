@@ -489,7 +489,7 @@ class InterfaceGrapeFruittrigger
 					$origin_id = GETPOST('id');
 
 					$categorie_static = new Categorie($db);
-					$categoriesid = $categorie_static->containing($origin_id, 0,'id');
+					$categoriesid = $categorie_static->containing($origin_id, 0,'object');
 
 					//$object->setCategories($categoriesid);
 					foreach($categoriesid as &$cat) {
