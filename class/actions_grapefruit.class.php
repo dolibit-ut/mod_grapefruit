@@ -582,9 +582,10 @@ class ActionsGrapeFruit
 					$ref_client = $base_object->ref_client;
 					$usecommande=$Qwrite=true;
 				}
-				elseif(!empty($conf->global->GRAPEFRUIT_SUPPLIER_CONTACT_SHIP_ADDRESS) && empty($conf->global->GRAPEFRUIT_SHOW_SUPPLIER_ORDER_REFS)){
+				elseif(!empty($conf->global->GRAPEFRUIT_SUPPLIER_CONTACT_SHIP_ADDRESS)){
 					$Qwrite=true;
 				}
+
 				if($usecontact && $Qwrite)
 				{
 					//Recipient name
