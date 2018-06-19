@@ -452,6 +452,19 @@ class InterfaceGrapeFruittrigger
         } elseif ($action === 'SHIPPING_VALIDATE') {
 
 			if(!empty($conf->global->GRAPEFRUIT_SET_ORDER_SHIPPED_IF_ALL_PRODUCT_SHIPPED)) TGrappeFruit::setOrderShippedIfAllProductShipped($object);
+			
+			if(! empty($conf->expedition->enabled) && !empty($conf->global->MAIN_SUBMODULE_LIVRAISON) && ! empty($conf->global->GRAPEFRUIT_CREATE_DELIVERY_FROM_SHIPPING))
+			{
+			    
+			    include_once DOL_DOCUMENT_ROOT.'/livraison/class/livraison.class.php';
+			    $delivery = new Livraison($this->db);
+			    $result=$delivery->create_from_sending($user, $object->id);
+			    if ($result < 0)
+			    {
+			        setEventMessages($delivery->error, $delivery->errors, 'errors');
+			    }
+			    
+			}
 
 		} elseif ($action === 'SHIPPING_DELETE') {
 
