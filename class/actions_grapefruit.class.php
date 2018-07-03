@@ -545,7 +545,7 @@ class ActionsGrapeFruit
 		// Sur version 5.0 le $parameters['currentcontext'] == ordersuppliercard et le "pdfgeneration" est dans $parameters['context']
 		$TContext = explode(':', $parameters['context']);
 
-		if ($parameters['currentcontext'] === 'pdfgeneration' || in_array('pdfgeneration', $TContext))
+		if (empty($object->_pdfGenerated) && ($parameters['currentcontext'] === 'pdfgeneration' || in_array('pdfgeneration', $TContext)))
 		{
 			$base_object = $parameters['object'];
 
@@ -633,6 +633,8 @@ class ActionsGrapeFruit
 						$parameters['object']->note_public = dol_nl2br($newcontent."\n\n".$parameters['object']->note_public);
 					else
 						$parameters['object']->note_public = dol_nl2br($newcontent);
+
+					$object->_pdfGenerated = true;
 				}
 			} // Fin order / order_supplier
 		}
