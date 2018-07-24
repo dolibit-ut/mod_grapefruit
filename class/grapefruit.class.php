@@ -471,9 +471,15 @@ class TGrappeFruit
 				$t->label = $label;
 				$t->fk_project = $object->id;
 				$t->fk_task_parent = 0;
+				$t->date_c = dol_now();
 
 				$res = $t->create($user);
-
+				
+				if(!empty($conf->global->GRAPEFRUIT_PROJECT_TYPE_FOR_TASK) && $conf->global->GRAPEFRUIT_PROJECT_TYPE_FOR_TASK > 0){
+				    $t->add_contact($user->id, $conf->global->GRAPEFRUIT_PROJECT_TYPE_FOR_TASK, 'internal');
+				}
+				
+				
 				if ($res < 0) {
 					setEventMessage($langs->trans('ImpossibleToAdd', $label));
 				}

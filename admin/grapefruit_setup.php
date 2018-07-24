@@ -34,6 +34,9 @@ require_once '../lib/grapefruit.lib.php';
 dol_include_once('/product/class/html.formproduct.class.php');
 dol_include_once('/core/class/html.formorder.class.php');
 dol_include_once('/grapefruit/class/grapefruit.class.php');
+dol_include_once('/projet/class/task.class.php');
+dol_include_once('/core/class/html.formcompany.class.php');
+
 
 // Translations
 $langs->load("grapefruit@grapefruit");
@@ -104,6 +107,7 @@ dol_fiche_head($head, 'settings', $langs->trans("Module104997Name"), 0, "grapefr
 
 // Setup page goes here
 $form = new Form($db);
+$formcompany   = new FormCompany($db);
 $var = false;
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
@@ -159,6 +163,24 @@ print '<textarea cols="80" rows="5" name="GRAPEFRUIT_PROJECT_AUTO_ADD_TASKS_ON_C
 print '<input type="submit" class="button" value="' . $langs->trans("Modify") . '">';
 print '</form>';
 print '</td></tr>';
+
+$var = ! $var;
+print '<tr ' . $bc[$var] . '>';
+print '<td>' . $langs->trans("GRAPEFRUIT_PROJECT_TYPE_FOR_TASK") . '</td>';
+print '<td colspan="2"  align="right">';
+print '<form method="POST" action="' . $_SERVER['PHP_SELF'] . '">';
+print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
+print '<input type="hidden" name="action" value="set_GRAPEFRUIT_PROJECT_TYPE_FOR_TASK">';
+
+$defaultTask = new Task($db);
+print $formcompany->selectTypeContact($defaultTask,$conf->global->GRAPEFRUIT_PROJECT_TYPE_FOR_TASK, 'GRAPEFRUIT_PROJECT_TYPE_FOR_TASK','internal','rowid', 1);
+
+
+
+print '<input type="submit" class="button" value="' . $langs->trans("Modify") . '">';
+print '</form>';
+print '</td></tr>';
+
 
 $var = ! $var;
 print '<tr ' . $bc[$var] . '>';
