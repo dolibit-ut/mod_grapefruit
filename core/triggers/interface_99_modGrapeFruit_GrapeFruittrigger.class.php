@@ -110,8 +110,27 @@ class InterfaceGrapeFruittrigger
 		$db = &$this->db;
 		dol_include_once('/grapefruit/class/grapefruit.class.php');
 		$langs->load('grapefruit@grapefruit');
-
-		if ($action == 'ACTION_CREATE') {
+		
+		if($action==='ORDER_SUPPLIER_CREATE') {
+		
+		    if(!empty($conf->global->GRAPEFRUIT_SUPPLIER_ORDER_COPY_LINK_FROM_ORIGIN) && $object->origin=='supplier_proposal' && $object->origin_id>0) {
+		        
+		        dol_include_once('/supplier_proposal/class/supplier_proposal.class.php');
+		        
+		        $sp = new SupplierProposal($object->db);
+		        $sp->fetch($object->origin_id);
+		        $sp->fetchObjectLinked();
+		        
+		        foreach($sp->linkedObjectsIds as $type=>$objs) {
+		            foreach($objs as $fk_object) {
+		                if($type!='supplier_order' && $fk_object!=$object->id)   $object->add_object_linked($type, $fk_object);
+		            }
+		        }
+		        
+		    }
+		    
+		}
+		else if ($action == 'ACTION_CREATE') {
 			dol_syslog("Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id);
 
 			if (! empty($conf->global->GRAPEFRUIT_CAN_ASSOCIATE_TASK_TO_ACTIONCOMM)) {
@@ -483,7 +502,7 @@ class InterfaceGrapeFruittrigger
 					$origin_id = GETPOST('id');
 
 					$categorie_static = new Categorie($db);
-					$categoriesid = $categorie_static->containing($origin_id, 0,'id');
+					$categoriesid = $categorie_static->containing($origin_id, 0,'object');
 
 					//$object->setCategories($categoriesid);
 					foreach($categoriesid as &$cat) {

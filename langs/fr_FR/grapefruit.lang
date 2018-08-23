@@ -114,3 +114,5 @@ WorkingBoardFilterByUser = Tableau de bord filtré pour mon utilisateur
 WorkingBoardNotFiltered = Tableau de bord non filtré
 NbRestockedElements=%s élément(s) restocké(s)
 QtyToRestockForProduct=Qté à restocker pour %s (%s éléments dans la ligne)
+set_GRAPEFRUIT_SUPPLIER_PROPAL_ADDLINE_ZERO=Ajouter les lignes avec un prix à zéro
+GRAPEFRUIT_SUPPLIER_ORDER_COPY_LINK_FROM_ORIGIN=Copier les liens de la proposition fournisseur d'origine
