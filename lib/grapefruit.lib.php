@@ -53,6 +53,31 @@ function grapefruitAdminPrepareHead()
 
     return $head;
 }
+function addPuHtRemise($nbcolumn,&$object) {
+		global $langs,$conf;
+	?>
+		<script type="text/javascript">
+			$(document).ready(function(){
+				$('#tablelines tr td:nth-child(<?php echo $nbcolumn; ?>)').after('<td align="right" class="pu_ht_remise" width=80></td>');
+					// Ajout des libellé de colonne
+			    $('#tablelines .liste_titre > td.pu_ht_remise').first().html('<?php echo $langs->trans('DiscountUHT'); ?>');
+	        		// Ajout des prix devisé sur les lignes
+		        <?php		       			
+		    	if(!empty($object->lines)) {
+			    	foreach($object->lines as $line){
+						if($line->rowid)
+							$line->id = $line->rowid;
+						
+						echo "$('#row-".$line->id." td.pu_ht_remise').html('".price($line->subprice*(1-$line->remise_percent/100),0,'',1,$conf->global->MAIN_MAX_DECIMALS_TOT,$conf->global->MAIN_MAX_DECIMALS_TOT)."');";
+		    			if($line->error != '') echo "alert('".$line->error."');";
+		      			}
+		  			}
+				?>
+			});
+		 </script>	
+		 <?php
+	
+	}
 
 function grapefruitGetTasksForProject($name='fk_task', $socid=-1, $showempty=1, $projectid=0)
 {
