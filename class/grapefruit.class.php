@@ -615,7 +615,7 @@ class TGrappeFruit
 		$TFact=array();
 		// On refait la fonction dans l'autre sens car la commande peut avoir été facturée en plusieurs fois
 		$order->fetchObjectLinked();
-		if (is_array($object->linkedObjects) && array_key_exists('facture', $object->linkedObjects) && count($object->linkedObjects['facture'])>0 ) {
+		if (is_array($order->linkedObjects) && array_key_exists('facture', $order->linkedObjects) && count($order->linkedObjects['facture'])>0 ) {
 			$TFact = array_values($order->linkedObjects['facture']);
 		}
 
