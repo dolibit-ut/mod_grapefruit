@@ -68,7 +68,7 @@ function addPuHtRemise($nbcolumn, &$object) {
                     // Ajout des prix devisé sur les lignes
 
                 let first_td = $('tr[rel=subtotal] td:first');
-                first_td.attr('colspan', ((int)first_td.attr('colspan') + 1));
+                first_td.attr('colspan', (parseInt(first_td.attr('colspan')) + 1));
 
                 <?php
                 if(!empty($object->lines)) {
