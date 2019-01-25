@@ -62,13 +62,25 @@ function addPuHtRemise($nbcolumn, &$object) {
     ?>
         <script type="text/javascript">
             $(document).ready(function(){
-                $('#tablelines tr td:nth-child(<?php echo $nbcolumn; ?>)').after('<td align="right" class="pu_ht_remise" width=80></td>');
+                $('#tablelines tr:not([rel=subtotal]) td:nth-child(<?php echo $nbcolumn; ?>)').each(function() {
+                    let parent_tr_class = $(this).parent('tr').attr('class');
+
+                    let classname = 'pu_ht_remise';
+                    if(parent_tr_class.indexOf('liste_titre_create') !== -1) classname += ' nobottom';
+
+                    let td = '<td align="right" class="'+classname+'" width=80></td>';
+                    $(this).after(td);
+                });
+
+                $('tr[rel=subtotal]').each(function() {
+                    let first_td = $(this).children().first();
+                    first_td.attr('colspan', parseInt(first_td.attr('colspan')) + 1);
+                });
+
+                $('#trlinefordates td:first').after('<td align="right" class="pu_ht_remise" width=80></td>'); // Add empty column in objectline_create
                     // Ajout des libellé de colonne
                 $('#tablelines .liste_titre > td.pu_ht_remise').first().html('<?php echo $langs->trans('DiscountUHT'); ?>');
                     // Ajout des prix devisé sur les lignes
-
-                let first_td = $('tr[rel=subtotal] td:first');
-                first_td.attr('colspan', (parseInt(first_td.attr('colspan')) + 1));
 
                 <?php
                 if(!empty($object->lines)) {
