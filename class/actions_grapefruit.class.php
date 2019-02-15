@@ -521,8 +521,13 @@ class ActionsGrapeFruit
 				$linkedobjects = $parameters['linkedobjects'];
 
 				$objecttype = 'projet';
+				$ref_to_show = '';
+				if(! empty($object->project->ref)) {
+				    $ref_to_show .= $object->project->ref;
+				    if(! empty($object->project->title)) $ref_to_show .= ' - '.$object->project->title;
+				}
 				$linkedobjects[$objecttype]['ref_title'] = $outputlangs->transnoentities("Project");
-				$linkedobjects[$objecttype]['ref_value'] = $outputlangs->transnoentities(empty($object->project->ref)?'':$object->projet->ref);
+				$linkedobjects[$objecttype]['ref_value'] = $outputlangs->transnoentities($ref_to_show);
 /*				$linkedobjects[$objecttype]['date_title'] = $outputlangs->transnoentities("ProjectDate");
 				$linkedobjects[$objecttype]['date_value'] = dol_print_date($object->project->date_start,'day','',$outputlangs);
 */
