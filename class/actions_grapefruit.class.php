@@ -524,16 +524,13 @@ class ActionsGrapeFruit
 				$ref_to_show = '';
 				if(! empty($object->project->ref)) {
 				    $ref_to_show .= $object->project->ref;
-				    if(! empty($object->project->title)) $ref_to_show .= ' - '.$object->project->title;
+				    if(! empty($conf->global->GRAPEFRUIT_CONCAT_PROJECT_DESC) && ! empty($object->project->title)) $ref_to_show .= ' - '.$object->project->title;
 				}
+
 				$linkedobjects[$objecttype]['ref_title'] = $outputlangs->transnoentities("Project");
 				$linkedobjects[$objecttype]['ref_value'] = $outputlangs->transnoentities($ref_to_show);
-/*				$linkedobjects[$objecttype]['date_title'] = $outputlangs->transnoentities("ProjectDate");
-				$linkedobjects[$objecttype]['date_value'] = dol_print_date($object->project->date_start,'day','',$outputlangs);
-*/
 
 				$this->results = $linkedobjects;
-
 
 				return 1;
 			}
