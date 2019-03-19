@@ -116,3 +116,5 @@ NbRestockedElements=%s élément(s) restocké(s)
 QtyToRestockForProduct=Qté à restocker pour %s (%s éléments dans la ligne)
 set_GRAPEFRUIT_SUPPLIER_PROPAL_ADDLINE_ZERO=Ajouter les lignes avec un prix à zéro
 GRAPEFRUIT_SUPPLIER_ORDER_COPY_LINK_FROM_ORIGIN=Copier les liens de la proposition fournisseur d'origine
+GRAPEFRUIT_CREATE_SUPPLIER_PRICES_ON_SUPPLIER_ORDER_VALIDATION=Créer les prix fournisseur lors de la validation d'une commande fournisseur
+GRAPEFRUIT_CREATE_SUPPLIER_PRICES_ON_SUPPLIER_ORDER_VALIDATION_tooltip=Les références fournisseurs seront générées avec ce masque "AUTOREF_{0000}"
