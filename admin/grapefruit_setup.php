@@ -441,6 +441,14 @@ echo ajax_constantonoff('GRAPEFRUIT_CONFIRM_ON_CREATE_INVOICE_FROM_SUPPLIER_ORDE
 print '</form>';
 print '</td></tr>';
 
+$var = ! $var;
+print '<tr '.$bc[$var].'>';
+print '<td>'.$form->textwithpicto($langs->trans("GRAPEFRUIT_CREATE_SUPPLIER_PRICES_ON_SUPPLIER_ORDER_VALIDATION"), $langs->trans("GRAPEFRUIT_CREATE_SUPPLIER_PRICES_ON_SUPPLIER_ORDER_VALIDATION_tooltip")).'</td>';
+print '<td align="center" width="20">&nbsp;</td>';
+print '<td align="right" width="300">';
+print ajax_constantonoff('GRAPEFRUIT_CREATE_SUPPLIER_PRICES_ON_SUPPLIER_ORDER_VALIDATION');
+print '</td></tr>';
+
 print '<tr class="liste_titre">';
 print '<td>' . $langs->trans("SupplierInvoice") . '</td>' . "\n";
 print '<td align="center" width="20">&nbsp;</td>';
