@@ -198,11 +198,7 @@ $var = ! $var;
 print '<tr ' . $bc[$var] . '>';
 print '<td>' . $langs->trans("set_GRAPEFRUIT_CONCAT_PROJECT_DESC") . '</td>';
 print '<td colspan="2"  align="right">';
-print '<form method="POST" action="' . $_SERVER['PHP_SELF'] . '">';
-print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
-print '<input type="hidden" name="action" value="set_GRAPEFRUIT_CONCAT_PROJECT_DESC">';
-echo ajax_constantonoff('set_GRAPEFRUIT_CONCAT_PROJECT_DESC');
-print '</form>';
+echo ajax_constantonoff('GRAPEFRUIT_CONCAT_PROJECT_DESC');
 print '</td></tr>';
 
 $var=!$var;
