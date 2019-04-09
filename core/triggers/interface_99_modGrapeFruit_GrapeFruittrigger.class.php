@@ -492,13 +492,17 @@ class InterfaceGrapeFruittrigger
 		} elseif ($action === 'ORDER_SUPPLIER_VALIDATE') {
 
 			if($conf->global->GRAPEFRUIT_AUTO_ORDER_ON_SUPPLIERORDER_VALIDATION_WITH_METHOD > 0) TGrappeFruit::orderSupplierOrder($object, $conf->global->GRAPEFRUIT_AUTO_ORDER_ON_SUPPLIERORDER_VALIDATION_WITH_METHOD);
+
 			if(! empty($conf->global->GRAPEFRUIT_CREATE_SUPPLIER_PRICES_ON_SUPPLIER_ORDER_VALIDATION)) {
 			    foreach($object->lines as $l) {
                     $product_fourn = new ProductFournisseur($this->db);
                     $product_fourn->fetch($l->fk_product);
 
-                    $product_fourn->add_fournisseur($user, $object->socid, '', $l->qty);
+                    $product_fourn->add_fournisseur($user, $object->socid, (! empty($l->ref_supplier) ? $l->ref_supplier : ''), $l->qty);
+
                     $ref_fourn = 'AUTOREF_'.$product_fourn->product_fourn_price_id;
+                    if(! empty($l->ref_supplier)) $ref_fourn = $l->ref_supplier;
+
                     $product_fourn->update_buyprice($l->qty, $l->total_ht, $user, 'HT', $object->thirdparty, 'NULL', $ref_fourn, $l->tva_tx);
 
                     // We update ref_supplier of line to show it
