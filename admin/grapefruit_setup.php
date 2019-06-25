@@ -508,6 +508,14 @@ print '</td></tr>';
 
 $var = ! $var;
 print '<tr ' . $bc[$var] . '>';
+print '<td>' . $langs->trans("set_GRAPEFRUIT_SET_LINKED_ORDERS_NOT_BILLED_ON_SUPPLIER_BILL_DELETE") . '</td>';
+print '<td align="center" width="20">&nbsp;</td>';
+print '<td align="right" width="300">';
+echo ajax_constantonoff('GRAPEFRUIT_SET_LINKED_ORDERS_NOT_BILLED_ON_SUPPLIER_BILL_DELETE');
+print '</td></tr>';
+
+$var = ! $var;
+print '<tr ' . $bc[$var] . '>';
 print '<td>' . $langs->trans("set_GRAPEFRUIT_SET_RIGHT_ORDER_STATUS_ON_SHIPPING_DELETE") . '</td>';
 print '<td align="center" width="20">&nbsp;</td>';
 print '<td align="right" width="300">';
