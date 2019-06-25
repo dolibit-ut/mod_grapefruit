@@ -1090,6 +1090,28 @@ class InterfaceGrapeFruittrigger
 		 );
 		 }
 		 */
+
+		// Supplier Bill
+		elseif ($action === 'BILL_SUPPLIER_DELETE') {
+            /**
+             * @var $object FactureFournisseur
+             */
+		    $object = $object;
+            if ($conf->global->GRAPEFRUIT_SET_LINKED_ORDERS_NOT_BILLED_ON_SUPPLIER_BILL_DELETE && $object->fetchObjectLinked()){
+                $order_ids = $object->linkedObjectsIds['order_supplier'];
+                if (empty($order_ids)) return 0;
+                $sql = 'UPDATE ' . MAIN_DB_PREFIX . 'commande_fournisseur SET billed = 0 '.
+                    'WHERE rowid IN ('. join(',', $order_ids) .');';
+                $resql = $db->query($sql);
+                if (!$resql) {
+                    setEventMessage(
+                        'Unable to unset the billed status of supplier orders linked to the deleted supplier bill.',
+                        'errors'
+                    );
+                    dol_print_error($db);
+                }
+            }
+        }
 		return 0;
 	}
 }
