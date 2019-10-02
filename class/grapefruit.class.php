@@ -23,7 +23,7 @@ class TGrappeFruit
 				$product->product_fourn_id = $fourn->id;
 
 				// La methode update_buyprice() renvoie -1 ou -2 en cas d'erreur ou l'id de l'objet modifié ou créé en cas de réussite
-				$ret=$product->update_buyprice( $line->qty, $line->subprice, $user, 'HT', $fourn, 1, $line->ref_fourn, $line->tva_tx, 0, $line->remise_percent);
+				$ret=$product->update_buyprice( $line->qty, $line->total_ht, $user, 'HT', $fourn, 1, $line->ref_fourn, $line->tva_tx, 0, $line->remise_percent);
 
 			}
 
@@ -453,29 +453,37 @@ class TGrappeFruit
 			foreach ( $TLabel as $label ) {
 
 				$label = trim($label);
+				if(!empty($label)) { // pour ne pas prendre le cas du retour à la ligne vide
+				
+					$t = new Task($db);
 
-				$t = new Task($db);
-
-				$defaultref = '';
-				$obj = empty($conf->global->PROJECT_TASK_ADDON) ? 'mod_task_simple' : $conf->global->PROJECT_TASK_ADDON;
-				if (! empty($conf->global->PROJECT_TASK_ADDON) && is_readable(DOL_DOCUMENT_ROOT . "/core/modules/project/task/" . $conf->global->PROJECT_TASK_ADDON . ".php")) {
-					require_once DOL_DOCUMENT_ROOT . "/core/modules/project/task/" . $conf->global->PROJECT_TASK_ADDON . '.php';
-					$modTask = new $obj();
-					$defaultref = $modTask->getNextValue($soc, $object);
-				}
-
-				if (is_numeric($defaultref) && $defaultref <= 0)
 					$defaultref = '';
+					$obj = empty($conf->global->PROJECT_TASK_ADDON) ? 'mod_task_simple' : $conf->global->PROJECT_TASK_ADDON;
+					if (! empty($conf->global->PROJECT_TASK_ADDON) && is_readable(DOL_DOCUMENT_ROOT . "/core/modules/project/task/" . $conf->global->PROJECT_TASK_ADDON . ".php")) {
+						require_once DOL_DOCUMENT_ROOT . "/core/modules/project/task/" . $conf->global->PROJECT_TASK_ADDON . '.php';
+						$modTask = new $obj();
+						$defaultref = $modTask->getNextValue($soc, $object);
+					}
 
-				$t->ref = $defaultref;
-				$t->label = $label;
-				$t->fk_project = $object->id;
-				$t->fk_task_parent = 0;
+					if (is_numeric($defaultref) && $defaultref <= 0)
+						$defaultref = '';
 
-				$res = $t->create($user);
+					$t->ref = $defaultref;
+					$t->label = $label;
+					$t->fk_project = $object->id;
+					$t->fk_task_parent = 0;
+					$t->date_c = dol_now();
 
-				if ($res < 0) {
-					setEventMessage($langs->trans('ImpossibleToAdd', $label));
+					$res = $t->create($user);
+					
+					if(!empty($conf->global->GRAPEFRUIT_PROJECT_TYPE_FOR_TASK) && $conf->global->GRAPEFRUIT_PROJECT_TYPE_FOR_TASK > 0){
+					    $t->add_contact($user->id, $conf->global->GRAPEFRUIT_PROJECT_TYPE_FOR_TASK, 'internal');
+					}
+					
+					
+					if ($res < 0) {
+						setEventMessage($langs->trans('ImpossibleToAdd', $label));
+					}
 				}
 			}
 
@@ -671,6 +679,8 @@ class TGrappeFruit
 		global $user;
 
 		$object->fetchObjectLinked();
+		if(empty($object->linkedObjects['propal'])) return 0;
+
 		$TOriginPropal = array_values($object->linkedObjects['propal']);
 		$propal = $TOriginPropal[0];
 

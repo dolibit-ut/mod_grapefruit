@@ -521,14 +521,16 @@ class ActionsGrapeFruit
 				$linkedobjects = $parameters['linkedobjects'];
 
 				$objecttype = 'projet';
+				$ref_to_show = '';
+				if(! empty($object->project->ref)) {
+				    $ref_to_show .= $object->project->ref;
+				    if(! empty($conf->global->GRAPEFRUIT_CONCAT_PROJECT_DESC) && ! empty($object->project->title)) $ref_to_show .= ' - '.$object->project->title;
+				}
+
 				$linkedobjects[$objecttype]['ref_title'] = $outputlangs->transnoentities("Project");
-				$linkedobjects[$objecttype]['ref_value'] = $outputlangs->transnoentities(empty($object->project->ref)?'':$object->projet->ref);
-/*				$linkedobjects[$objecttype]['date_title'] = $outputlangs->transnoentities("ProjectDate");
-				$linkedobjects[$objecttype]['date_value'] = dol_print_date($object->project->date_start,'day','',$outputlangs);
-*/
+				$linkedobjects[$objecttype]['ref_value'] = $outputlangs->transnoentities($ref_to_show);
 
 				$this->results = $linkedobjects;
-
 
 				return 1;
 			}
@@ -545,7 +547,7 @@ class ActionsGrapeFruit
 		// Sur version 5.0 le $parameters['currentcontext'] == ordersuppliercard et le "pdfgeneration" est dans $parameters['context']
 		$TContext = explode(':', $parameters['context']);
 
-		if ($parameters['currentcontext'] === 'pdfgeneration' || in_array('pdfgeneration', $TContext))
+		if (empty($object->_pdfGenerated) && ($parameters['currentcontext'] === 'pdfgeneration' || in_array('pdfgeneration', $TContext)))
 		{
 			$base_object = $parameters['object'];
 
@@ -582,9 +584,10 @@ class ActionsGrapeFruit
 					$ref_client = $base_object->ref_client;
 					$usecommande=$Qwrite=true;
 				}
-				elseif(!empty($conf->global->GRAPEFRUIT_SUPPLIER_CONTACT_SHIP_ADDRESS) && empty($conf->global->GRAPEFRUIT_SHOW_SUPPLIER_ORDER_REFS)){
+				elseif(!empty($conf->global->GRAPEFRUIT_SUPPLIER_CONTACT_SHIP_ADDRESS)){
 					$Qwrite=true;
 				}
+
 				if($usecontact && $Qwrite)
 				{
 					//Recipient name
@@ -592,28 +595,32 @@ class ActionsGrapeFruit
 					$thirdparty=$base_object->thirdparty;
 					if (!empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)) $thirdparty = $base_object->contact;
 
-					$carac_client_name= pdfBuildThirdpartyName($thirdparty, $parameters['outputlangs']);
-
 					$thecontact = $base_object->contact;
+					if(empty($thecontact->client) && empty($thecontact->thirdparty) && method_exists($thecontact, 'fetch_thirdparty')) $thecontact->fetch_thirdparty();
+
+					if((float) DOL_VERSION < 3.8)
+						$objclient = $thecontact->client;
+					else
+						$objclient = $thecontact->thirdparty;
+
+					$carac_client_name= pdfBuildThirdpartyName($objclient, $parameters['outputlangs']);
 
 					// SI un élément manquant ou qu'on veuille envoyé à la société du contact alors on change
 					if(empty($thecontact->address) || empty($thecontact->zip) || empty($thecontact->town))
 					{
-						$contactSociete = new Societe($db);
-						$contactSociete->fetch($thecontact->socid);
-						$thecontact->address = $contactSociete->address;
-						$thecontact->zip = $contactSociete->zip;
-						$thecontact->town = $contactSociete->town;
+						$thecontact->address = $objclient->address;
+						$thecontact->zip = $objclient->zip;
+						$thecontact->town = $objclient->town;
 					}
 
-					$carac_client=pdf_build_address($parameters['outputlangs'],$object->emetteur,$base_object->client,$base_object->contact,$usecontact,'target');
+					$carac_client=pdf_build_address($parameters['outputlangs'],$object->emetteur,$objclient,$thecontact,$usecontact,'target');
 
 					/*echo '<pre>';
 					var_dump($base_object->contact,true);exit;*/
 
 					if($conf->global->GRAPEFRUIT_SUPPLIER_CONTACT_SHIP_ADDRESS_SHOW_DETAILS){
 
-						$carac_client .= 'email : '.$base_object->contact->email." \ntel : ".$base_object->contact->phone_pro;
+						$carac_client .= "\n".'email : '.$thecontact->email." \ntel : ".$thecontact->phone_pro;
 					}
 
 					$newcontent = $parameters['outputlangs']->trans('DeliveryAddress').' :'."\n".'<strong>'.$carac_client_name.'</strong>'."\n".$carac_client;
@@ -628,6 +635,8 @@ class ActionsGrapeFruit
 						$parameters['object']->note_public = dol_nl2br($newcontent."\n\n".$parameters['object']->note_public);
 					else
 						$parameters['object']->note_public = dol_nl2br($newcontent);
+
+					$object->_pdfGenerated = true;
 				}
 			} // Fin order / order_supplier
 		}
@@ -719,18 +728,20 @@ class ActionsGrapeFruit
                         $("div.boxstatsindicator a, a.boxstatsindicator").attr('href',function(i, href) {
                         	if(href)
                         	{
-                        		filtert=1
-                            	var appendUrl = 'search_sale=<?php echo $user->id; ?>';
+					if(href.indexOf('projet/list') == -1) {
+	                        		filtert=1
+		                            	var appendUrl = 'search_sale=<?php echo $user->id; ?>';
 
 								if (href.indexOf("comm/action/listactions.php") >= 0){
 									appendUrl = 'filtert=<?php echo $user->id; ?>';
 								}
                                 
-                            	if (href.indexOf("?") >= 0){
-                            		return href + '&' + appendUrl;
-                            	}else{
-                            		return href + '?' + appendUrl;
-                            	}
+	        	                    	if (href.indexOf("?") >= 0){
+		                            		return href + '&' + appendUrl;
+		                            	}else{
+		                            		return href + '?' + appendUrl;
+		                            	}
+					}
                         	}	
                         });
 
