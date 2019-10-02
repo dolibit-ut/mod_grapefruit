@@ -453,6 +453,12 @@ class InterfaceGrapeFruittrigger
 			if($conf->global->GRAPEFRUIT_AUTO_ORDER_ON_SUPPLIERORDER_VALIDATION_WITH_METHOD > 0) TGrappeFruit::orderSupplierOrder($object, $conf->global->GRAPEFRUIT_AUTO_ORDER_ON_SUPPLIERORDER_VALIDATION_WITH_METHOD);
 
 		}
+		elseif ($action == 'BILL_SUPPLIER_VALIDATE')
+        {
+            if(!empty($conf->global->GRAPEFRUIT_SET_SUPPLIER_ORDER_BILLED_IF_SAME_MONTANT)) {
+                TGrappeFruit::setOrderBilledIfSameMontant($object);
+            }
+        }
 		elseif ($action === 'PRODUCT_CREATE') {
 
 			if(!empty($conf->global->GRAPEFRUIT_COPY_CAT_ON_CLONE)) {
