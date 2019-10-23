@@ -481,6 +481,10 @@ $var=!$var;
 setup_print_rich_editor_input('GRAPEFRUIT_ORDER_DEFAULT_PUBLIC_NOTE', $bc[$var]);
 $var=!$var;
 setup_print_rich_editor_input('GRAPEFRUIT_ORDER_DEFAULT_PRIVATE_NOTE', $bc[$var]);
+$var=!$var;
+setup_print_on_off('GRAPEFRUIT_COPY_CLIENT_REF_FROM_PROPOSAL_TO_ORDER', false, '', 'GRAPEFRUIT_COPY_CLIENT_REF_FROM_PROPOSAL_TO_ORDER_desc');
+$var=!$var;
+setup_print_on_off('GRAPEFRUIT_COPY_DATE_FROM_PROPOSAL_TO_ORDER', false, '', 'GRAPEFRUIT_COPY_DATE_FROM_PROPOSAL_TO_ORDER_desc');
 
 print '</table>';
 
