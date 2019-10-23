@@ -79,10 +79,10 @@ class ActionsGrapeFruit
 
 	function formObjectOptions($parameters, &$object, &$action, $hookmanager)
 	{
-		global $conf;
+		global $conf, $langs;
+		$Tcontext = explode(':', $parameters['context']);
 		//var_dump($action, $parameters);exit;
 		//Context : frm creation propal
-		
 		// Script pour gérer les champs obligatoires sur une fiche contact
 		if($parameters['currentcontext'] === 'contactcard' && !empty($conf->global->GRAPEFRUIT_CONTACT_FORCE_FIELDS) && $action == 'edit') {
 			$TChamps = explode(',',$conf->global->GRAPEFRUIT_CONTACT_FORCE_FIELDS);
@@ -135,7 +135,54 @@ class ActionsGrapeFruit
 				<?php	
 			}
 		}
-		
+
+        if (in_array('ordercard', $Tcontext)) {
+            if (GETPOST('action', 'alpha') == 'create') {
+                $variablesPHPToJs = array(
+                    'useCKEditor' => !empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT)
+                );
+                $origin = GETPOST('origin', 'alpha');
+                $originId = intval(GETPOST('originid', 'int'));
+                // if any of these confs is non-empty, the javascript code will be printed
+                $javascriptRequired = (
+                       !empty($conf->global->GRAPEFRUIT_ORDER_DEFAULT_PUBLIC_NOTE)
+                    || !empty($conf->global->GRAPEFRUIT_ORDER_DEFAULT_PRIVATE_NOTE)
+                );
+                if (!empty($conf->global->GRAPEFRUIT_ORDER_DEFAULT_PUBLIC_NOTE)) {
+                    $variablesPHPToJs['publicNote'] = $conf->global->GRAPEFRUIT_ORDER_DEFAULT_PUBLIC_NOTE;
+                }
+                if (!empty($conf->global->GRAPEFRUIT_ORDER_DEFAULT_PRIVATE_NOTE)) {
+                    $variablesPHPToJs['privateNote'] = $conf->global->GRAPEFRUIT_ORDER_DEFAULT_PRIVATE_NOTE;
+                }
+                if ($javascriptRequired) {
+                    $this->resprints = '
+                    <script>
+                        $(function() {
+                            let variablesFromPHP = ' . json_encode($variablesPHPToJs) . ';
+                            // setTimeout(…, 0) needed to ensure CKEditor instances are already initialized
+                            setTimeout(function(){
+                                if (variablesFromPHP.useCKEditor) {
+                                    if (variablesFromPHP.publicNote) {
+                                        CKEDITOR.instances.note_public.setData(variablesFromPHP.publicNote);
+                                    }
+                                    if (variablesFromPHP.privateNote) {
+                                        CKEDITOR.instances.note_private.setData(variablesFromPHP.privateNote);
+                                    }
+                                } else {
+                                    if (variablesFromPHP.publicNote) {
+                                        document.querySelector("#note_public").value = variablesFromPHP.publicNote;
+                                    }
+                                    if (variablesFromPHP.privateNote) {
+                                        document.querySelector("#note_private").value = variablesFromPHP.privateNote;
+                                    }
+                                }
+                            }, 0);
+                        });
+                    </script>';
+                }
+            }
+            return 0;
+        }
 		/*else if ($parameters['currentcontext'] === 'invoicecard' && $action === 'confirm_valid') { 
 		
 				?>
