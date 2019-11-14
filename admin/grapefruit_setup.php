@@ -31,6 +31,7 @@ if (! $res) {
 // Libraries
 require_once DOL_DOCUMENT_ROOT . "/core/lib/admin.lib.php";
 require_once '../lib/grapefruit.lib.php';
+dol_include_once('abricot/includes/lib/admin.lib.php');
 
 // Translations
 $langs->load("grapefruit@grapefruit");
@@ -99,6 +100,28 @@ dol_fiche_head(
     0,
     "grapefruit@grapefruit"
 );
+
+/**
+ * Check if rich text is enabled and display a CKEditor if yes. Fall back to normal textarea edit.
+ * @param string $confKey  The conf name, e.g. CLIAFIDEL_ORDER_DEFAULT_PUBLIC_NOTE.
+ */
+function setup_print_rich_editor_input($confKey, $trattributes) {
+    global $conf, $langs, $form;
+    if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT)) {
+        setup_print_input_form_part($confKey, $langs->trans('' . $confKey), $langs->trans('desc_' . $confKey), array(), 'textarea');
+    } else {
+        include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+        $doleditor=new DolEditor($confKey, $conf->global->$confKey,'',80,'dolibarr_notes');
+        echo '<tr '.$trattributes.'><td colspan="3">'
+        , '<form action="'.$_SERVER["PHP_SELF"].'?'.http_build_query(array('action'=>'set_' . $confKey)).'" method="POST">'
+        , '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />'
+        , $form->textwithpicto($langs->trans('' . $confKey), $langs->trans('desc_' . $confKey))
+        , $doleditor->Create()
+        , '<div style="text-align: right">' .'<input type="submit" class="button" value="'.$langs->trans("Modify").'" />' .'</div>'
+        , '</form>'
+        , '</td></tr>';
+    }
+}
 
 // Setup page goes here
 $form=new Form($db);
@@ -454,6 +477,14 @@ print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">'
 print '</form>';
 print '</td></tr>';
 
+$var=!$var;
+setup_print_rich_editor_input('GRAPEFRUIT_ORDER_DEFAULT_PUBLIC_NOTE', $bc[$var]);
+$var=!$var;
+setup_print_rich_editor_input('GRAPEFRUIT_ORDER_DEFAULT_PRIVATE_NOTE', $bc[$var]);
+$var=!$var;
+setup_print_on_off('GRAPEFRUIT_COPY_CLIENT_REF_FROM_PROPOSAL_TO_ORDER', false, '', 'GRAPEFRUIT_COPY_CLIENT_REF_FROM_PROPOSAL_TO_ORDER_desc');
+$var=!$var;
+setup_print_on_off('GRAPEFRUIT_COPY_DATE_FROM_PROPOSAL_TO_ORDER', false, '', 'GRAPEFRUIT_COPY_DATE_FROM_PROPOSAL_TO_ORDER_desc');
 
 print '</table>';
 

@@ -37,7 +37,18 @@ set_GRAPEFRUIT_CAN_ASSOCIATE_TASK_TO_ACTIONCOMM=Permettre d'associéer une tâch
 set_GRAPEFRUIT_ADD_PROJECT_TO_PDF=Afficher le projet lié sur les documents PDF
 set_GRAPEFRUIT_CONTACT_FORCE_FIELDS=Champs obligatoires supplémentaires sur une fiche contact (ex:firstname,town ...)
 
+GRAPEFRUIT_ORDER_DEFAULT_PUBLIC_NOTE=Note publique par défaut sur les commandes
+GRAPEFRUIT_ORDER_DEFAULT_PRIVATE_NOTE=Note privée par défaut sur les commandes
+desc_GRAPEFRUIT_ORDER_DEFAULT_PUBLIC_NOTE=La note sera pré-remplie au moment de la création, mais vous pourrez la modifier avant d’enregistrer.
+desc_GRAPEFRUIT_ORDER_DEFAULT_PRIVATE_NOTE=La note sera pré-remplie au moment de la création, mais vous pourrez la modifier avant d’enregistrer.
+
+GRAPEFRUIT_COPY_CLIENT_REF_FROM_PROPOSAL_TO_ORDER=Copier la référence client de la proposition sur la commande qui en est issue
+GRAPEFRUIT_COPY_CLIENT_REF_FROM_PROPOSAL_TO_ORDER_desc=Lors de la création d’une commande depuis une proposition commerciale, pré-remplir le champ "référence client" avec la référence client de la commande.
+GRAPEFRUIT_COPY_DATE_FROM_PROPOSAL_TO_ORDER=Copier la date de la proposition sur la commande qui en est issue
+GRAPEFRUIT_COPY_DATE_FROM_PROPOSAL_TO_ORDER_desc=Lors de la création d’une commande depuis une proposition commerciale, pré-remplir le champ "date" avec la date de la commande.
+
 ProjectDate=Date projet
 
 # Models
 DocumentModelDorade=Modèle d'expédition chiffré
+

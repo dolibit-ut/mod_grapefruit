@@ -79,10 +79,10 @@ class ActionsGrapeFruit
 
 	function formObjectOptions($parameters, &$object, &$action, $hookmanager)
 	{
-		global $conf;
+		global $conf, $langs;
+		$Tcontext = explode(':', $parameters['context']);
 		//var_dump($action, $parameters);exit;
 		//Context : frm creation propal
-		
 		// Script pour gérer les champs obligatoires sur une fiche contact
 		if($parameters['currentcontext'] === 'contactcard' && !empty($conf->global->GRAPEFRUIT_CONTACT_FORCE_FIELDS) && $action == 'edit') {
 			$TChamps = explode(',',$conf->global->GRAPEFRUIT_CONTACT_FORCE_FIELDS);
@@ -135,7 +135,88 @@ class ActionsGrapeFruit
 				<?php	
 			}
 		}
-		
+
+        if (in_array('ordercard', $Tcontext)) {
+            if (GETPOST('action', 'alpha') == 'create') {
+                $variablesPHPToJs = array(
+                    'useCKEditor' => !empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT)
+                );
+                $origin = GETPOST('origin', 'alpha');
+                $originId = intval(GETPOST('originid', 'int'));
+                // if any of these confs is non-empty, the javascript code will be printed
+                $javascriptRequired = (
+                       !empty($conf->global->GRAPEFRUIT_ORDER_DEFAULT_PUBLIC_NOTE)
+                    || !empty($conf->global->GRAPEFRUIT_ORDER_DEFAULT_PRIVATE_NOTE)
+                    || !empty($conf->global->GRAPEFRUIT_COPY_DATE_FROM_PROPOSAL_TO_ORDER)
+                    || !empty($conf->global->GRAPEFRUIT_COPY_CLIENT_REF_FROM_PROPOSAL_TO_ORDER)
+                );
+                $originProposalRequired = (
+                    !empty($conf->global->GRAPEFRUIT_COPY_DATE_FROM_PROPOSAL_TO_ORDER)
+                    || !empty($conf->global->GRAPEFRUIT_COPY_CLIENT_REF_FROM_PROPOSAL_TO_ORDER)
+                );
+                if (!empty($conf->global->GRAPEFRUIT_ORDER_DEFAULT_PUBLIC_NOTE)) {
+                    $variablesPHPToJs['publicNote'] = $conf->global->GRAPEFRUIT_ORDER_DEFAULT_PUBLIC_NOTE;
+                }
+                if (!empty($conf->global->GRAPEFRUIT_ORDER_DEFAULT_PRIVATE_NOTE)) {
+                    $variablesPHPToJs['privateNote'] = $conf->global->GRAPEFRUIT_ORDER_DEFAULT_PRIVATE_NOTE;
+                }
+                if ($origin == 'propal' && $originProposalRequired) {
+                    global $db;
+                    $originProposal = new Propal($db);
+                    if ($originProposal->fetch($originId) < 0) {
+                        $this->error = $langs->trans('ErrorOriginProposalNotFound');
+                        return -1;
+                    }
+                    $variablesPHPToJs = array_merge($variablesPHPToJs, array(
+                        'refClient'    => $originProposal->ref_client,
+                        'dateTimestamp' => intval($originProposal->date) * 1000, // convert to millisecond (JS uses ms timestamps)
+                    ));
+                }
+                if ($javascriptRequired) {
+                    $this->resprints = '
+                    <script>
+                        $(function() {
+                            let variablesFromPHP = ' . json_encode($variablesPHPToJs) . ';
+                            
+                            if (variablesFromPHP.dateTimestamp) {
+                                let dateInput = document.querySelector(\'input[name="re"]\');
+                                let date = new Date(variablesFromPHP.dateTimestamp);
+                                let dayOfMonth = date.getDate();
+                                let month = date.getMonth() + 1; // getMonth() => 0 to 11, not 1 to 12
+                                let year = date.getFullYear();
+                                let dateString = "" + dayOfMonth + "/" + month + "/" +  year;
+                                $(dateInput).datepicker("setDate", dateString).change();
+                            }
+                            
+                            if (variablesFromPHP.refClient) {
+                                let refCliInput = document.querySelector(\'input[name="ref_client"]\');
+                                refCliInput.value = variablesFromPHP.refClient;
+                            }
+                            
+                            // setTimeout(…, 0) needed to ensure CKEditor instances are already initialized
+                            setTimeout(function(){
+                                if (variablesFromPHP.useCKEditor) {
+                                    if (variablesFromPHP.publicNote) {
+                                        CKEDITOR.instances.note_public.setData(variablesFromPHP.publicNote);
+                                    }
+                                    if (variablesFromPHP.privateNote) {
+                                        CKEDITOR.instances.note_private.setData(variablesFromPHP.privateNote);
+                                    }
+                                } else {
+                                    if (variablesFromPHP.publicNote) {
+                                        document.querySelector("#note_public").value = variablesFromPHP.publicNote;
+                                    }
+                                    if (variablesFromPHP.privateNote) {
+                                        document.querySelector("#note_private").value = variablesFromPHP.privateNote;
+                                    }
+                                }
+                            }, 0);
+                        });
+                    </script>';
+                }
+            }
+            return 0;
+        }
 		/*else if ($parameters['currentcontext'] === 'invoicecard' && $action === 'confirm_valid') { 
 		
 				?>
