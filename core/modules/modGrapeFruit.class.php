@@ -90,7 +90,19 @@ class modGrapeFruit extends DolibarrModules
 		//                        );
 		$this->module_parts = array(
 			'triggers' => 1
-			,'hooks' => array('contactcard', 'propalcard', 'suppliercard', 'pdfgeneration','invoicecard','ordercard', 'ordersuppliercard', 'thirdpartycard', 'fullcalendardao','globalcard', 'invoicesuppliercard','index')
+			,'hooks' => array(
+				'contactcard',
+				'propalcard',
+				'ordercard',
+				'suppliercard',
+				'pdfgeneration',
+				'invoicecard',
+				'ordersuppliercard',
+				'thirdpartycard',
+				'fullcalendardao',
+				'globalcard',
+				'invoicesuppliercard',
+				'index')
 			,'models' => 1
 			,'substitutions'=>1
 			/*,'tpl'=>1*/
@@ -260,7 +272,7 @@ class modGrapeFruit extends DolibarrModules
 		$ext->addExtraField('grapefruitReminderBill', 'Reminder Bill', 'boolean', 100, 1, 'facture');
 		dol_include_once('/grapefruit/config.php');
 		dol_include_once('/grapefruit/script/create-maj-base.php');
-		
+
 		$result=$this->_load_tables('/grapefruit/sql/');
 
 		return $this->_init($sql, $options);

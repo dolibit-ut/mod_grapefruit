@@ -40,6 +40,17 @@ set_GRAPEFRUIT_CAN_ASSOCIATE_TASK_TO_ACTIONCOMM=Permettre d'associéer une tâch
 set_GRAPEFRUIT_ADD_PROJECT_TO_PDF=Afficher le projet lié sur les documents PDF
 set_GRAPEFRUIT_CONCAT_PROJECT_DESC=---> Concaténer le libellé du projet après la référence sur les documents PDF
 set_GRAPEFRUIT_CONTACT_FORCE_FIELDS=Champs obligatoires supplémentaires sur une fiche contact (ex:firstname,town ...)
+
+GRAPEFRUIT_ORDER_DEFAULT_PUBLIC_NOTE=Note publique par défaut sur les commandes
+GRAPEFRUIT_ORDER_DEFAULT_PRIVATE_NOTE=Note privée par défaut sur les commandes
+desc_GRAPEFRUIT_ORDER_DEFAULT_PUBLIC_NOTE=La note sera pré-remplie au moment de la création, mais vous pourrez la modifier avant d’enregistrer.
+desc_GRAPEFRUIT_ORDER_DEFAULT_PRIVATE_NOTE=La note sera pré-remplie au moment de la création, mais vous pourrez la modifier avant d’enregistrer.
+
+GRAPEFRUIT_COPY_CLIENT_REF_FROM_PROPOSAL_TO_ORDER=Copier la référence client de la proposition sur la commande qui en est issue
+GRAPEFRUIT_COPY_CLIENT_REF_FROM_PROPOSAL_TO_ORDER_desc=Lors de la création d’une commande depuis une proposition commerciale, pré-remplir le champ "référence client" avec la référence client de la commande.
+GRAPEFRUIT_COPY_DATE_FROM_PROPOSAL_TO_ORDER=Copier la date de la proposition sur la commande qui en est issue
+GRAPEFRUIT_COPY_DATE_FROM_PROPOSAL_TO_ORDER_desc=Lors de la création d’une commande depuis une proposition commerciale, pré-remplir le champ "date" avec la date de la commande.
+
 set_MAIN_ADD_EVENT_ON_ELEMENT_CARD=Permettre l'ajout d'événements à partir de propale, commande,...
 set_GRAPEFRUIT_DISALLOW_SAME_REF_MULTICOMPANY=Empêcher un projet d'avoir la même référence à travers les entités
 DuplicateProjectRef=Référence de projet déjà utilisée
@@ -111,7 +122,7 @@ SupplierProposal=Proposition fournisseur/Demande de prix
 set_GRAPEFRUIT_SUPPLIER_PROPAL_CREATE_PRICE_ON_ACCEP=Créer le prix fournisseur sur l'acceptation de la proposition
 
 set_GRAPEFRUIT_VALIDATE_SUPPLIERINVOICE_ON_RECEIPT_SUPPLIERORDER = Valider la facture fournisseur (si elle existe) sur la reception complète d'une commande fournisseur
-set_GRAPEFRUIT_ALLOW_UPDATE_SUPPLIER_INVOICE_DATE=Autoriser la modification de la date d'une facture fournisseur tant que cette dernière n'est pas classée payée ou comptabilisée par le module export comptable 
+set_GRAPEFRUIT_ALLOW_UPDATE_SUPPLIER_INVOICE_DATE=Autoriser la modification de la date d'une facture fournisseur tant que cette dernière n'est pas classée payée ou comptabilisée par le module export comptable
 set_GRAPEFRUIT_FILTER_HOMEPAGE_BY_USER= Permettre le filtrage du tableau de bord (sur la page d'accueil) pour l'utilisateur connecté
 WorkingBoardFilterByUser = Tableau de bord filtré pour mon utilisateur
 WorkingBoardNotFiltered = Tableau de bord non filtré
@@ -121,3 +132,4 @@ set_GRAPEFRUIT_SUPPLIER_PROPAL_ADDLINE_ZERO=Ajouter les lignes avec un prix à z
 GRAPEFRUIT_SUPPLIER_ORDER_COPY_LINK_FROM_ORIGIN=Copier les liens de la proposition fournisseur d'origine
 GRAPEFRUIT_CREATE_SUPPLIER_PRICES_ON_SUPPLIER_ORDER_VALIDATION=Créer les prix fournisseur lors de la validation d'une commande fournisseur
 GRAPEFRUIT_CREATE_SUPPLIER_PRICES_ON_SUPPLIER_ORDER_VALIDATION_tooltip=Les références fournisseurs seront générées avec ce masque "AUTOREF_{0000}"
+

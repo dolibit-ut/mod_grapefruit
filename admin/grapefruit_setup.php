@@ -36,7 +36,7 @@ dol_include_once('/core/class/html.formorder.class.php');
 dol_include_once('/grapefruit/class/grapefruit.class.php');
 dol_include_once('/projet/class/task.class.php');
 dol_include_once('/core/class/html.formcompany.class.php');
-
+dol_include_once('abricot/includes/lib/admin.lib.php');
 
 // Translations
 $langs->load("grapefruit@grapefruit");
@@ -104,6 +104,28 @@ print_fiche_titre($langs->trans($page_name), $linkback);
 // Configuration header
 $head = grapefruitAdminPrepareHead();
 dol_fiche_head($head, 'settings', $langs->trans("Module104997Name"), 0, "grapefruit@grapefruit");
+
+/**
+ * Check if rich text is enabled and display a CKEditor if yes. Fall back to normal textarea edit.
+ * @param string $confKey  The conf name, e.g. CLIAFIDEL_ORDER_DEFAULT_PUBLIC_NOTE.
+ */
+function setup_print_rich_editor_input($confKey, $trattributes) {
+    global $conf, $langs, $form;
+    if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT)) {
+        setup_print_input_form_part($confKey, $langs->trans('' . $confKey), $langs->trans('desc_' . $confKey), array(), 'textarea');
+    } else {
+        include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+        $doleditor=new DolEditor($confKey, $conf->global->$confKey,'',80,'dolibarr_notes');
+        echo '<tr '.$trattributes.'><td colspan="3">'
+        , '<form action="'.$_SERVER["PHP_SELF"].'?'.http_build_query(array('action'=>'set_' . $confKey)).'" method="POST">'
+        , '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />'
+        , $form->textwithpicto($langs->trans('' . $confKey), $langs->trans('desc_' . $confKey))
+        , $doleditor->Create()
+        , '<div style="text-align: right">' .'<input type="submit" class="button" value="'.$langs->trans("Modify").'" />' .'</div>'
+        , '</form>'
+        , '</td></tr>';
+    }
+}
 
 // Setup page goes here
 $form = new Form($db);
@@ -563,6 +585,15 @@ echo ajax_constantonoff('GRAPEFRUIT_ORDER_EXPRESS_FROM_PROPAL');
 print '</form>';
 print '</td></tr>';
 
+$var=!$var;
+setup_print_rich_editor_input('GRAPEFRUIT_ORDER_DEFAULT_PUBLIC_NOTE', $bc[$var]);
+$var=!$var;
+setup_print_rich_editor_input('GRAPEFRUIT_ORDER_DEFAULT_PRIVATE_NOTE', $bc[$var]);
+$var=!$var;
+setup_print_on_off('GRAPEFRUIT_COPY_CLIENT_REF_FROM_PROPOSAL_TO_ORDER', false, '', 'GRAPEFRUIT_COPY_CLIENT_REF_FROM_PROPOSAL_TO_ORDER_desc');
+$var=!$var;
+setup_print_on_off('GRAPEFRUIT_COPY_DATE_FROM_PROPOSAL_TO_ORDER', false, '', 'GRAPEFRUIT_COPY_DATE_FROM_PROPOSAL_TO_ORDER_desc');
+
 print '<tr class="liste_titre">';
 print '<td>' . $langs->trans("Sending") . '</td>' . "\n";
 print '<td align="center" width="20">&nbsp;</td>';
@@ -754,7 +785,7 @@ if ($conf->facture->enabled) {
 	echo ajax_constantonoff('GRAPEFRUIT_BILL_ADD_DISCOUNT_COLUMN');
 	print '</form>';
 	print '</td></tr>';
-	
+
 	$var = ! $var;
 	print '<tr ' . $bc[$var] . '>';
 	print '<td>' . $langs->trans("set_GRAPEFRUIT_BILL_AUTO_VALIDATE_IF_ORIGIN") . '</td>';
@@ -766,7 +797,7 @@ if ($conf->facture->enabled) {
 	echo ajax_constantonoff('GRAPEFRUIT_BILL_AUTO_VALIDATE_IF_ORIGIN');
 	print '</form>';
 	print '</td></tr>';
-	
+
 	$var = ! $var;
 	print '<tr ' . $bc[$var] . '>';
 	print '<td>' . $langs->trans("set_GRAPEFRUIT_ALLOW_RESTOCK_ON_CREDIT_NOTES") . '</td>';
@@ -774,7 +805,7 @@ if ($conf->facture->enabled) {
 	print '<td align="right" width="300">';
 	echo ajax_constantonoff('GRAPEFRUIT_ALLOW_RESTOCK_ON_CREDIT_NOTES');
 	print '</td></tr>';
-	
+
 }
 
 if ($conf->agefodd->enabled) {

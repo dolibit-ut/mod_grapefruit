@@ -122,7 +122,7 @@ class ActionsGrapeFruit
 			if ($object->type == Facture::TYPE_SITUATION) $object->setValueFrom('ishidden', 0, 'extrafields', '"grapefruit_default_situation_progress_line"', '', 'name');
 			else $object->setValueFrom('ishidden', 1, 'extrafields', '"grapefruit_default_situation_progress_line"', '', 'name');
 		}
-		
+
 		if (in_array('ordercard', $TContext))
 		{
 			if (!empty($conf->global->GRAPEFRUIT_ORDER_EXPRESS_FROM_PROPAL) && GETPOST('origin') === 'propal' && GETPOST('originid') > 0 && $action == 'create' && GETPOST('socid', 'int') > 0)
@@ -148,12 +148,12 @@ class ActionsGrapeFruit
 				}
 			}
 		}
-		
+
 		if(!empty($conf->global->GRAPEFRUIT_ALLOW_RESTOCK_ON_CREDIT_NOTES) && empty($conf->global->STOCK_CALCULATE_ON_BILL) && $object->element === 'facture' && $object->type == Facture::TYPE_CREDIT_NOTE) {
 			// Pour empêcher de remplir le form confirm de manière à exécuter le notre
 			if($action === 'valid') $action = 'validATM';
 		}
-		
+
 		return 0;
 	}
 
@@ -190,6 +190,7 @@ class ActionsGrapeFruit
 	function formObjectOptions($parameters, &$object, &$action, $hookmanager)
 	{
 		global $conf, $langs, $user;
+		$TContext = explode(':', $parameters['context']);
 		//var_dump($action, $parameters);exit;
 		//Context : frm creation propal
 		dol_include_once('/grapefruit/lib/grapefruit.lib.php');
@@ -198,9 +199,9 @@ class ActionsGrapeFruit
 		$langs->load('grapefruit@grapefruit');
 
 		$form = new Form($db);
-		
+
 		// Script pour gérer les champs obligatoires sur une fiche contact
-		if(in_array('contactcard',explode(':',$parameters['context'])) && !empty($conf->global->GRAPEFRUIT_CONTACT_FORCE_FIELDS) && ($action == 'edit' || $action == 'create')) {
+		if(in_array('contactcard',$TContext) && !empty($conf->global->GRAPEFRUIT_CONTACT_FORCE_FIELDS) && ($action == 'edit' || $action == 'create')) {
 			$TChamps = explode(',',$conf->global->GRAPEFRUIT_CONTACT_FORCE_FIELDS);
 			$first = true;
 			$match1 = '';
@@ -224,7 +225,7 @@ class ActionsGrapeFruit
 			<?php
 		}
 
-		if (in_array('propalcard',explode(':',$parameters['context'])))
+		if (in_array('propalcard',$TContext))
 		{
 			if($action === 'create') {
 
@@ -265,7 +266,7 @@ class ActionsGrapeFruit
 					addPuHtRemise(5,$object);
 			}
 		}
-		elseif (in_array('thirdpartycard',explode(':',$parameters['context'])))
+		elseif (in_array('thirdpartycard',$TContext))
 		{
 			if (!empty($conf->global->GRAPEFRUIT_DISABLE_PROSPECTCUSTOMER_CHOICE) && ($action == 'create' || $action == 'edit'))
 			{
@@ -280,7 +281,7 @@ class ActionsGrapeFruit
 
 		}
 
-		if (in_array('ordercard',explode(':',$parameters['context']))) {
+		if (in_array('ordercard',$TContext)) {
 			if(!empty($conf->global->GRAPEFRUIT_ALLOW_CREATE_BILL_EXPRESS)
 				&& $object->statut > Commande::STATUS_DRAFT
 				&& !$object->billed
@@ -320,6 +321,87 @@ class ActionsGrapeFruit
 		}
 
 
+        if (in_array('ordercard', $TContext)) {
+            if (GETPOST('action', 'alpha') == 'create') {
+                $variablesPHPToJs = array(
+                    'useCKEditor' => !empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT)
+                );
+                $origin = GETPOST('origin', 'alpha');
+                $originId = intval(GETPOST('originid', 'int'));
+                // if any of these confs is non-empty, the javascript code will be printed
+                $javascriptRequired = (
+                       !empty($conf->global->GRAPEFRUIT_ORDER_DEFAULT_PUBLIC_NOTE)
+                    || !empty($conf->global->GRAPEFRUIT_ORDER_DEFAULT_PRIVATE_NOTE)
+                    || !empty($conf->global->GRAPEFRUIT_COPY_DATE_FROM_PROPOSAL_TO_ORDER)
+                    || !empty($conf->global->GRAPEFRUIT_COPY_CLIENT_REF_FROM_PROPOSAL_TO_ORDER)
+                );
+                $originProposalRequired = (
+                    !empty($conf->global->GRAPEFRUIT_COPY_DATE_FROM_PROPOSAL_TO_ORDER)
+                    || !empty($conf->global->GRAPEFRUIT_COPY_CLIENT_REF_FROM_PROPOSAL_TO_ORDER)
+                );
+                if (!empty($conf->global->GRAPEFRUIT_ORDER_DEFAULT_PUBLIC_NOTE)) {
+                    $variablesPHPToJs['publicNote'] = $conf->global->GRAPEFRUIT_ORDER_DEFAULT_PUBLIC_NOTE;
+                }
+                if (!empty($conf->global->GRAPEFRUIT_ORDER_DEFAULT_PRIVATE_NOTE)) {
+                    $variablesPHPToJs['privateNote'] = $conf->global->GRAPEFRUIT_ORDER_DEFAULT_PRIVATE_NOTE;
+                }
+                if ($origin == 'propal' && $originProposalRequired) {
+                    global $db;
+                    $originProposal = new Propal($db);
+                    if ($originProposal->fetch($originId) < 0) {
+                        $this->error = $langs->trans('ErrorOriginProposalNotFound');
+                        return -1;
+                    }
+                    $variablesPHPToJs = array_merge($variablesPHPToJs, array(
+                        'refClient'    => $originProposal->ref_client,
+                        'dateTimestamp' => intval($originProposal->date) * 1000, // convert to millisecond (JS uses ms timestamps)
+                    ));
+                }
+                if ($javascriptRequired) {
+                    $this->resprints = '
+                    <script>
+                        $(function() {
+                            let variablesFromPHP = ' . json_encode($variablesPHPToJs) . ';
+                            
+                            if (variablesFromPHP.dateTimestamp) {
+                                let dateInput = document.querySelector(\'input[name="re"]\');
+                                let date = new Date(variablesFromPHP.dateTimestamp);
+                                let dayOfMonth = date.getDate();
+                                let month = date.getMonth() + 1; // getMonth() => 0 to 11, not 1 to 12
+                                let year = date.getFullYear();
+                                let dateString = "" + dayOfMonth + "/" + month + "/" +  year;
+                                $(dateInput).datepicker("setDate", dateString).change();
+                            }
+                            
+                            if (variablesFromPHP.refClient) {
+                                let refCliInput = document.querySelector(\'input[name="ref_client"]\');
+                                refCliInput.value = variablesFromPHP.refClient;
+                            }
+                            
+                            // setTimeout(…, 0) needed to ensure CKEditor instances are already initialized
+                            setTimeout(function(){
+                                if (variablesFromPHP.useCKEditor) {
+                                    if (variablesFromPHP.publicNote) {
+                                        CKEDITOR.instances.note_public.setData(variablesFromPHP.publicNote);
+                                    }
+                                    if (variablesFromPHP.privateNote) {
+                                        CKEDITOR.instances.note_private.setData(variablesFromPHP.privateNote);
+                                    }
+                                } else {
+                                    if (variablesFromPHP.publicNote) {
+                                        document.querySelector("#note_public").value = variablesFromPHP.publicNote;
+                                    }
+                                    if (variablesFromPHP.privateNote) {
+                                        document.querySelector("#note_private").value = variablesFromPHP.privateNote;
+                                    }
+                                }
+                            }, 0);
+                        });
+                    </script>';
+                }
+            }
+            return 0;
+        }
 		/*else if ($parameters['currentcontext'] === 'invoicecard' && $action === 'confirm_valid') {
 
 				?>
@@ -347,7 +429,7 @@ class ActionsGrapeFruit
 				</script>
 				<?php
 		}*/
-		if (in_array('invoicecard',explode(':',$parameters['context'])))
+		if (in_array('invoicecard',$TContext))
 		{
 			if($conf->global->GRAPEFRUIT_BILL_ADD_DISCOUNT_COLUMN){
 
@@ -355,11 +437,11 @@ class ActionsGrapeFruit
 			}
 		}
 
-		if(in_array('invoicesuppliercard',explode(':',$parameters['context'])) && !empty($conf->global->GRAPEFRUIT_ALLOW_UPDATE_SUPPLIER_INVOICE_DATE) && empty($object->paye) && $action !== 'editdatef'
+		if(in_array('invoicesuppliercard',$TContext) && !empty($conf->global->GRAPEFRUIT_ALLOW_UPDATE_SUPPLIER_INVOICE_DATE) && empty($object->paye) && $action !== 'editdatef'
 			&& (empty($conf->exportcompta->enabled) || (!empty($conf->exportcompta->enabled) && empty($object->array_options['options_date_compta'])))) {
 
 			?>
-			
+
 			<script type="text/javascript">
 				$(document).ready(function () {
 					var link_edit_datef = $('[href*="action=editdatef"]').attr('href');
@@ -369,9 +451,9 @@ class ActionsGrapeFruit
 					}
 				});
 			</script>
-			
+
 			<?php
-			
+
 		}
 
 	}
@@ -381,15 +463,16 @@ class ActionsGrapeFruit
 	function createFrom($parameters, &$object, &$action, $hookmanager) {
 
 		global $conf,$user,$langs;
+        $TContext = explode(':', $parameters['context']);
 
-		if (in_array('invoicecard',explode(':',$parameters['context'])))
+		if (in_array('invoicecard',$TContext))
 		{
 			dol_include_once('/grapefruit/class/grapefruit.class.php');
 			$langs->load('grapefruit@grapefruit');
 
 			TGrappeFruit::billCloneLink($object,$parameters['objFrom']);
 
-			
+
 			TGrappeFruit::autoValidateIfFrom($object,$parameters['objFrom']);
 		}
 	}
@@ -397,10 +480,9 @@ class ActionsGrapeFruit
 	function addMoreActionsButtons($parameters, &$object, &$action, $hookmanager)
 	{
 		global $conf,$user,$langs,$db,$mysoc;
+        $TContext = explode(':', $parameters['context']);
 
-		$context = explode(':', $parameters['context']);
-
-		if (in_array('suppliercard',explode(':',$parameters['context'])) && !empty($conf->global->GRAPEFRUIT_SUPPLIER_FORCE_BT_ORDER_TO_INVOICE))
+		if (in_array('suppliercard',$TContext) && !empty($conf->global->GRAPEFRUIT_SUPPLIER_FORCE_BT_ORDER_TO_INVOICE))
 		{
 			if ($user->rights->fournisseur->facture->creer)
 			{
@@ -420,7 +502,7 @@ class ActionsGrapeFruit
 		}
 
 
-		if (in_array('propalcard', $context) || in_array('ordercard', $context) || in_array('invoicecard', $context))
+		if (in_array('propalcard', $TContext) || in_array('ordercard', $context) || in_array('invoicecard', $context))
 		{
 			if (!empty($conf->global->GRAPEFRUIT_DEFAULT_TVA_ON_DOCUMENT_CLIENT_ENABLED) && $action != 'editline')
 			{
@@ -506,10 +588,10 @@ class ActionsGrapeFruit
 	function pdf_getLinkedObjects(&$parameters, &$object, &$action, $hookmanager) {
 
 		global $conf,$user,$langs,$db,$mysoc,$outputlangs;
+        $TContext = explode(':', $parameters['context']);
 
 
-
-		if (in_array( 'pdfgeneration', explode(':',$parameters['context']) ) && !empty($conf->global->GRAPEFRUIT_ADD_PROJECT_TO_PDF))
+		if (in_array( 'pdfgeneration', $TContext) && !empty($conf->global->GRAPEFRUIT_ADD_PROJECT_TO_PDF))
 		{
 			if (empty($object->project->ref)) $object->fetch_projet();
 
@@ -722,9 +804,9 @@ class ActionsGrapeFruit
 				<script type="text/javascript">
 					$(document).ready(function(){
 						$("#homepagemode").appendTo(".fichetwothirdright");
-						
+
 						<?php if ($mode == 'filtered') { ?>
-						
+
                         $("div.boxstatsindicator a, a.boxstatsindicator").attr('href',function(i, href) {
                         	if(href)
                         	{
@@ -735,24 +817,24 @@ class ActionsGrapeFruit
 								if (href.indexOf("comm/action/listactions.php") >= 0){
 									appendUrl = 'filtert=<?php echo $user->id; ?>';
 								}
-                                
+
 	        	                    	if (href.indexOf("?") >= 0){
 		                            		return href + '&' + appendUrl;
 		                            	}else{
 		                            		return href + '?' + appendUrl;
 		                            	}
 					}
-                        	}	
+                        	}
                         });
 
 						<?php  } ?>
 
-						
-						
+
+
 					});
-				
+
 				</script>
-				
+
 			<?php
 		}
 	}
@@ -774,7 +856,7 @@ class ActionsGrapeFruit
 		$object->fetchObjectLinked();
 
 		require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
-		
+
 		if ( (in_array('ordercard', $TContext) && !empty($conf->global->GRAPEFRUIT_CONFIRM_ON_CREATE_INVOICE_FROM_ORDER) && !empty($object->linkedObjects['facture']))
 			|| (in_array('ordersuppliercard', $TContext) && !empty($conf->global->GRAPEFRUIT_CONFIRM_ON_CREATE_INVOICE_FROM_SUPPLIER_ORDER) && !empty($object->linkedObjects['invoice_supplier']))
 		)
@@ -853,7 +935,7 @@ class ActionsGrapeFruit
 				TGrappeFruit::printJSFillQtyToRestock();
 			}
 		}
-		
+
 		return 0;
 	}
 
