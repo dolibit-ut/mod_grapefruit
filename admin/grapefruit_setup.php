@@ -585,6 +585,15 @@ echo ajax_constantonoff('GRAPEFRUIT_ORDER_EXPRESS_FROM_PROPAL');
 print '</form>';
 print '</td></tr>';
 
+$var=!$var;
+setup_print_rich_editor_input('GRAPEFRUIT_ORDER_DEFAULT_PUBLIC_NOTE', $bc[$var]);
+$var=!$var;
+setup_print_rich_editor_input('GRAPEFRUIT_ORDER_DEFAULT_PRIVATE_NOTE', $bc[$var]);
+$var=!$var;
+setup_print_on_off('GRAPEFRUIT_COPY_CLIENT_REF_FROM_PROPOSAL_TO_ORDER', false, '', 'GRAPEFRUIT_COPY_CLIENT_REF_FROM_PROPOSAL_TO_ORDER_desc');
+$var=!$var;
+setup_print_on_off('GRAPEFRUIT_COPY_DATE_FROM_PROPOSAL_TO_ORDER', false, '', 'GRAPEFRUIT_COPY_DATE_FROM_PROPOSAL_TO_ORDER_desc');
+
 print '<tr class="liste_titre">';
 print '<td>' . $langs->trans("Sending") . '</td>' . "\n";
 print '<td align="center" width="20">&nbsp;</td>';
@@ -998,14 +1007,6 @@ print $form->selectyesno('GRAPEFRUIT_FILTER_HOMEPAGE_BY_USER', $conf->global->GR
 print '<input type="submit" class="button" value="' . $langs->trans("Modify") . '">';
 print '</form>';
 print '</td></tr>';
-$var=!$var;
-setup_print_rich_editor_input('GRAPEFRUIT_ORDER_DEFAULT_PUBLIC_NOTE', $bc[$var]);
-$var=!$var;
-setup_print_rich_editor_input('GRAPEFRUIT_ORDER_DEFAULT_PRIVATE_NOTE', $bc[$var]);
-$var=!$var;
-setup_print_on_off('GRAPEFRUIT_COPY_CLIENT_REF_FROM_PROPOSAL_TO_ORDER', false, '', 'GRAPEFRUIT_COPY_CLIENT_REF_FROM_PROPOSAL_TO_ORDER_desc');
-$var=!$var;
-setup_print_on_off('GRAPEFRUIT_COPY_DATE_FROM_PROPOSAL_TO_ORDER', false, '', 'GRAPEFRUIT_COPY_DATE_FROM_PROPOSAL_TO_ORDER_desc');
 
 print '</table>';
 
