@@ -21,3 +21,8 @@ $PDOdb=new TPDOdb;
 $o=new TXXX($db);
 $o->init_db_by_vars($PDOdb);
 */
+global $db;
+$sql = "INSERT INTO `".MAIN_DB_PREFIX."c_actioncomm` (`id`, `code`, `type`, `libelle`, `module`, `active`, `todo`, `position`, `color`) VALUES ('104997', 'AC_STI_BILL', 'module', 'Relance Facture', 'grapefruit', '1', NULL, '101', NULL);";
+$res = $db->query($sql);
+
+//

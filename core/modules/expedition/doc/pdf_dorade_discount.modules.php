@@ -33,7 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 /**
  *	Classe permettant de generer les borderaux envoi au modele Dorade
  */
-class pdf_dorade extends ModelePdfExpedition
+class pdf_dorade_discount extends ModelePdfExpedition
 {
 	var $emetteur;	// Objet societe qui emet
 
@@ -50,8 +50,8 @@ class pdf_dorade extends ModelePdfExpedition
 		$langs->load('grapefruit@grapefruit');
 		
 		$this->db = $db;
-		$this->name = "dorade";
-		$this->description = $langs->trans("DocumentModelDorade");
+		$this->name = "dorade_discount";
+		$this->description = $langs->trans("DocumentModelDoradeDiscount");
 
 		$this->type = 'pdf';
 		$formatarray=pdf_getFormat();
@@ -71,9 +71,10 @@ class pdf_dorade extends ModelePdfExpedition
 
 		// Defini position des colonnes
 		$this->posxdesc=$this->marge_gauche+1;
-		$this->posxqtyordered=$this->page_largeur - $this->marge_droite - 110;
-		$this->posxqtytoship=$this->page_largeur - $this->marge_droite - 80;
-		$this->posxpuht=$this->page_largeur - $this->marge_droite - 50;
+		$this->posxqtyordered=$this->page_largeur - $this->marge_droite - 125;
+		$this->posxqtytoship=$this->page_largeur - $this->marge_droite - 95;
+		$this->posxpuht=$this->page_largeur - $this->marge_droite - 70;
+		$this->posxpuhtremise=$this->page_largeur - $this->marge_droite -50;
 		$this->posxtotalht=$this->page_largeur - $this->marge_droite - 25;
 	}
 
@@ -106,6 +107,7 @@ class pdf_dorade extends ModelePdfExpedition
 		$outputlangs->load("propal");
 		$outputlangs->load("deliveries");
         $outputlangs->load("sendings");
+		$outputlangs->load("grapefruit@grapefruit");
 
 		if ($conf->expedition->dir_output)
 		{
@@ -312,12 +314,15 @@ class pdf_dorade extends ModelePdfExpedition
 
 					$pdf->SetXY($this->posxqtyordered, $curY);
 					$pdf->MultiCell(($this->posxqtytoship - $this->posxqtyordered), 3, $object->lines[$i]->qty_asked,'','C');
-
 					$pdf->SetXY($this->posxqtytoship, $curY);
 					$pdf->MultiCell(($this->posxpuht - $this->posxqtytoship), 3, $object->lines[$i]->qty_shipped,'','C');
 
 					$pdf->SetXY($this->posxpuht, $curY);
-					$pdf->MultiCell(($this->posxtotalht - $this->posxpuht-1), 3, price($object->lines[$i]->subprice, 0, $outputlangs),'','R');
+					$pdf->MultiCell(($this->posxpuhtremise - $this->posxpuht), 3, price($object->lines[$i]->subprice, 0, $outputlangs),'','R');
+
+					$pdf->SetXY($this->posxpuhtremise, $curY);
+					$pdf->MultiCell(($this->posxtotalht - $this->posxpuhtremise-1), 3, price($object->lines[$i]->price, 0, $outputlangs),'','R');
+
 
 					$pdf->SetXY($this->posxtotalht, $curY);
 					$pdf->MultiCell(($this->page_largeur - $this->marge_droite - $this->posxtotalht), 3, price($object->lines[$i]->total_ht, 0, $outputlangs),'','R');
@@ -476,13 +481,19 @@ class pdf_dorade extends ModelePdfExpedition
 			$pdf->MultiCell(($this->posxpuht - $this->posxqtytoship), 2, $outputlangs->transnoentities("QtyToShip"),'','C');
 		}
 		
+		
 		$pdf->line($this->posxpuht-1, $tab_top, $this->posxpuht-1, $tab_top + $tab_height);
 		if (empty($hidetop))
 		{
 			$pdf->SetXY($this->posxpuht-1, $tab_top+1);
-			$pdf->MultiCell(($this->posxtotalht - $this->posxpuht), 2, $outputlangs->transnoentities("PriceUHT"),'','C');
+			$pdf->MultiCell(($this->posxpuhtremise - $this->posxpuht), 2, $outputlangs->transnoentities("PriceUHT"),'','C');
 		}
-		
+		$pdf->line($this->posxpuhtremise-1, $tab_top, $this->posxpuhtremise-1, $tab_top + $tab_height);
+		if (empty($hidetop))
+		{
+			$pdf->SetXY($this->posxpuhtremise, $tab_top+1);
+			$pdf->MultiCell(($this->posxtotalht - $this->posxpuhtremise), 2, $outputlangs->transnoentities("DiscountUHT"),'','C');
+		}
 		$pdf->line($this->posxtotalht-1, $tab_top, $this->posxtotalht-1, $tab_top + $tab_height);
 		if (empty($hidetop))
 		{
@@ -506,8 +517,6 @@ class pdf_dorade extends ModelePdfExpedition
 		global $conf,$langs,$mysoc;
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 		$langs->load("orders");
-
-		if(!isset($object->client) && isset($object->thirdparty)) $object->client = $object->thirdparty;
 
 		pdf_pagehead($pdf,$outputlangs,$this->page_hauteur);
 
@@ -598,12 +607,13 @@ class pdf_dorade extends ModelePdfExpedition
 		$pdf->SetTextColor(0,0,60);
 		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("DateDeliveryPlanned")." : ".dol_print_date($object->date_delivery,"daytext",false,$outputlangs,true), '', 'R');
 
-		if (! empty($object->client->code_client))
+		$code_client = (DOL_VERSION < 4) ? $object->client->code_client : $object->thirdparty->code_client;
+		if (! empty($code_client))
 		{
 			$posy+=4;
 			$pdf->SetXY($posx,$posy);
 			$pdf->SetTextColor(0,0,60);
-			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("CustomerCode")." : " . $outputlangs->transnoentities($object->client->code_client), '', 'R');
+			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("CustomerCode")." : " . $outputlangs->transnoentities($code_client), '', 'R');
 		}
 
 
@@ -652,7 +662,7 @@ class pdf_dorade extends ModelePdfExpedition
 		 		$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Name").": ".$outputlangs->convToOutputCharset($object->user->getFullName($outputlangs))."\n";
 		 	}
 
-		 	$carac_emetteur .= pdf_build_address($outputlangs, $this->emetteur, $object->client);
+		 	$carac_emetteur .= pdf_build_address($outputlangs, $this->emetteur, (DOL_VERSION < 4) ? $object->client : $object->thirdparty);
 
 			// Show sender
 			$posx=$this->marge_gauche;
@@ -696,12 +706,12 @@ class pdf_dorade extends ModelePdfExpedition
 			if ($usecontact && !empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)) {
 				$thirdparty = $object->contact;
 			} else {
-				$thirdparty = isset($object->client) ? $object->client : $object->thirdparty;
+			    $thirdparty = (DOL_VERSION < 4) ? $object->client : $object->thirdparty;
 			}
 
 			$carac_client_name= pdfBuildThirdpartyName($thirdparty, $outputlangs);
 
-			$carac_client=pdf_build_address($outputlangs,$this->emetteur,$object->client,(!empty($object->contact)?$object->contact:null),$usecontact,'targetwithdetails');
+			$carac_client=pdf_build_address($outputlangs,$this->emetteur,(DOL_VERSION < 4) ? $object->client : $object->thirdparty,(!empty($object->contact)?$object->contact:null),$usecontact,'targetwithdetails');
 
 			// Show recipient
 			$widthrecbox=100;
