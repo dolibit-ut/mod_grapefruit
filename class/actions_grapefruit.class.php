@@ -190,6 +190,7 @@ class ActionsGrapeFruit
 	function formObjectOptions($parameters, &$object, &$action, $hookmanager)
 	{
 		global $conf, $langs, $user;
+		$TContext = explode(':', $parameters['context']);
 		//var_dump($action, $parameters);exit;
 		//Context : frm creation propal
 		dol_include_once('/grapefruit/lib/grapefruit.lib.php');
@@ -200,7 +201,7 @@ class ActionsGrapeFruit
 		$form = new Form($db);
 
 		// Script pour gérer les champs obligatoires sur une fiche contact
-		if(in_array('contactcard',explode(':',$parameters['context'])) && !empty($conf->global->GRAPEFRUIT_CONTACT_FORCE_FIELDS) && ($action == 'edit' || $action == 'create')) {
+		if(in_array('contactcard',$TContext) && !empty($conf->global->GRAPEFRUIT_CONTACT_FORCE_FIELDS) && ($action == 'edit' || $action == 'create')) {
 			$TChamps = explode(',',$conf->global->GRAPEFRUIT_CONTACT_FORCE_FIELDS);
 			$first = true;
 			$match1 = '';
@@ -224,7 +225,7 @@ class ActionsGrapeFruit
 			<?php
 		}
 
-		if (in_array('propalcard',explode(':',$parameters['context'])))
+		if (in_array('propalcard',$TContext))
 		{
 			if($action === 'create') {
 
@@ -265,7 +266,7 @@ class ActionsGrapeFruit
 					addPuHtRemise(5,$object);
 			}
 		}
-		elseif (in_array('thirdpartycard',explode(':',$parameters['context'])))
+		elseif (in_array('thirdpartycard',$TContext))
 		{
 			if (!empty($conf->global->GRAPEFRUIT_DISABLE_PROSPECTCUSTOMER_CHOICE) && ($action == 'create' || $action == 'edit'))
 			{
@@ -280,7 +281,7 @@ class ActionsGrapeFruit
 
 		}
 
-		if (in_array('ordercard',explode(':',$parameters['context']))) {
+		if (in_array('ordercard',$TContext)) {
 			if(!empty($conf->global->GRAPEFRUIT_ALLOW_CREATE_BILL_EXPRESS)
 				&& $object->statut > Commande::STATUS_DRAFT
 				&& !$object->billed
@@ -320,7 +321,7 @@ class ActionsGrapeFruit
 		}
 
 
-        if (in_array('ordercard', $Tcontext)) {
+        if (in_array('ordercard', $TContext)) {
             if (GETPOST('action', 'alpha') == 'create') {
                 $variablesPHPToJs = array(
                     'useCKEditor' => !empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT)
@@ -428,7 +429,7 @@ class ActionsGrapeFruit
 				</script>
 				<?php
 		}*/
-		if (in_array('invoicecard',explode(':',$parameters['context'])))
+		if (in_array('invoicecard',$TContext))
 		{
 			if($conf->global->GRAPEFRUIT_BILL_ADD_DISCOUNT_COLUMN){
 
@@ -436,7 +437,7 @@ class ActionsGrapeFruit
 			}
 		}
 
-		if(in_array('invoicesuppliercard',explode(':',$parameters['context'])) && !empty($conf->global->GRAPEFRUIT_ALLOW_UPDATE_SUPPLIER_INVOICE_DATE) && empty($object->paye) && $action !== 'editdatef'
+		if(in_array('invoicesuppliercard',$TContext) && !empty($conf->global->GRAPEFRUIT_ALLOW_UPDATE_SUPPLIER_INVOICE_DATE) && empty($object->paye) && $action !== 'editdatef'
 			&& (empty($conf->exportcompta->enabled) || (!empty($conf->exportcompta->enabled) && empty($object->array_options['options_date_compta'])))) {
 
 			?>
@@ -462,8 +463,9 @@ class ActionsGrapeFruit
 	function createFrom($parameters, &$object, &$action, $hookmanager) {
 
 		global $conf,$user,$langs;
+        $TContext = explode(':', $parameters['context']);
 
-		if (in_array('invoicecard',explode(':',$parameters['context'])))
+		if (in_array('invoicecard',$TContext))
 		{
 			dol_include_once('/grapefruit/class/grapefruit.class.php');
 			$langs->load('grapefruit@grapefruit');
@@ -478,10 +480,9 @@ class ActionsGrapeFruit
 	function addMoreActionsButtons($parameters, &$object, &$action, $hookmanager)
 	{
 		global $conf,$user,$langs,$db,$mysoc;
+        $TContext = explode(':', $parameters['context']);
 
-		$context = explode(':', $parameters['context']);
-
-		if (in_array('suppliercard',explode(':',$parameters['context'])) && !empty($conf->global->GRAPEFRUIT_SUPPLIER_FORCE_BT_ORDER_TO_INVOICE))
+		if (in_array('suppliercard',$TContext) && !empty($conf->global->GRAPEFRUIT_SUPPLIER_FORCE_BT_ORDER_TO_INVOICE))
 		{
 			if ($user->rights->fournisseur->facture->creer)
 			{
@@ -501,7 +502,7 @@ class ActionsGrapeFruit
 		}
 
 
-		if (in_array('propalcard', $context) || in_array('ordercard', $context) || in_array('invoicecard', $context))
+		if (in_array('propalcard', $TContext) || in_array('ordercard', $context) || in_array('invoicecard', $context))
 		{
 			if (!empty($conf->global->GRAPEFRUIT_DEFAULT_TVA_ON_DOCUMENT_CLIENT_ENABLED) && $action != 'editline')
 			{
@@ -587,10 +588,10 @@ class ActionsGrapeFruit
 	function pdf_getLinkedObjects(&$parameters, &$object, &$action, $hookmanager) {
 
 		global $conf,$user,$langs,$db,$mysoc,$outputlangs;
+        $TContext = explode(':', $parameters['context']);
 
 
-
-		if (in_array( 'pdfgeneration', explode(':',$parameters['context']) ) && !empty($conf->global->GRAPEFRUIT_ADD_PROJECT_TO_PDF))
+		if (in_array( 'pdfgeneration', $TContext) && !empty($conf->global->GRAPEFRUIT_ADD_PROJECT_TO_PDF))
 		{
 			if (empty($object->project->ref)) $object->fetch_projet();
 
