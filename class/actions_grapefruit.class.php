@@ -324,7 +324,8 @@ class ActionsGrapeFruit
         if (in_array('ordercard', $TContext)) {
             if (GETPOST('action', 'alpha') == 'create') {
                 $variablesPHPToJs = array(
-                    'useCKEditor' => !empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT)
+                    'useCKEditor' => (!empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT)
+                                   && !empty($conf->fckeditor->enabled))
                 );
                 $origin = GETPOST('origin', 'alpha');
                 $originId = intval(GETPOST('originid', 'int'));
