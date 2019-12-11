@@ -503,7 +503,7 @@ class ActionsGrapeFruit
 		}
 
 
-		if (in_array('propalcard', $TContext) || in_array('ordercard', $context) || in_array('invoicecard', $context))
+		if (in_array('propalcard', $TContext) || in_array('ordercard', $TContext) || in_array('invoicecard', $TContext))
 		{
 			if (!empty($conf->global->GRAPEFRUIT_DEFAULT_TVA_ON_DOCUMENT_CLIENT_ENABLED) && $action != 'editline')
 			{
