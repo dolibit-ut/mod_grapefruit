@@ -471,7 +471,7 @@ class ActionsGrapeFruit
 
 		}
 
-		if (!empty($conf->global->GRAPEFRUIT_SITUATION_INVOICE_DEFAULT_PROGRESS) && in_array('invoicecard', $context) && $object->type == Facture::TYPE_SITUATION && $object->statut == Facture::STATUS_DRAFT)
+		if (!empty($conf->global->GRAPEFRUIT_SITUATION_INVOICE_DEFAULT_PROGRESS) && in_array('invoicecard', $TContext) && $object->type == Facture::TYPE_SITUATION && $object->statut == Facture::STATUS_DRAFT)
 		{
 			?>
 			<script type="text/javascript">
