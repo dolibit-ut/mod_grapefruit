@@ -69,7 +69,7 @@ function grapefruite_completesubstitutionarray(&$substitutionarray,$outputlangs,
 		$total_facture_impayee_only_pos = 0;
 
 		if (method_exists($object, 'fetch_thirdparty')) $object->fetch_thirdparty();
-		$societe = !empty($object->client) ? $object->client : $object->thirdparty;
+		$societe = is_object($object->client) ? $object->client : $object->thirdparty;
 		if (get_class($object) == 'Societe') $societe = &$object;
 
 		if (!empty($societe))

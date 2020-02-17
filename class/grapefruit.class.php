@@ -474,6 +474,12 @@ class TGrappeFruit
 					$t->date_c = dol_now();
 	
 					$res = $t->create($user);
+					
+					if(!empty($conf->global->GRAPEFRUIT_PROJECT_TYPE_FOR_TASK) && $conf->global->GRAPEFRUIT_PROJECT_TYPE_FOR_TASK > 0){
+					    $t->add_contact($user->id, $conf->global->GRAPEFRUIT_PROJECT_TYPE_FOR_TASK, 'internal');
+					}
+					
+					
 					if ($res < 0) {
 						setEventMessage($langs->trans('ImpossibleToAdd', $label));
 					}
@@ -593,49 +599,71 @@ class TGrappeFruit
 
 	}
 
-	/**
-	 * @param $object : object facture
-	 */
-	static function setOrderBilledIfSameMontant(&$object) {
+    /**
+     * Call this when a bill is validated:
+     * set the order the bill derives from as "billed" if the sum of the amounts of all related validated bills is equal
+     * to the amount on the order.
+     *
+     * For supplier bills/orders, it will also set the supplier order as "billed" if the amounts of the supplier
+     * invoices exceed the amount on the supplier order (the difference in behaviours exists because the supplier
+     * part was added later with a different client requirement).
+     *
+     * @param CommonInvoice $object     The (client or supplier) bill that has just been validated (which triggers this behaviour)
+     * @return int  0 if there is nothing to do, 1 if
+     */
+    static function setOrderBilledIfSameMontant(&$object) {
+        /**
+         * @var CommonObject $order
+         */
+        global $user, $langs;
 
-		global $user, $langs;
+        $langs->load('orders');
 
-		$langs->load('orders');
+        $isSupplierOrder = isset($object->table_element) && $object->table_element == 'facture_fourn';
+        // keys used in linkedObjects array
+        if ($isSupplierOrder) {
+            $order_type = 'order_supplier';
+            $bill_type = 'invoice_supplier';
+        } else {
+            $order_type = 'commande';
+            $bill_type = 'facture';
+        }
 
-		$order=array();
-		// Récupération de la commande d'origine
-		$object->fetchObjectLinked();
+        // Récupération de la commande d'origine
+        $object->fetchObjectLinked(null, $order_type, $object->id, $bill_type);
 
-		if (is_array($object->linkedObjects) && array_key_exists('commande', $object->linkedObjects) && count($object->linkedObjects['commande'])>0 ) {
-			$TOriginOrder = array_values($object->linkedObjects['commande']);
-			$order = $TOriginOrder[0];
-		}
-		if(empty($order)) return 0;
+        if (is_array($object->linkedObjects) && array_key_exists($order_type, $object->linkedObjects) && count($object->linkedObjects[$order_type]) > 0) {
+            $TOriginOrder = array_values($object->linkedObjects[$order_type]);
+            $order = $TOriginOrder[0];
+        }
+        if (empty($order)) return 0;
 
-		$TFact=array();
-		// On refait la fonction dans l'autre sens car la commande peut avoir été facturée en plusieurs fois
-		$order->fetchObjectLinked();
-		if (is_array($order->linkedObjects) && array_key_exists('facture', $order->linkedObjects) && count($order->linkedObjects['facture'])>0 ) {
-			$TFact = array_values($order->linkedObjects['facture']);
-		}
+        // Si la commande est déjà classée "facturée" (elle peut l’avoir été avant), il n’y a rien de plus à faire.
+        if (!empty($order->billed)) {
+            return 0;
+        }
 
-		$total_ttc = 0;
-		foreach($TFact as $f) {
-			if($f->statut > 0) $total_ttc+=$f->total_ttc;
-		}
-		if(empty($TFact)) return 0;
+        $TFact=array();
+        // On refait la fonction dans l'autre sens car la commande peut avoir été facturée en plusieurs fois
+        $order->fetchObjectLinked($order->id, $order_type, null, $bill_type);
+        if (is_array($object->linkedObjects) && array_key_exists($bill_type, $order->linkedObjects) && count($order->linkedObjects[$bill_type])>0 ) {
+            $TFact = array_values($order->linkedObjects[$bill_type]);
+        }
 
-		// On compare les montants
-		if($total_ttc == $order->total_ttc) {
-			// On classe facturée la commande uniquement si elle ne l'est pas déjà (peut avoir été fait avant)
-			if(empty($order->billed)) {
-				if((float)DOL_VERSION >= 4.0) $res_classifybill = $order->classifyBilled($user);
-				else $res_classifybill = $order->classifyBilled();
-				if($res_classifybill > 0) setEventMessage($langs->trans('grapefruit_order_status_set_to', $order->getNomUrl(), $langs->transnoentities('StatusOrderBilled')));
-			}
-		}
+        $total_ttc = 0;
+        foreach($TFact as $f) {
+            if($f->statut > 0) $total_ttc+=$f->total_ttc;
+        }
+        if(empty($TFact)) return 0;
+        // On compare les montants
+        if($total_ttc >= $order->total_ttc || ($isSupplierOrder && $total_ttc > $order->total_ttc)) {
+            if((float)DOL_VERSION >= 4.0) $res_classifybill = $order->classifyBilled($user);
+            else $res_classifybill = $order->classifyBilled();
+            if($res_classifybill > 0) setEventMessage($langs->trans('grapefruit_order_status_set_to', $order->getNomUrl(), $langs->transnoentities('StatusOrderBilled')));
+            return 1;
+        }
 
-	}
+    }
 
 	function orderSupplierOrder(&$object, $methode_id) {
 

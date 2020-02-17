@@ -11,7 +11,7 @@ set_GRAPEFRUIT_BUDGET_NEEDED=Rendre obligatoire la saisie d'un budget dans un pr
 BudgetRequire=Budget obligatoire
 ValuesUpdated=Valeurs mises à jour
 set_GRAPEFRUIT_PROPAL_DEFAULT_BANK_ACOUNT=Définir un compte bancaire par défaut lors de la création d'une propal (v. d'ajout 3.8)
-set_GRAPEFRUIT_LINK_PROPAL_2_PROJECT=Lier automatiquement une propale au projet du client si celui ci possède un projet ouvert (si plusieurs projets lie la propale au plus récent)
+set_GRAPEFRUIT_LINK_PROPAL_2_PROJECT=Lier automatiquement une propale au projet du client si celui ci possède un projet ouvert (si plusieurs projets, lie la propale au plus récent)
 set_GRAPEFRUIT_SUPPLIER_FORCE_BT_ORDER_TO_INVOICE=Forcer l'accès à la fonctionnalité "Facturer Commandes" sur statut 2,3,4 et 5 et non pas seulement sur 5 (remplacer <b>/fourn/commande/orderstoinvoice.php</b> - spécifique faire une recherche sur "GRAPEFRUIT" - v. d'ajout 3.8 )
 set_GRAPEFRUIT_SUPPLIER_CONTACT_SHIP_ADDRESS=Ajouter le contact livraison sur le PDF d'une Commande Fournisseur
 set_GRAPEFRUIT_ORDER_CONTACT_SHIP_ADDRESS=Ajouter le contact livraison sur le PDF d'une Commande Client
@@ -31,26 +31,41 @@ ModelRequire=Modèle de mail requis pour envoi automatique
 DefaultWarehouseRequired=Entrepôt requis pour la création de l'expédition
 set_GRAPEFRUIT_DATEEND_NEEDED=Date de fin de projet requise à la création
 set_GRAPEFRUIT_SHIPPING_CREATE_FROM_ORDER_WHERE_BILL_PAID_WAREHOUSE=Entrepôt pour la création de l'expédition
+set_GRAPEFRUIT_CREATE_DELIVERY_FROM_SHIPPING=Créer automatiquement le bon de livraison à la validation de l'expédition
 set_GRAPEFRUIT_SEND_BILL_BY_MAIL_ON_VALIDATE_MODEL=Modèle à utiliser
 set_GRAPEFRUIT_FORCE_VAR_HIDEREF_ON_SUPPLIER_ORDER=Forcer l'affichage de la référence produit sur le PDF d'une commande fournisseur même avec l'utilisation de MAIN_GENERATE_DOCUMENTS_HIDE_REF
 set_GRAPEFRUIT_DISABLE_PROSPECTCUSTOMER_CHOICE=Retirer la possibilité de définir une fiche tiers en tant que "Prospect / Client"
 set_GRAPEFRUIT_SEND_BILL_BY_MAIL_ON_VALIDATE_ORDER=Envoyer les information de commande dans l'email facture
 set_GRAPEFRUIT_CAN_ASSOCIATE_TASK_TO_ACTIONCOMM=Permettre d'associéer une tâche à un évènement agenda via "fullcalendar" (couplé à "related")
 set_GRAPEFRUIT_ADD_PROJECT_TO_PDF=Afficher le projet lié sur les documents PDF
+set_GRAPEFRUIT_CONCAT_PROJECT_DESC=---> Concaténer le libellé du projet après la référence sur les documents PDF
 set_GRAPEFRUIT_CONTACT_FORCE_FIELDS=Champs obligatoires supplémentaires sur une fiche contact (ex:firstname,town ...)
+
+GRAPEFRUIT_ORDER_DEFAULT_PUBLIC_NOTE=Note publique par défaut sur les commandes
+GRAPEFRUIT_ORDER_DEFAULT_PRIVATE_NOTE=Note privée par défaut sur les commandes
+desc_GRAPEFRUIT_ORDER_DEFAULT_PUBLIC_NOTE=La note sera pré-remplie au moment de la création, mais vous pourrez la modifier avant d’enregistrer.
+desc_GRAPEFRUIT_ORDER_DEFAULT_PRIVATE_NOTE=La note sera pré-remplie au moment de la création, mais vous pourrez la modifier avant d’enregistrer.
+
+GRAPEFRUIT_COPY_CLIENT_REF_FROM_PROPOSAL_TO_ORDER=Copier la référence client de la proposition sur la commande qui en est issue
+GRAPEFRUIT_COPY_CLIENT_REF_FROM_PROPOSAL_TO_ORDER_desc=Lors de la création d’une commande depuis une proposition commerciale, pré-remplir le champ "référence client" avec la référence client de la commande.
+GRAPEFRUIT_COPY_DATE_FROM_PROPOSAL_TO_ORDER=Copier la date de la proposition sur la commande qui en est issue
+GRAPEFRUIT_COPY_DATE_FROM_PROPOSAL_TO_ORDER_desc=Lors de la création d’une commande depuis une proposition commerciale, pré-remplir le champ "date" avec la date de la commande.
+
 set_MAIN_ADD_EVENT_ON_ELEMENT_CARD=Permettre l'ajout d'événements à partir de propale, commande,...
 set_GRAPEFRUIT_DISALLOW_SAME_REF_MULTICOMPANY=Empêcher un projet d'avoir la même référence à travers les entités
 DuplicateProjectRef=Référence de projet déjà utilisée
 ProjectDate=Date projet
-set_GRAPEFRUIT_SUPPLIER_ORDER_CLASSIFY_RECEIPT_ORDER=Calcul le status de la commande fournisseur sur ventilation manuel
-set_GRAPEFRUIT_INVOICE_CLASSIFY_BILLED_PROPAL=Classer facturé une proposition commerciale si la facture associées est validé
+set_GRAPEFRUIT_SUPPLIER_ORDER_CLASSIFY_RECEIPT_ORDER=Calcule le statut de la commande fournisseur sur ventilation manuelle
+set_GRAPEFRUIT_INVOICE_CLASSIFY_BILLED_PROPAL=Classer facturée une proposition commerciale si la facture associée est validée
 set_GRAPEFRUIT_PROJECT_AUTO_WIN=Passer automatiquement un projet/opportunité au satut gagné lors de l'affectation à un devis ou une commande
 set_GRAPEFRUIT_SET_ORDER_SHIPPED_IF_ALL_PRODUCT_SHIPPED=Classer la commande d'origine au statut "livrée" sur la validation d'une expédition si tous les produits ont été envoyés
 set_GRAPEFRUIT_AUTO_ORDER_ON_SUPPLIERORDER_VALIDATION_WITH_METHOD=Passer automatiquement la commande chez le fournisseur lors de sa validation/approbation de la méthode suivante
 set_GRAPEFRUIT_ALLOW_CREATE_ORDER_AND_BILL_ON_UNSIGNED_PROPAL=Autoriser la création d'une commande ou facture sur un devis au statut "validé" (ce dernier sera classé "signé" automatiquement lors de la validation de la commande de destination)
 set_GRAPEFRUIT_ALLOW_CREATE_BILL_EXPRESS=Autoriser la création express d'une facture depuis la fiche commande (création, validation de la facture, accès direct à l'écran de paiement et classement de la commande au statut "facturée")
-set_GRAPEFRUIT_SET_ORDER_BILLED_IF_SAME_MONTANT=Classer la commande d'origine au statut "Facturée" si son montant est égal à la somme des montants des factures associées (action faite sur validation de facture)
-set_GRAPEFRUIT_SET_RIGHT_ORDER_STATUS_ON_SHIPPING_DELETE=Remettre à jour le statut de la commande d'origine lors de la suppression d'une expédition (en cours si au moins une autre expédition existe, et validée si plus aucune autre expédition) 
+set_GRAPEFRUIT_SET_ORDER_BILLED_IF_SAME_MONTANT=Classer la commande d'origine au statut "Facturée" si son montant est égal ou inférieur à la somme des montants des factures associées (action faite sur validation de facture)
+set_GRAPEFRUIT_SET_LINKED_ORDERS_NOT_BILLED_ON_SUPPLIER_BILL_DELETE=Lors de la suppression d’une facture fournisseur, classer les commandes fournisseur liées comme “non facturées”.
+set_GRAPEFRUIT_SET_SUPPLIER_ORDER_BILLED_IF_SAME_MONTANT=Lorsque le total des factures fournisseur associées à une commande fournisseur atteint ou dépasse le montant de cette dernière, la classer « facturée » (action déclenchée à la validation des factures fournisseur).
+set_GRAPEFRUIT_SET_RIGHT_ORDER_STATUS_ON_SHIPPING_DELETE=Remettre à jour le statut de la commande d'origine lors de la suppression d'une expédition (en cours si au moins une autre expédition existe, et validée si plus aucune autre expédition)
 set_GRAPEFRUIT_ORDER_ADD_DISCOUNT_COLUMN=Ajouter la colonne prix unitaire remisé sur la fiche
 set_GRAPEFRUIT_ORDER_EXPRESS_FROM_PROPAL=Création expresse d’une commande client depuis un devis (le clic sur le bouton "Créer commande" depuis le devis ne passera pas par le formulaire de création)
 set_GRAPEFRUIT_PROPAL_ADD_DISCOUNT_COLUMN=Ajouter la colonne prix unitaire remisé sur la fiche
@@ -63,6 +78,9 @@ set_GRAPEFRUIT_BILL_COPY_LINKS_ON_CLONE=Copier les liens de la facture au clone 
 set_GRAPEFRUIT_DEFAULT_TVA_ON_DOCUMENT_CLIENT_ENABLED=Ajouter un champ sur proposition commmerciale, commande et facture client pour mettre à jour rapidement la TVA des lignes
 set_GRAPEFRUIT_REMINDER_BILL_DELAY= Délai après date de limite de reglement pour créer un evenement facture de relance sur l'agenda (en jours)
 set_GRAPEFRUIT_EVENT_DESCRIPTION= Description de l'évènement de relance créé
+GRAPEFRUIT_PROJECT_TYPE_FOR_TASK=Type de contact utilisé pour associer l'utilisateur à la tache (lors de la création d'un projet) .
+
+
 # Models
 DocumentModelDorade=Modèle d'expédition chiffré
 DocumentModelDoradeDiscount=Modèle d'expédition chiffré avec prix unitaire remisé
@@ -103,8 +121,8 @@ set_GRAPEFRUIT_COPY_CAT_ON_CLONE=Copier les catégories au clone
 SupplierProposal=Proposition fournisseur/Demande de prix
 set_GRAPEFRUIT_SUPPLIER_PROPAL_CREATE_PRICE_ON_ACCEP=Créer le prix fournisseur sur l'acceptation de la proposition
 
-set_GRAPEFRUIT_VALIDATE_SUPPLIERINVOICE_ON_RECEIPT_SUPPLIERORDER = Valider la facture fournisseur (si elle existe) sur la reception compléte d'une commande fournisseur
-set_GRAPEFRUIT_ALLOW_UPDATE_SUPPLIER_INVOICE_DATE=Autoriser la modification de la date d'une facture fournisseur tant que cette dernière n'est pas classée payée ou comptabilisée par le module export comptable 
+set_GRAPEFRUIT_VALIDATE_SUPPLIERINVOICE_ON_RECEIPT_SUPPLIERORDER = Valider la facture fournisseur (si elle existe) sur la reception complète d'une commande fournisseur
+set_GRAPEFRUIT_ALLOW_UPDATE_SUPPLIER_INVOICE_DATE=Autoriser la modification de la date d'une facture fournisseur tant que cette dernière n'est pas classée payée ou comptabilisée par le module export comptable
 set_GRAPEFRUIT_FILTER_HOMEPAGE_BY_USER= Permettre le filtrage du tableau de bord (sur la page d'accueil) pour l'utilisateur connecté
 WorkingBoardFilterByUser = Tableau de bord filtré pour mon utilisateur
 WorkingBoardNotFiltered = Tableau de bord non filtré
@@ -112,3 +130,6 @@ NbRestockedElements=%s élément(s) restocké(s)
 QtyToRestockForProduct=Qté à restocker pour %s (%s éléments dans la ligne)
 set_GRAPEFRUIT_SUPPLIER_PROPAL_ADDLINE_ZERO=Ajouter les lignes avec un prix à zéro
 GRAPEFRUIT_SUPPLIER_ORDER_COPY_LINK_FROM_ORIGIN=Copier les liens de la proposition fournisseur d'origine
+GRAPEFRUIT_CREATE_SUPPLIER_PRICES_ON_SUPPLIER_ORDER_VALIDATION=Créer les prix fournisseur lors de la validation d'une commande fournisseur
+GRAPEFRUIT_CREATE_SUPPLIER_PRICES_ON_SUPPLIER_ORDER_VALIDATION_tooltip=Les références fournisseurs seront générées avec ce masque "AUTOREF_{0000}"
+

@@ -471,6 +471,19 @@ class InterfaceGrapeFruittrigger
         } elseif ($action === 'SHIPPING_VALIDATE') {
 
 			if(!empty($conf->global->GRAPEFRUIT_SET_ORDER_SHIPPED_IF_ALL_PRODUCT_SHIPPED)) TGrappeFruit::setOrderShippedIfAllProductShipped($object);
+			
+			if(! empty($conf->expedition->enabled) && !empty($conf->global->MAIN_SUBMODULE_LIVRAISON) && ! empty($conf->global->GRAPEFRUIT_CREATE_DELIVERY_FROM_SHIPPING))
+			{
+			    
+			    include_once DOL_DOCUMENT_ROOT.'/livraison/class/livraison.class.php';
+			    $delivery = new Livraison($this->db);
+			    $result=$delivery->create_from_sending($user, $object->id);
+			    if ($result < 0)
+			    {
+			        setEventMessages($delivery->error, $delivery->errors, 'errors');
+			    }
+			    
+			}
 
 		} elseif ($action === 'SHIPPING_DELETE') {
 
@@ -480,7 +493,31 @@ class InterfaceGrapeFruittrigger
 
 			if($conf->global->GRAPEFRUIT_AUTO_ORDER_ON_SUPPLIERORDER_VALIDATION_WITH_METHOD > 0) TGrappeFruit::orderSupplierOrder($object, $conf->global->GRAPEFRUIT_AUTO_ORDER_ON_SUPPLIERORDER_VALIDATION_WITH_METHOD);
 
+			if(! empty($conf->global->GRAPEFRUIT_CREATE_SUPPLIER_PRICES_ON_SUPPLIER_ORDER_VALIDATION)) {
+			    foreach($object->lines as $l) {
+                    $product_fourn = new ProductFournisseur($this->db);
+                    $product_fourn->fetch($l->fk_product);
+
+                    $product_fourn->add_fournisseur($user, $object->socid, (! empty($l->ref_supplier) ? $l->ref_supplier : ''), $l->qty);
+
+                    $ref_fourn = 'AUTOREF_'.$product_fourn->product_fourn_price_id;
+                    if(! empty($l->ref_supplier)) $ref_fourn = $l->ref_supplier;
+
+                    $product_fourn->update_buyprice($l->qty, $l->total_ht, $user, 'HT', $object->thirdparty, 'NULL', $ref_fourn, $l->tva_tx);
+
+                    // We update ref_supplier of line to show it
+                    $l->ref_supplier = $ref_fourn;
+                    $l->update();
+                }
+            }
+
 		}
+		elseif ($action == 'BILL_SUPPLIER_VALIDATE')
+        {
+            if(!empty($conf->global->GRAPEFRUIT_SET_SUPPLIER_ORDER_BILLED_IF_SAME_MONTANT)) {
+                TGrappeFruit::setOrderBilledIfSameMontant($object);
+            }
+        }
 		elseif ($action === 'PRODUCT_CREATE') {
 
 			if(!empty($conf->global->GRAPEFRUIT_COPY_CAT_ON_CLONE)) {
@@ -1059,6 +1096,28 @@ class InterfaceGrapeFruittrigger
 		 );
 		 }
 		 */
+
+		// Supplier Bill
+		elseif ($action === 'BILL_SUPPLIER_DELETE') {
+			/**
+			 * @var $object FactureFournisseur
+			 */
+			$object = $object;
+			if ($conf->global->GRAPEFRUIT_SET_LINKED_ORDERS_NOT_BILLED_ON_SUPPLIER_BILL_DELETE && $object->fetchObjectLinked()){
+				$order_ids = $object->linkedObjectsIds['order_supplier'];
+				if (empty($order_ids)) return 0;
+				$sql = 'UPDATE ' . MAIN_DB_PREFIX . 'commande_fournisseur SET billed = 0 '.
+					'WHERE rowid IN ('. join(',', $order_ids) .');';
+				$resql = $db->query($sql);
+				if (!$resql) {
+					setEventMessage(
+						'Unable to unset the billed status of supplier orders linked to the deleted supplier bill.',
+						'errors'
+					);
+					dol_print_error($db);
+				}
+			}
+		}
 		return 0;
 	}
 }
