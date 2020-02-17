@@ -657,7 +657,7 @@ class TGrappeFruit
         }
         if(empty($TFact)) return 0;
         // On compare les montants
-        if($total_ttc == $order->total_ttc || ($isSupplierOrder && $total_ttc > $order->total_ttc)) {
+        if($total_ttc >= $order->total_ttc || ($isSupplierOrder && $total_ttc > $order->total_ttc)) {
             if((float)DOL_VERSION >= 4.0) $res_classifybill = $order->classifyBilled($user);
             else $res_classifybill = $order->classifyBilled();
             if($res_classifybill > 0) setEventMessage($langs->trans('grapefruit_order_status_set_to', $order->getNomUrl(), $langs->transnoentities('StatusOrderBilled')));
