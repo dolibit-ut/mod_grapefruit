@@ -454,9 +454,8 @@ class TGrappeFruit
 
 				$label = trim($label);
 				if(!empty($label)) { // pour ne pas prendre le cas du retour à la ligne vide
-				
 					$t = new Task($db);
-
+	
 					$defaultref = '';
 					$obj = empty($conf->global->PROJECT_TASK_ADDON) ? 'mod_task_simple' : $conf->global->PROJECT_TASK_ADDON;
 					if (! empty($conf->global->PROJECT_TASK_ADDON) && is_readable(DOL_DOCUMENT_ROOT . "/core/modules/project/task/" . $conf->global->PROJECT_TASK_ADDON . ".php")) {
@@ -464,16 +463,16 @@ class TGrappeFruit
 						$modTask = new $obj();
 						$defaultref = $modTask->getNextValue($soc, $object);
 					}
-
+	
 					if (is_numeric($defaultref) && $defaultref <= 0)
 						$defaultref = '';
-
+	
 					$t->ref = $defaultref;
 					$t->label = $label;
 					$t->fk_project = $object->id;
 					$t->fk_task_parent = 0;
 					$t->date_c = dol_now();
-
+	
 					$res = $t->create($user);
 					
 					if(!empty($conf->global->GRAPEFRUIT_PROJECT_TYPE_FOR_TASK) && $conf->global->GRAPEFRUIT_PROJECT_TYPE_FOR_TASK > 0){

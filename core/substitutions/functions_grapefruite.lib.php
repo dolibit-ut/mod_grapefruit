@@ -70,6 +70,7 @@ function grapefruite_completesubstitutionarray(&$substitutionarray,$outputlangs,
 
 		if (method_exists($object, 'fetch_thirdparty')) $object->fetch_thirdparty();
 		$societe = is_object($object->client) ? $object->client : $object->thirdparty;
+		if (get_class($object) == 'Societe') $societe = &$object;
 
 		if (!empty($societe))
 		{

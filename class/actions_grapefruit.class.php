@@ -66,7 +66,7 @@ class ActionsGrapeFruit
 		dol_include_once('/grapefruit/class/grapefruit.class.php');
 		require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
 		require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
-		
+
 		$TContext = explode(':', $parameters['context']);
 
 		$actionATM = GETPOST('actionATM');
@@ -132,7 +132,7 @@ class ActionsGrapeFruit
 				$propal = new Propal($db);
 				if ($propal->fetch(GETPOST('originid')) > 0)
 				{
-					if ($object->createFromProposal($propal) > 0)
+					if ($object->createFromProposal($propal,$user) > 0)
 					{
 						header('Location: '.dol_buildpath('/commande/card.php', 1).'?id='.$object->id);
 						exit;
@@ -363,7 +363,7 @@ class ActionsGrapeFruit
                     <script>
                         $(function() {
                             let variablesFromPHP = ' . json_encode($variablesPHPToJs) . ';
-                            
+
                             if (variablesFromPHP.dateTimestamp) {
                                 let dateInput = document.querySelector(\'input[name="re"]\');
                                 let date = new Date(variablesFromPHP.dateTimestamp);
@@ -373,12 +373,12 @@ class ActionsGrapeFruit
                                 let dateString = "" + dayOfMonth + "/" + month + "/" +  year;
                                 $(dateInput).datepicker("setDate", dateString).change();
                             }
-                            
+
                             if (variablesFromPHP.refClient) {
                                 let refCliInput = document.querySelector(\'input[name="ref_client"]\');
                                 refCliInput.value = variablesFromPHP.refClient;
                             }
-                            
+
                             // setTimeout(…, 0) needed to ensure CKEditor instances are already initialized
                             setTimeout(function(){
                                 if (variablesFromPHP.useCKEditor) {
@@ -554,7 +554,7 @@ class ActionsGrapeFruit
 
 		}
 
-		if (!empty($conf->global->GRAPEFRUIT_SITUATION_INVOICE_DEFAULT_PROGRESS) && in_array('invoicecard', $context) && $object->type == Facture::TYPE_SITUATION && $object->statut == Facture::STATUS_DRAFT)
+		if (!empty($conf->global->GRAPEFRUIT_SITUATION_INVOICE_DEFAULT_PROGRESS) && in_array('invoicecard', $TContext) && $object->type == Facture::TYPE_SITUATION && $object->statut == Facture::STATUS_DRAFT)
 		{
 			?>
 			<script type="text/javascript">
