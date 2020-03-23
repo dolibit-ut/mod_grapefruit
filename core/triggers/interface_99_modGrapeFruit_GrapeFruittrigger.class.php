@@ -110,25 +110,25 @@ class InterfaceGrapeFruittrigger
 		$db = &$this->db;
 		dol_include_once('/grapefruit/class/grapefruit.class.php');
 		$langs->load('grapefruit@grapefruit');
-		
+
 		if($action==='ORDER_SUPPLIER_CREATE') {
-		
+
 		    if(!empty($conf->global->GRAPEFRUIT_SUPPLIER_ORDER_COPY_LINK_FROM_ORIGIN) && $object->origin=='supplier_proposal' && $object->origin_id>0) {
-		        
+
 		        dol_include_once('/supplier_proposal/class/supplier_proposal.class.php');
-		        
+
 		        $sp = new SupplierProposal($object->db);
 		        $sp->fetch($object->origin_id);
 		        $sp->fetchObjectLinked();
-		        
+
 		        foreach($sp->linkedObjectsIds as $type=>$objs) {
 		            foreach($objs as $fk_object) {
 		                if($type!='supplier_order' && $fk_object!=$object->id)   $object->add_object_linked($type, $fk_object);
 		            }
 		        }
-		        
+
 		    }
-		    
+
 		}
 		else if ($action == 'ACTION_CREATE') {
 			dol_syslog("Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id);
@@ -237,8 +237,9 @@ class InterfaceGrapeFruittrigger
 				}
 			}
 
-			//Création de l'évènement de la facture de relance
-			if(!empty($object->array_options['options_grapefruitReminderBill']) ){//verification facture de relance
+			//Création de l'évènement de la facture de relance => verification facture de relance
+			if( is_array($object->array_options) && array_key_exists('options_grapefruitReminderBill', $object->array_options)
+				&& !empty($object->array_options['options_grapefruitReminderBill']) ){
 				if((!empty($conf->global->GRAPEFRUIT_REMINDER_BILL_DELAY) )){
 					require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 					$actioncomm = new ActionComm($db);//evenement agenda
@@ -331,7 +332,7 @@ class InterfaceGrapeFruittrigger
 				$fk_entrepot = GETPOST('fk_entrepot');
 				if(!empty($fk_entrepot)) {
 					$nb_restock=0;
-					
+
 					foreach($_REQUEST as $k=>$qty) {
 						if(strpos($k, 'restock_line_') !== false && (float)$qty> 0) {
 							$id_line = strtr($k, array('restock_line_'=>''));
@@ -340,7 +341,7 @@ class InterfaceGrapeFruittrigger
 							$fk_product = $line->fk_product;
 							$prod = new Product($db);
 							$prod->fetch($fk_product);
-							
+
 							// Restock entièrement créé à la main car la fonction correct_stock ne permet pas d'ajouter un avoir comme élément d'origine
 							$prod->origin = $object;
 							$prod->origin->id = $object->id;
@@ -348,21 +349,21 @@ class InterfaceGrapeFruittrigger
 							$movementstock->origin = $object;
 							$movementstock->origin->id = $object->id;
 							$result=$movementstock->_create($user,$prod->id,$fk_entrepot,'+'.$qty,0,$line->pa_ht,$langs->trans('Restockage via avoir'),'');
-							
+
 							if(!empty($result)) $nb_restock+=$qty;
-									
+
 						}
 					}
-					
+
 					// Nécessité de faire un commit() car on coupe la fonction validate() avec le header en dessous
 					$db->commit();
-					
+
 					setEventMessage($langs->trans('NbRestockedElements', $nb_restock));
 					header('Location: '.$_SERVER['PHP_SELF'].'?facid='.$object->id); // Pour éviter un autre stockage si F5 (paramètres passés en GET)
 					exit;
 				}
 			}
-			
+
 		} elseif ($action === 'PROJECT_CREATE') {
 			if (! TGrappeFruit::checkNoDuplicateRef($object))
 				return - 1;
@@ -471,10 +472,10 @@ class InterfaceGrapeFruittrigger
         } elseif ($action === 'SHIPPING_VALIDATE') {
 
 			if(!empty($conf->global->GRAPEFRUIT_SET_ORDER_SHIPPED_IF_ALL_PRODUCT_SHIPPED)) TGrappeFruit::setOrderShippedIfAllProductShipped($object);
-			
+
 			if(! empty($conf->expedition->enabled) && !empty($conf->global->MAIN_SUBMODULE_LIVRAISON) && ! empty($conf->global->GRAPEFRUIT_CREATE_DELIVERY_FROM_SHIPPING))
 			{
-			    
+
 			    include_once DOL_DOCUMENT_ROOT.'/livraison/class/livraison.class.php';
 			    $delivery = new Livraison($this->db);
 			    $result=$delivery->create_from_sending($user, $object->id);
@@ -482,7 +483,7 @@ class InterfaceGrapeFruittrigger
 			    {
 			        setEventMessages($delivery->error, $delivery->errors, 'errors');
 			    }
-			    
+
 			}
 
 		} elseif ($action === 'SHIPPING_DELETE') {
