@@ -72,7 +72,7 @@ function grapefruite_completesubstitutionarray(&$substitutionarray,$outputlangs,
 		$societe = is_object($object->client) ? $object->client : $object->thirdparty;
 		if (get_class($object) == 'Societe') $societe = &$object;
 
-		if (!empty($societe))
+		if (!empty($societe) && get_class($societe) == 'Societe')
 		{
 			if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {	// Never use this
 				$filterabsolutediscount = "fk_facture_source IS NULL"; // If we want deposit to be substracted to payments only and not to total of final invoice
