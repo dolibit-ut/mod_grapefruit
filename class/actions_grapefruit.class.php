@@ -854,7 +854,7 @@ class ActionsGrapeFruit
 		global $conf,$langs;
 
 		$TContext = explode(':', $parameters['context']);
-		$object->fetchObjectLinked();
+		if($action != 'create') $object->fetchObjectLinked();
 
 		require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
 
