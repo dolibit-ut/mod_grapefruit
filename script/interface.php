@@ -6,15 +6,15 @@
 	$langs->load("agenda");
 	$langs->load("other");
 
-	$get=GETPOST('get');
-	$set=GETPOST('set');
+	$get=GETPOST('get','alphanohtml');
+	$set=GETPOST('set','alphanohtml');
 
 
 
 
 	switch ($get) {
 		case 'fullcalandar_tasks':
-			$projectid = GETPOST('projectid');
+			$projectid = GETPOST('projectid','int');
 			return grapefruitGetTasksForProject('fk_task', -1, 0, $projectid);
 			
 			break;
@@ -26,13 +26,13 @@
 	switch ($set) {
 		case 'defaultTVA':
 			
-			_updateTVA(GETPOST('element'), GETPOST('element_id'), GETPOST('default_tva'));
+			_updateTVA(GETPOST('element','alphanohtml'), GETPOST('element_id', 'int'), GETPOST('default_tva','alphanohtml'));
 			
 			break;
 		
 		case 'defaultProgress':
 			
-			_updateProgress(GETPOST('element_id'), GETPOST('default_progress'));
+			_updateProgress(GETPOST('element_id','int'), GETPOST('default_progress','alphanohtml'));
 			
 			break;
 		default:

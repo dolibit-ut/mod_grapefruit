@@ -47,18 +47,18 @@ $langs->load('companies');
 if (! $user->rights->fournisseur->facture->creer)
 	accessforbidden();
 
-$id = (GETPOST('id') ? GETPOST('id', 'int') : GETPOST("facid")); // For backward compatibility
+$id = (GETPOST('id','int') ? GETPOST('id', 'int') : GETPOST("facid")); // For backward compatibility
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
-$sref = GETPOST('sref');
-$sref_client = GETPOST('sref_client');
-$sall = GETPOST('sall');
+$sref = GETPOST('sref','alphanohtml');
+$sref_client = GETPOST('sref_client','alphanohtml');
+$sall = GETPOST('sall','alphanohtml');
 $socid = GETPOST('socid', 'int');
-$selected = GETPOST('orders_to_invoice');
+$selected = GETPOST('orders_to_invoice','alphanohtml');
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
-$viewstatut = GETPOST('viewstatut');
+$viewstatut = GETPOST('viewstatut','alphanohtml');
 
 if (! $sortfield)
 	$sortfield = 'c.rowid';
@@ -77,8 +77,8 @@ if ($action == 'create') {
 				'<div class="error">' . $langs->trans('Error_OrderNotChecked') . '</div>'
 		);
 	} else {
-		$origin = GETPOST('origin');
-		$originid = GETPOST('originid');
+		$origin = GETPOST('origin','alphanohtml');
+		$originid = GETPOST('originid','int');
 	}
 }
 
@@ -120,11 +120,11 @@ if (($action == 'create' || $action == 'add') && empty($mesgs)) {
 	$projectid = GETPOST('projectid', 'int') ? GETPOST('projectid', 'int') : 0;
 	$lineid = GETPOST('lineid', 'int');
 	$userid = GETPOST('userid', 'int');
-	$search_ref = GETPOST('sf_ref') ? GETPOST('sf_ref') : GETPOST('search_ref');
+	$search_ref = GETPOST('sf_ref','alphanohtml') ? GETPOST('sf_ref','alphanohtml') : GETPOST('search_ref','alphanohtml');
 
 	// Security check
-	if ($user->societe_id)
-		$socid = $user->societe_id;
+	if ($user->socid)
+		$socid = $user->socid;
 	$result = restrictedArea($user, 'fournisseur', $id, 'facture_fourn', 'facture');
 
 	$usehm = $conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE;
@@ -132,7 +132,7 @@ if (($action == 'create' || $action == 'add') && empty($mesgs)) {
 
 	// Insert new invoice in database
 	if ($action == 'add' && $user->rights->fournisseur->facture->creer) {
-		$object->socid = GETPOST('socid');
+		$object->socid = GETPOST('socid','int');
 		$db->begin();
 		$error = 0;
 
@@ -148,11 +148,11 @@ if (($action == 'create' || $action == 'add') && empty($mesgs)) {
 			$object->libelle = $_POST['libelle'];
 			$object->date = $datefacture;
 			$object->date_echeance = $datedue;
-			$object->note_public = GETPOST('note_public');
-			$object->note_private = GETPOST('note_private');
-			$object->cond_reglement_id = GETPOST('cond_reglement_id');
-			$object->mode_reglement_id = GETPOST('mode_reglement_id');
-			$projectid = GETPOST('projectid');
+			$object->note_public = GETPOST('note_public','none');
+			$object->note_private = GETPOST('note_private','none');
+			$object->cond_reglement_id = GETPOST('cond_reglement_id', 'int');
+			$object->mode_reglement_id = GETPOST('mode_reglement_id', 'int');
+			$projectid = GETPOST('projectid', 'int');
 			if ($projectid > 0)
 				$object->fk_project = $projectid;
 
@@ -274,14 +274,14 @@ if ($action == 'create' && !$error) {
 	$dateinvoice = empty($conf->global->MAIN_AUTOFILL_DATE) ? - 1 : '';
 
 	print '<form name="add" action="' . $_SERVER["PHP_SELF"] . '" method="POST">';
-	print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
+	print '<input type="hidden" name="token" value="' . newToken() . '">';
 	print '<input type="hidden" name="action" value="add">';
 	print '<input type="hidden" name="socid" value="' . $soc->id . '">' . "\n";
 	print '<input name="facnumber" type="hidden" value="provisoire">';
 	print '<input name="ref_client" type="hidden" value="' . $ref_client . '">';
 	print '<input name="ref_int" type="hidden" value="' . $ref_int . '">';
-	print '<input type="hidden" name="origin" value="' . GETPOST('origin') . '">';
-	print '<input type="hidden" name="originid" value="' . GETPOST('originid') . '">';
+	print '<input type="hidden" name="origin" value="' . GETPOST('origin','alphanohtml') . '">';
+	print '<input type="hidden" name="originid" value="' . GETPOST('originid', 'int') . '">';
 	print '<table class="border" width="100%">';
 
 	// Ref
@@ -354,7 +354,7 @@ if ($action == 'create' && !$error) {
 
 	print '</textarea></td></tr>';
 	// Private note
-	if (empty($user->societe_id)) {
+	if (empty($user->socid)) {
 		print '<tr>';
 		print '<td class="border" valign="top">' . $langs->trans('NotePrivate') . '</td>';
 		print '<td valign="top" colspan="2">';
