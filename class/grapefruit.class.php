@@ -1032,7 +1032,7 @@ class TGrappeFruit
 			if(empty($line->product_type) && !empty($line->fk_product)) {
 				$prod = new Product($db);
 				$prod->fetch($line->fk_product);
-				$tab[] = array('type'=>'text', 'name'=>'restock_line_'.$line->id, 'label'=>$langs->trans('QtyToRestockForProduct', $prod->getNomUrl(1), $line->qty), 'value'=>0, 'size'=>'2');
+				$tab[] = array('type'=>'text', 'name'=>'restock_line_'.$line->id, 'label'=>$langs->transnoentities('QtyToRestockForProduct', $prod->getNomUrl(1), $line->qty), 'value'=>0, 'size'=>'2');
 				$tab[] = array('type'=>'hidden', 'name'=>'qty_line_'.$line->id, 'value'=>$line->qty);
 			}
 		}
