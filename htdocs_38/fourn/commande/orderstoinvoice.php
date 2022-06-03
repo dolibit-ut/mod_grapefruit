@@ -274,7 +274,7 @@ if ($action == 'create' && !$error) {
 	$dateinvoice = empty($conf->global->MAIN_AUTOFILL_DATE) ? - 1 : '';
 
 	print '<form name="add" action="' . $_SERVER["PHP_SELF"] . '" method="POST">';
-	print '<input type="hidden" name="token" value="' . newToken() . '">';
+	print '<input type="hidden" name="token" value="' . $newToken . '">';
 	print '<input type="hidden" name="action" value="add">';
 	print '<input type="hidden" name="socid" value="' . $soc->id . '">' . "\n";
 	print '<input name="facnumber" type="hidden" value="provisoire">';
@@ -354,7 +354,7 @@ if ($action == 'create' && !$error) {
 
 	print '</textarea></td></tr>';
 	// Private note
-	if (empty($user->socid)) {
+	if (empty($user->societe_id)) {
 		print '<tr>';
 		print '<td class="border" valign="top">' . $langs->trans('NotePrivate') . '</td>';
 		print '<td valign="top" colspan="2">';
