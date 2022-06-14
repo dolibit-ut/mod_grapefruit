@@ -101,9 +101,9 @@ if (preg_match('/del_(.*)/', $action, $reg)) {
  */
 $page_name = "GrapeFruitSetup";
 llxHeader('', $langs->trans($page_name));
-
+$newToken = function_exists('newToken') ? newToken() : $_SESSION['newtoken'];
 // Subheader
-$linkback = '<a href="' . DOL_URL_ROOT . '/admin/modules.php">' . $langs->trans("BackToModuleList") . '</a>';
+$linkback = '<a href="' . DOL_URL_ROOT . '/admin/modules.php?token='.$newToken.'">' . $langs->trans("BackToModuleList") . '</a>';
 load_fiche_titre($langs->trans($page_name), $linkback, 'title_setup');
 
 // Configuration header
