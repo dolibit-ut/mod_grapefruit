@@ -69,7 +69,7 @@ class ActionsGrapeFruit
 
 		$TContext = explode(':', $parameters['context']);
 
-		$actionATM = GETPOST('actionATM');
+		$actionATM = GETPOST('actionATM','alphanohtml');
 		if ($parameters['currentcontext'] == 'ordercard' && $object->statut >= 1 && !empty($conf->global->GRAPEFRUIT_ALLOW_CREATE_BILL_EXPRESS))
 		{
 
@@ -125,12 +125,12 @@ class ActionsGrapeFruit
 
 		if (in_array('ordercard', $TContext))
 		{
-			if (!empty($conf->global->GRAPEFRUIT_ORDER_EXPRESS_FROM_PROPAL) && GETPOST('origin') === 'propal' && GETPOST('originid') > 0 && $action == 'create' && GETPOST('socid', 'int') > 0)
+			if (!empty($conf->global->GRAPEFRUIT_ORDER_EXPRESS_FROM_PROPAL) && GETPOST('origin','alphanohtml') === 'propal' && GETPOST('originid', 'int') > 0 && $action == 'create' && GETPOST('socid', 'int') > 0)
 			{
 				require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 
 				$propal = new Propal($db);
-				if ($propal->fetch(GETPOST('originid')) > 0)
+				if ($propal->fetch(GETPOST('originid', 'int')) > 0)
 				{
 					if ($object->createFromProposal($propal,$user) > 0)
 					{
@@ -246,8 +246,8 @@ class ActionsGrapeFruit
 					<script type="text/javascript">
 						$(document).ready(function() {
 
-							var bt_cmd = $('<a class="butAction" href="<?php echo dol_buildpath('/commande/card.php', 2); ?>?action=create&amp;origin=<?php echo $object->element; ?>&amp;originid=<?php echo $object->id; ?>&amp;socid=<?php echo $object->socid; ?>"><?php echo $langs->trans('AddOrder'); ?></a>');
-							var bt_bill = $('<a class="butAction" href="<?php echo dol_buildpath('/compta/facture.php', 2); ?>?action=create&amp;origin=<?php echo $object->element; ?>&amp;originid=<?php echo $object->id; ?>&amp;socid=<?php echo $object->socid; ?>"><?php echo $langs->trans('AddBill'); ?></a>');
+							var bt_cmd = $('<a class="butAction" href="<?php echo dol_buildpath('/commande/card.php', 2); ?>?action=create&amp;token='<?php echo $newToken; ?>'&amp;origin=<?php echo $object->element; ?>&amp;originid=<?php echo $object->id; ?>&amp;socid=<?php echo $object->socid; ?>"><?php echo $langs->trans('AddOrder'); ?></a>');
+							var bt_bill = $('<a class="butAction" href="<?php echo dol_buildpath('/compta/facture.php', 2); ?>?action=create&amp;token=' <?php echo $newToken; ?>'&amp;origin=<?php echo $object->element; ?>&amp;originid=<?php echo $object->id; ?>&amp;socid=<?php echo $object->socid; ?>"><?php echo $langs->trans('AddBill'); ?></a>');
 
 							if ($('div.tabsAction a.butAction:contains("<?php print $langs->trans('SendByMail'); ?>")').length > 0) {
 								$('div.tabsAction a.butAction:contains("<?php print $langs->trans('SendByMail'); ?>")').after(bt_bill);
@@ -292,7 +292,7 @@ class ActionsGrapeFruit
 				?>
 
 				<script type="text/javascript">
-					var bt_create_fact_express = $('<a class="butAction" href="<?php echo dol_buildpath('/commande/card.php?actionATM=create_bill_express&id='.GETPOST('id'), 2); ?>"><?php echo $langs->trans('GrapefruitCreateBillExpress'); ?></a>');
+					var bt_create_fact_express = $('<a class="butAction" href="<?php echo dol_buildpath('/commande/card.php?actionATM=create_bill_express&id='.GETPOST('id','int'), 2); ?>"><?php echo $langs->trans('GrapefruitCreateBillExpress'); ?></a>');
 					$(document).ready(function() {
 
 						if ($('div.tabsAction a.butAction:contains("<?php print $langs->transnoentities('CreateBill'); ?>")').length > 0) {
@@ -481,6 +481,7 @@ class ActionsGrapeFruit
 	function addMoreActionsButtons($parameters, &$object, &$action, $hookmanager)
 	{
 		global $conf,$user,$langs,$db,$mysoc;
+		$newToken = function_exists('newToken') ? newToken() : $_SESSION['newtoken'];
         $TContext = explode(':', $parameters['context']);
 
 		if (in_array('suppliercard',$TContext) && !empty($conf->global->GRAPEFRUIT_SUPPLIER_FORCE_BT_ORDER_TO_INVOICE))
@@ -779,7 +780,7 @@ class ActionsGrapeFruit
 			dol_include_once('/core/class/html.form.class.php');
 			$form = new Form($db);
 
-			$mode = GETPOST('homepagemode');
+			$mode = GETPOST('homepagemode','alphanohtml');
 
 			if ($mode == 'filtered')
 			{
