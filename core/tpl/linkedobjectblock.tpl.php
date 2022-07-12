@@ -57,24 +57,24 @@ foreach($linkedObjectBlock as $key => $objectlink)
     $var=!$var;
     $trclass=($var?'pair':'impair');
     if ($ilink == count($linkedObjectBlock) && empty($noMoreLinkedObjectBlockAfter) && count($linkedObjectBlock) <= 1) $trclass.=' liste_sub_total';
-    
+
 ?>
     <tr class="<?php echo $trclass; ?>">
         <td><?php echo $langs->trans($objectLabel); ?></td>
-        <td><?php 
+        <td><?php
         if(method_exists($objectlink, 'fetch_thirdparty')) $objectlink->fetch_thirdparty();
-        
+
         if(!empty($objectlink->thirdparty)) {
-        
+
         	echo $objectlink->thirdparty->getNomUrl(1).' - ';
-        
+
         }
-        
-        
+
+
         echo $objectlink->getNomUrl(1); ?></td>
-    	<td align="center"><?php 
-    	
-    		echo $objectlink->ref_client; 
+    	<td align="center"><?php
+
+    		echo $objectlink->ref_client;
     	?></td>
     	<td align="center"><?php echo dol_print_date($objectlink->date,'day'); ?></td>
     	<td align="right"><?php
@@ -87,8 +87,9 @@ foreach($linkedObjectBlock as $key => $objectlink)
     		<?php
     		// For now, shipments must stay linked to order, so link is not deletable
     		if($object->element != 'shipping' && (float)DOL_VERSION>3.7 ) {
-    			?>
-    			<a href="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dellink&dellinkid='.$key; ?>"><?php echo img_delete($langs->transnoentitiesnoconv("RemoveLink")); ?></a>
+				$newToken = function_exists('newToken') ? newToken() : $_SESSION['newtoken'];
+				?>
+    			<a href="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dellink&token='.$newToken.'&dellinkid='.$key; ?>"><?php echo img_delete($langs->transnoentitiesnoconv("RemoveLink")); ?></a>
     			<?php
     		}
     		?>
@@ -108,7 +109,7 @@ if (count($linkedObjectBlock) > 1)
     	<td align="right"></td>
     	<td align="right"></td>
     </tr>
-    <?php  
+    <?php
 }
 if((float)DOL_VERSION<=3.7) {
 	echo '</table>';

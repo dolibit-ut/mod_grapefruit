@@ -252,7 +252,7 @@ if (($action == 'create' || $action == 'add') && empty($mesgs)) {
 /*
  * View
  */
-
+$newToken = function_exists('newToken') ? newToken() : $_SESSION['newtoken'];
 $html = new Form($db);
 $htmlother = new FormOther($db);
 $formfile = new FormFile($db);
@@ -274,7 +274,7 @@ if ($action == 'create' && !$error) {
 	$dateinvoice = empty($conf->global->MAIN_AUTOFILL_DATE) ? - 1 : '';
 
 	print '<form name="add" action="' . $_SERVER["PHP_SELF"] . '" method="POST">';
-	print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
+	print '<input type="hidden" name="token" value="' . $newToken . '">';
 	print '<input type="hidden" name="action" value="add">';
 	print '<input type="hidden" name="socid" value="' . $soc->id . '">' . "\n";
 	print '<input name="facnumber" type="hidden" value="provisoire">';
@@ -409,7 +409,7 @@ if (($action != 'create' && $action != 'add') && !$error) {
 	if ($conf->grapefruit->enabled && !empty($conf->global->GRAPEFRUIT_SUPPLIER_FORCE_BT_ORDER_TO_INVOICE)) $sql .= " AND c.fk_statut IN (2,3,4,5)";
 	else $sql .= " AND c.fk_statut IN (5)";
 	/* */
-	
+
 	// Find order that are not already invoiced
 	$sql .= " AND c.rowid NOT IN (SELECT fk_source FROM " . MAIN_DB_PREFIX . "element_element WHERE targettype='invoice_supplier')";
 
@@ -456,7 +456,7 @@ if (($action != 'create' && $action != 'add') && !$error) {
 			$companystatic->nom = $soc->nom;
 			print '<h3>' . $companystatic->getNomUrl(1, 'customer') . '</h3>';
 		}
-		
+
 		print '<form method="get" action="orderstoinvoice.php">';
 		print '<input type="hidden" name="socid" value="' . $socid . '">';
 		print '<table class="noborder" width="100%">';
