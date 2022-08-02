@@ -278,7 +278,7 @@ class InterfaceGrapeFruittrigger
 					}
 					$idcontacts=$object->getIdBillingContact();
 					if(!empty($idcontacts)){
-						$actioncomm->contactid=$idcontacts[0];
+						$actioncomm->contact_id=$idcontacts[0];
 						$actioncomm->contact=$object->contact;
 
 					}
@@ -329,7 +329,7 @@ class InterfaceGrapeFruittrigger
 			if(!empty($conf->global->GRAPEFRUIT_ALLOW_RESTOCK_ON_CREDIT_NOTES) && empty($conf->global->STOCK_CALCULATE_ON_BILL) && $object->element === 'facture' && $object->type == Facture::TYPE_CREDIT_NOTE) {
 				require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
 				require_once DOL_DOCUMENT_ROOT .'/product/stock/class/mouvementstock.class.php';
-				$fk_entrepot = GETPOST('fk_entrepot');
+				$fk_entrepot = GETPOST('fk_entrepot','int');
 				if(!empty($fk_entrepot)) {
 					$nb_restock=0;
 
@@ -348,6 +348,7 @@ class InterfaceGrapeFruittrigger
 							$movementstock=new MouvementStock($db);
 							$movementstock->origin = $object;
 							$movementstock->origin->id = $object->id;
+							$movementstock->origin_id = $object->id;
 							$result=$movementstock->_create($user,$prod->id,$fk_entrepot,'+'.$qty,0,$line->pa_ht,$langs->trans('Restockage via avoir'),'');
 
 							if(!empty($result)) $nb_restock+=$qty;
@@ -476,8 +477,8 @@ class InterfaceGrapeFruittrigger
 			if(! empty($conf->expedition->enabled) && !empty($conf->global->MAIN_SUBMODULE_LIVRAISON) && ! empty($conf->global->GRAPEFRUIT_CREATE_DELIVERY_FROM_SHIPPING))
 			{
 
-			    include_once DOL_DOCUMENT_ROOT.'/livraison/class/livraison.class.php';
-			    $delivery = new Livraison($this->db);
+			    include_once DOL_DOCUMENT_ROOT.'/delivery/class/delivery.class.php';
+			    $delivery = new Delivery($this->db);
 			    $result=$delivery->create_from_sending($user, $object->id);
 			    if ($result < 0)
 			    {
@@ -523,8 +524,8 @@ class InterfaceGrapeFruittrigger
 
 			if(!empty($conf->global->GRAPEFRUIT_COPY_CAT_ON_CLONE)) {
 
-				if(GETPOST('action') === 'confirm_clone') {
-					$origin_id = GETPOST('id');
+				if(GETPOST('action','alphanohtml') === 'confirm_clone') {
+					$origin_id = GETPOST('id','int');
 
 					$categorie_static = new Categorie($db);
 					$categoriesid = $categorie_static->containing($origin_id, 0,'object');
@@ -550,7 +551,7 @@ class InterfaceGrapeFruittrigger
 
 			if(!empty($conf->global->GRAPEFRUIT_VALIDATE_SUPPLIERINVOICE_ON_RECEIPT_SUPPLIERORDER)) {
 
-				if(GETPOST('type') === 'tot') {
+				if(GETPOST('type','alphanohtml') === 'tot') {
 
 					$object->fetchObjectLinked($object->id,$object->element,'','invoice_supplier');
 

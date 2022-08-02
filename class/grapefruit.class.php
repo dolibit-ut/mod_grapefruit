@@ -248,7 +248,9 @@ class TGrappeFruit
 		$substit['__REF__'] = (empty($object->newref)?$object->ref:$object->newref);
 		$substit['__ORDER_REF__'] = $orderref;
 		$substit['__SIGNATURE__'] = $user->signature;
+		$substit['__USER_SIGNATURE__'] = $user->signature;
 		$substit['__REFCLIENT__'] = $object->ref_client;
+		$substit['__REF_CLIENT__'] = $object->ref_client;
 		$substit['__THIRDPARTY_NAME__'] = $object->thirdparty->name;
 		$substit['__PROJECT_REF__'] = (is_object($object->projet) ? $object->projet->ref : '');
 		$substit['__PROJECT_NAME__'] = (is_object($object->projet) ? $object->projet->title : '');
@@ -363,7 +365,9 @@ class TGrappeFruit
 			// Make substitution
 		$substit['__REF__'] = $object->ref;
 		$substit['__SIGNATURE__'] = $user->signature;
+        $substit['__USER_SIGNATURE__'] = $user->signature;
 		$substit['__REFCLIENT__'] = $object->ref_client;
+		$substit['__REF_CLIENT__'] = $object->ref_client;
 		$substit['__THIRDPARTY_NAME__'] = $object->thirdparty->name;
 		$substit['__PROJECT_REF__'] = (is_object($object->projet) ? $object->projet->ref : '');
 		$substit['__PROJECT_NAME__'] = (is_object($object->projet) ? $object->projet->title : '');
@@ -981,7 +985,7 @@ class TGrappeFruit
 				$value = '<input type="hidden" id="idwarehouse" name="idwarehouse" value="' . key($warehouse_array) . '">';
 			} else {
 				$label = $object->type == Facture::TYPE_CREDIT_NOTE ? $langs->trans("SelectWarehouseForStockIncrease") : $langs->trans("SelectWarehouseForStockDecrease");
-				$value = $formproduct->selectWarehouses(GETPOST('idwarehouse')?GETPOST('idwarehouse'):'ifone', 'idwarehouse', '', 1);
+				$value = $formproduct->selectWarehouses(GETPOST('idwarehouse','int')?GETPOST('idwarehouse','int'):'ifone', 'idwarehouse', '', 1);
 			}
 			$formquestion = array(
 					// 'text' => $langs->trans("ConfirmClone"),
