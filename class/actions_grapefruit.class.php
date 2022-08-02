@@ -855,7 +855,10 @@ class ActionsGrapeFruit
 		global $conf,$langs;
 
 		$TContext = explode(':', $parameters['context']);
+        $tmpResprint = $hookmanager->resPrint;
+
 		if($action != 'create') $object->fetchObjectLinked();
+        if (empty($hookmanager->resPrint)) $hookmanager->resPrint = $tmpResprint;
 
 		require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
 
