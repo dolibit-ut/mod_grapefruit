@@ -770,6 +770,16 @@ class ActionsGrapeFruit
 		}
 		return 0;
 	}
+
+	/**
+	* Fonction de compatibilité : le hook addStatisticLine a été renommé en 14.0
+	*
+	*/
+	function addOpenElementsDashboardLine($parameters, &$object, &$action, $hookmanager)
+	{
+		return $this->addStatisticLine($parameters, $object, $action, $hookmanager);
+	}
+
 	function addStatisticLine($parameters, &$object, &$action, $hookmanager)
 	{
 		global $user, $conf, $db, $langs;
@@ -802,6 +812,12 @@ class ActionsGrapeFruit
 				print '</p>';
 			}
 
+			$cssSelector = "div.boxstatsindicator a, a.boxstatsindicator";
+			if (version_compare(DOL_VERSION, '12.0.0') > 0)
+			{
+				$cssSelector = "a.info-box-text-a";
+			}
+
 			?>
 				<script type="text/javascript">
 					$(document).ready(function(){
@@ -809,7 +825,7 @@ class ActionsGrapeFruit
 
 						<?php if ($mode == 'filtered') { ?>
 
-                        $("div.boxstatsindicator a, a.boxstatsindicator").attr('href',function(i, href) {
+                        $("<?php echo $cssSelector; ?>").attr('href',function(i, href) {
                         	if(href)
                         	{
 					if(href.indexOf('projet/list') == -1) {
