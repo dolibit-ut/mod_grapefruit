@@ -13,15 +13,17 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
- * 	\file		admin/about.php
- * 	\ingroup	grapefruit
- * 	\brief		This file is an example about page
+ * 	 \file		grapefruit/admin/grapefruit_about.php
+ * 	 \ingroup	grapefruit
+ * 	 \brief		This file is an example about page
  * 				Put some comments here
  */
+
+
 // Dolibarr environment
 $res = @include("../../main.inc.php"); // From htdocs directory
 if (! $res) {
@@ -40,9 +42,11 @@ if (! $user->admin) {
     accessforbidden();
 }
 
+
 /*
  * View
  */
+
 $page_name = "GrapeFruitAbout";
 llxHeader('', $langs->trans($page_name));
 
