@@ -13,19 +13,21 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
- * \file admin/grapefruit.php
- * \ingroup grapefruit
- * \brief This file is an example module setup page
- * Put some comments here
+ *  \file admin/grapefruit.php
+ *  \ingroup grapefruit
+ *  \brief This file is an example module setup page
+ *  Put some comments here
  */
+
+
 // Dolibarr environment
-$res = @include ("../../main.inc.php"); // From htdocs directory
+$res = @include ("../../main.inc.php");  // From htdocs directory
 if (! $res) {
-	$res = @include ("../../../main.inc.php"); // From "custom" directory
+	$res = @include ("../../../main.inc.php");  // From "custom" directory
 }
 
 // Libraries
@@ -58,9 +60,11 @@ $action = GETPOST('action', 'alpha');
 $newToken = function_exists('newToken') ? newToken() : $_SESSION['newtoken'];
 $object=new TGrappeFruit();
 
+
 /*
  * Actions
  */
+
 if (preg_match('/set_(.*)/', $action, $reg)) {
 	$code = $reg[1];
 	if (dolibarr_set_const($db, $code, GETPOST($code), 'chaine', 0, '', $conf->entity) > 0) {
@@ -96,12 +100,15 @@ if (preg_match('/del_(.*)/', $action, $reg)) {
 	}
 }
 
+
 /*
  * View
  */
+
 $page_name = "GrapeFruitSetup";
 llxHeader('', $langs->trans($page_name));
 $newToken = function_exists('newToken') ? newToken() : $_SESSION['newtoken'];
+
 // Subheader
 $linkback = '<a href="' . DOL_URL_ROOT . '/admin/modules.php?token='.$newToken.'">' . $langs->trans("BackToModuleList") . '</a>';
 load_fiche_titre($langs->trans($page_name), $linkback, 'title_setup');
