@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 
 ## Version 2.4
 
+- FIX : formated date substitution available (begins with __OBJECT_) on fields with name containing "date" - *16/12/2022* - 2.4.4
 - FIX : compat filtrage index for user - *05/09/2022* - 2.4.3
 - FIX : Editor name - *29/09/2022* - 2.4.2
 - FIX : V16 TOKEN - *08/06/2022* - 2.4.1  
