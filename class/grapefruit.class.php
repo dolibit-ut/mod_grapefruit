@@ -264,8 +264,8 @@ class TGrappeFruit
 
 		if (is_array($contactarr) && count($contactarr) > 0) {
 			foreach ( $contactarr as $contact ) {
-				dol_syslog(get_class($this) . '::' . __METHOD__ . 'lib=' . $contact['libelle']);
-				dol_syslog(get_class($this) . '::' . __METHOD__ . 'trans=' . $langs->trans('TypeContact_facture_external_BILLING'));
+				dol_syslog('TGrappeFruit::' . __METHOD__ . 'lib=' . $contact['libelle']);
+				dol_syslog('TGrappeFruit::' . __METHOD__ . 'trans=' . $langs->trans('TypeContact_facture_external_BILLING'));
 
 				if ($contact['libelle'] == $langs->trans('TypeContact_facture_external_BILLING')) {
 
@@ -275,7 +275,7 @@ class TGrappeFruit
 					$contactstatic->fetch($contact['id']);
 					$custcontact = $contactstatic->getFullName($langs, 1);
 
-					dol_syslog(get_class($this) . '::' . __METHOD__ . ' email=' . $contactstatic->email);
+					dol_syslog('TGrappeFruit::' . __METHOD__ . ' email=' . $contactstatic->email);
 				}
 			}
 
@@ -304,7 +304,7 @@ class TGrappeFruit
 			// generate invoice
 			$result = $object->generateDocument($object->modelpdf, $outputlangs, 0, 0, 0);
 			if ($result <= 0) {
-				$this->error = $object->error;
+				$error = $object->error;
 			}
 			$fileparams = dol_most_recent_file($conf->facture->dir_output . '/' . $object->ref, preg_quote($object->ref, '/') . '[^\-]+');
 			if (is_array($fileparams) && array_key_exists('fullname', $fileparams) && ! empty($fileparams['fullname'])) {
@@ -381,8 +381,8 @@ class TGrappeFruit
 
 		if (is_array($contactarr) && count($contactarr) > 0) {
 			foreach ( $contactarr as $contact ) {
-				dol_syslog(get_class($this) . '::' . __METHOD__ . ' lib=' . $contact['libelle']);
-				dol_syslog(get_class($this) . '::' . __METHOD__ . ' trans=' . $langs->trans('TypeContact_commande_external_BILLING'));
+				dol_syslog('TGrappeFruit::' . __METHOD__ . ' lib=' . $contact['libelle']);
+				dol_syslog('TGrappeFruit::' . __METHOD__ . ' trans=' . $langs->trans('TypeContact_commande_external_BILLING'));
 
 				if ($contact['libelle'] == $langs->trans('TypeContact_commande_external_BILLING')) {
 
@@ -392,7 +392,7 @@ class TGrappeFruit
 					$contactstatic->fetch($contact['id']);
 					$custcontact = $contactstatic->getFullName($langs, 1);
 
-					dol_syslog(get_class($this) . '::' . __METHOD__ . ' email=' . $contactstatic->email);
+					dol_syslog('TGrappeFruit::' . __METHOD__ . ' email=' . $contactstatic->email);
 				}
 			}
 
@@ -421,7 +421,7 @@ class TGrappeFruit
 			// generate invoice
 			$result = $object->generateDocument($object->modelpdf, $outputlangs, 0, 0, 0);
 			if ($result <= 0) {
-				$this->error = $object->error;
+				$error = $object->error;
 			}
 			$fileparams = dol_most_recent_file($conf->commande->dir_output . '/' . $object->ref, preg_quote($object->ref, '/') . '[^\-]+');
 			if (is_array($fileparams) && array_key_exists('fullname', $fileparams) && ! empty($fileparams['fullname'])) {
