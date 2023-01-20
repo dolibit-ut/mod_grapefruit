@@ -415,7 +415,7 @@ class InterfaceGrapeFruittrigger
 
 			}
 		 	dol_syslog("Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id);
-		 } elseif ($action == 'ORDER_SUPPLIER_DISPATCH') {
+		 } elseif ($action == (version_compare(DOL_VERSION , '17.0.0', '<') ? 'ORDER_SUPPLIER_DISPATCH' : 'ORDER_SUPPLIER_RECEIVE')) {
         	// classify supplier order delivery status
         	dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
