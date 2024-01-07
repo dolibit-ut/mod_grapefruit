@@ -1,0 +1,12 @@
+
+### Additional substitution keys  
+* __CLIENT_TOTAL_REMISE_DISPO__                 => available customer discounts (credit notes or deposits)
+* __CLIENT_TOTAL_AVOIR_DISPO__                  => available credit notes
+* __CLIENT_TOTAL_FACTURE_IMPAYEE__              => amount outstanding
+* __CLIENT_TOTAL_FACTURE_IMPAYEE_ONLY_POS__     => positive outstanding amount (if amount is negative, display 0)
+
+Other possibilities with the current object
+* __OBJECT_[ATTRIBUTE_NAME]__                   => replace [ATTRIBUTE_NAME] with the attribute name (in uppercase) of the object you wish to display (example with the ref attribute: __OBJECT_REF__).
+
+### Hidden configuration
+* GRAPEFRUIT_SUBSTITUTION_USE_CURRENCY_SYMBOL   => display currency symbol instead of spelling it out
